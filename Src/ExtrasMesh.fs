@@ -1,17 +1,15 @@
-namespace Rhino.Scripting.Extra
-
-open FsEx
-open Rhino.Geometry
+namespace Rhino.Scripting
 
 open System.Runtime.CompilerServices // [<Extension>] Attribute not needed for intrinsic (same dll) type augmentations ?
-open Rhino.Scripting
+open Rhino.Geometry
+
+open FsEx
 open FsEx.SaveIgnore
 
 
-
-[<AutoOpen>]
 /// This module provides functions to create or manipulate Rhino Meshes 
 /// This module is automatically opened when Rhino.Scripting.Extra namespace is opened.
+[<AutoOpen>]
 module ExtrasMesh =    
 
     type RhinoScriptSyntax with 
@@ -23,14 +21,14 @@ module ExtrasMesh =
                 m.Vertices.Add a ,
                 m.Vertices.Add b, 
                 m.Vertices.Add c) |>ignore        
+        
         /// Call  Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ?? sort points counterclockwise
         [<Extension>]
         static member MeshAddTriaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d)  = 
             m.Faces.AddFace(    
                 m.Vertices.Add(a.X,a.Y,a.Z) , 
                 m.Vertices.Add (b.X,b.Y,b.Z), 
-                m.Vertices.Add (c.X,c.Y,c.Z)) |>ignore
-        
+                m.Vertices.Add (c.X,c.Y,c.Z)) |>ignore        
         
         
         /// Call  Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ?? sort points counterclockwise

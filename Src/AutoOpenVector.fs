@@ -4,23 +4,20 @@ open System
 open System.Collections.Generic
 open System.Runtime.CompilerServices // [<Extension>] Attribute not needed for intrinsic (same dll) type augmentations ?
 
+open Rhino
+open Rhino.Geometry
+open Rhino.Scripting.NiceString
+
+
 open FsEx
 open FsEx.UtilMath
 open FsEx.SaveIgnore 
 open FsEx.ExtensionsIList
 
-open Rhino
-open Rhino.Geometry
-open FsEx
-open Rhino.Scripting.NiceString
-
-
-[<AutoOpen>]
 /// This module provides functions to manipulate Rhino Vector3d
 /// This module is automatically opened when Rhino.Scripting namespace is opened.
-module AutoOpenVector =
-    
-    open Vec
+[<AutoOpen>]
+module AutoOpenVector = 
 
     type RhinoScriptSyntax with
         (*
@@ -29,7 +26,7 @@ module AutoOpenVector =
         /// Use Vec.angle .. instead
         ///projects to Plane an returns angle in degrees in Plane between -180 and + 180               
         static member AngleInPlane180( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> unitize
+            let v = projectToPlane plane vector |> Vec.unitize
             let dot = v * plane.XAxis 
             let ang = acos dot  |> toDegrees
             if v*plane.YAxis < 0.0 then -ang else ang
@@ -39,7 +36,7 @@ module AutoOpenVector =
         /// Use Vec.angle .. instead
         ///projects to Plane an returns angle in degrees in Plane between 0 and 360               
         static member AngleInPlane360( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> unitize
+            let v = projectToPlane plane vector |> Vec.unitize
             let dot = v * plane.XAxis 
             let ang = acos dot  |> toDegrees
             if v*plane.YAxis < 0.0 then 360.0-ang else ang

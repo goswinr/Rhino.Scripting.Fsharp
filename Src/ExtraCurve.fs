@@ -1,21 +1,21 @@
-namespace Rhino.Scripting.Extra
+namespace Rhino.Scripting
 
-open FsEx
 open System
-open Rhino
-open Rhino.Geometry
-open Rhino.Scripting
 open System.Runtime.CompilerServices // [<Extension>] Attribute not needed for intrinsic (same dll) type augmentations ?
 open System.Collections.Generic
+
+open Rhino
+open Rhino.Geometry
+
+open FsEx
+open Rhino.Scripting
 open FsEx.SaveIgnore
 
-[<AutoOpen>]
 /// This module provides functions to create or manipulate Rhino Curves
 /// This module is automatically opened when Rhino.Scripting.Extra namespace is opened.
+[<AutoOpen>]
 module ExtrasCurve =
-
-  open Line
-  open Vec
+  
   open FsEx.ExtensionsIList
    
   type RhinoScriptSyntax with 
@@ -105,8 +105,8 @@ module ExtrasCurve =
 
 
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> unitize // vector of line A projected in arc plane 
-        let uB = (lineB.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> unitize // vector of line B projected in arc plane  
+        let uA = (lineA.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line A projected in arc plane 
+        let uB = (lineB.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line B projected in arc plane  
 
         // calculate trim       
         let alphaDouble = 
@@ -138,8 +138,8 @@ module ExtrasCurve =
     
     
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> projectToPlane arcPl |> unitize // vector of line A projected in arc plane 
-        let uB = (lineB.Mid - arcPl.Origin) |> projectToPlane arcPl |> unitize // vector of line B projected in arc plane  
+        let uA = (lineA.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line A projected in arc plane 
+        let uB = (lineB.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line B projected in arc plane  
     
         // calculate trim       
         let alphaDouble = 
@@ -152,13 +152,13 @@ module ExtrasCurve =
     
         let arcStart0 =  arcPl.Origin + uA * trim // still on arc plane
         let arcEnd0 =    arcPl.Origin + uB * trim
-        let arcStart =  arcStart0 |> projectToLine lineA direction |> Pnt.snapIfClose lineA.From |> Pnt.snapIfClose lineA.To
-        let arcEnd   =  arcEnd0   |> projectToLine lineB direction |> Pnt.snapIfClose lineB.From |> Pnt.snapIfClose lineB.To
+        let arcStart =  arcStart0 |> Vec.projectToLine lineA direction |> Pnt.snapIfClose lineA.From |> Pnt.snapIfClose lineA.To
+        let arcEnd   =  arcEnd0   |> Vec.projectToLine lineB direction |> Pnt.snapIfClose lineB.From |> Pnt.snapIfClose lineB.To
         let arc = Arc(arcStart0, - uA , arcEnd0)
     
         if alphaDouble > Math.PI * 0.49999 && not makeSCurve then // fillet bigger than 89.999 degrees, one arc from 3 points
-            let miA = intersectInOnePoint lineA axis
-            let miB = intersectInOnePoint lineB axis
+            let miA = Line.intersectInOnePoint lineA axis
+            let miB = Line.intersectInOnePoint lineB axis
             let miPt  = (miA + miB) * 0.5 // if lines are skew
             let midWei = sin alpha
             let knots=    [| 0. ; 0. ; 1. ; 1.|]
@@ -171,14 +171,14 @@ module ExtrasCurve =
             let trim2 = trim - radius * tan(betaH)
             let ma, mb = 
                 if makeSCurve then
-                    arcPl.Origin + uA * trim2 |> projectToLine lineA direction ,
-                    arcPl.Origin + uB * trim2 |> projectToLine lineB direction 
+                    arcPl.Origin + uA * trim2 |> Vec.projectToLine lineA direction ,
+                    arcPl.Origin + uB * trim2 |> Vec.projectToLine lineB direction 
                 else
-                    let miA = intersectInOnePoint lineA axis
-                    let miB = intersectInOnePoint lineB axis
+                    let miA = Line.intersectInOnePoint lineA axis
+                    let miB = Line.intersectInOnePoint lineB axis
                     let miPt  = (miA + miB) * 0.5 // if lines are skew
-                    arcPl.Origin + uA * trim2 |> projectToLine (Line(miPt,arcStart)) direction ,
-                    arcPl.Origin + uB * trim2 |> projectToLine (Line(miPt,arcEnd  )) direction              
+                    arcPl.Origin + uA * trim2 |> Vec.projectToLine (Line(miPt,arcStart)) direction ,
+                    arcPl.Origin + uB * trim2 |> Vec.projectToLine (Line(miPt,arcEnd  )) direction              
         
             let gamma = Math.PI*0.5 - betaH
             let midw= sin(gamma)

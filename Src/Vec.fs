@@ -90,7 +90,7 @@ module Vec =
     let inline unitizeWithAlternative (unitVectorAlt:Vector3d) (v:Vector3d) =
         let l = v.SquareLength
         if l < RhinoMath.ZeroTolerance  then  //sqrt RhinoMath.ZeroTolerance = 1e-06
-            unitVectorAlt //|> unitize
+            unitVectorAlt //|> Vec.unitize
         else  
             let f = 1.0 / sqrt(l)
             Vector3d(v.X*f , v.Y*f , v.Z*f)
@@ -120,7 +120,8 @@ module Vec =
         r
 
     /// Project point onto a finite line in directin of v
-    /// Fails if line is missed by tolerance 1e-6 and draws debug objects on layer 'Error-projectToLine'
+    /// Fails if line is missed by tolerance 1e-6 
+    //and draws debug objects on layer 'Error-projectToLine'
     let projectToLine (ln:Line) (v:Vector3d) (pt:Point3d) =
         let h = Line(pt,v)
         let ok,tln,th = Intersect.Intersection.LineLine(ln,h)
@@ -128,9 +129,9 @@ module Vec =
         let a = ln.PointAt(tln)
         let b = h.PointAt(th)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then 
-            rhsy.Doc.Objects.AddLine ln   |> rhsy.setLayer "Error-projectToLine"
-            rhsy.Doc.Objects.AddLine h    |> rhsy.setLayer "Error-projectToLineDirection"
-            rhsy.Doc.Objects.AddPoint pt  |> rhsy.setLayer "Error-projectToLineFrom"            
+            //rhsy.Doc.Objects.AddLine ln   |> rhsy.setLayer "Error-projectToLine"
+            //rhsy.Doc.Objects.AddLine h    |> rhsy.setLayer "Error-projectToLineDirection"
+            //rhsy.Doc.Objects.AddPoint pt  |> rhsy.setLayer "Error-projectToLineFrom"            
             RhinoScriptingException.Raise "Rhino.Scripting.Vec.projectToLine: missed Line by: %g " (a-b).Length
         a
     
