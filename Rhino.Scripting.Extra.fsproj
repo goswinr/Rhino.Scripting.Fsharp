@@ -18,7 +18,7 @@
     <AssemblyTitle>Rhino.Scripting.Extra</AssemblyTitle>
     <Product>Rhino.Scripting.Extra</Product> <!--visible in explorer-->
     <Title>Rhino.Scripting.Extra</Title>  
-    <PackageId>Rhino6.Scripting.Extra</PackageId>  
+    <PackageId>Rhino.Scripting.Extra</PackageId>  
 
     <Version>0.1.0.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
