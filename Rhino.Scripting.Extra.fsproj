@@ -20,10 +20,10 @@
     <Title>Rhino.Scripting.Extra</Title>  
     <PackageId>Rhino.Scripting.Extra</PackageId>  
 
-    <Version>0.1.0.0</Version>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
-    <PackageReleaseNotes>First public release</PackageReleaseNotes>
+    <Version>0.0.1</Version>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <FileVersion>0.0.1</FileVersion>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
     
     <Authors>GoswinR</Authors>
     <Copyright>Goswin Rothenthal 2021</Copyright>
@@ -57,9 +57,10 @@
     <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
     <!-- <PackageReference Include="RhinoCommon" Version="7.8.21196.5001" PrivateAssets="all" ExcludeAssets="runtime" /> -->
 
-    <!-- <PackageReference Include="FsEx" Version="0.5.0" />   -->
-    <Reference Include="FsEx" HintPath="../FsEx/bin/Release/netstandard2.0/FsEx.dll" />
-    <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/Rhino.Scripting.dll" />
+    <PackageReference Include="FsEx" Version="0.5.1" /> 
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.1" /> 
+    <!--<Reference Include="FsEx" HintPath="../FsEx/bin/Release/netstandard2.0/FsEx.dll" />-->
+    <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/Rhino.Scripting.dll" /> -->
       
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />      
   </ItemGroup>
