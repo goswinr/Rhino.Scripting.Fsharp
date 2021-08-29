@@ -57,17 +57,17 @@
     <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
     <!-- <PackageReference Include="RhinoCommon" Version="7.8.21196.5001" PrivateAssets="all" ExcludeAssets="runtime" /> -->
 
-    <PackageReference Include="FsEx" Version="0.*" /><!-- list exlicitly to get highest version from local nuget feed-->
-    <PackageReference Include="Rhino6.Scripting" Version="0.*" /> <!-- Accepts any 0.x.y version. Will resolve to the highest acceptable stable version.--> <!-- would include FsEx, but not RhCommon-->
+    <PackageReference Include="FsEx" Version="0.6.3" />
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.1" /> <!-- would include FsEx, but not RhCommon-->
     <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/Rhino.Scripting.dll" /> -->
-    <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/RFsEx.dll" /> -->
+    <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/FsEx.dll" /> -->
       
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />      
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" />   
-    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
+    <!--<None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />-->
     <None Include="Doc/logo128.png"    Pack="true" PackagePath="" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
 
     <Compile Include="Src/AutoOpenCurried.fs" />
