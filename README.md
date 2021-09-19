@@ -45,15 +45,15 @@ In an F# scripting editor do
 ```   
 open modules 
 ```fsharp
-open Rhino.Scripting  // to make extension members available 
 
-type rs = RhinoScriptSyntax  // type abbreviation  (alias) for RhinoScriptSyntax
+
+type rs = Rhino.Scripting  // type abbreviation  (alias) for RhinoScriptSyntax
 ```
 then use any of the RhinoScript functions like you would in Python or VBScript.  
 The `CoerceXXXX` functions will help you create types if you are too lazy to fully specify them.
 ```fsharp
-let pl = rhsy.CoercePlane(0 , 80 , 0) // makes World XY plane at point
-rhsy.AddText("Hello, Seff", pl, height = 50.)
+let pl = Scripting.CoercePlane(0 , 80 , 0) // makes World XY plane at point
+Scripting.AddText("Hello, Seff", pl, height = 50.)
 ```
 Screenshot from [Seff](https://github.com/goswinr/Seff.Rhino) Editor hosted in Rhino using Rhino.Scripting:
 ![Seff Editor Screenshot](Doc/HelloSeff.png)
@@ -63,13 +63,13 @@ Screenshot from [Seff](https://github.com/goswinr/Seff.Rhino) Editor hosted in R
 Many RhinoScript function take variable types of input parameters. This is implemented with method overloads.
 Many RhinoScript function have optional parameters. These are also implemented as optional method parameters.
 ### Example
-for example `rhsy.ObjectLayer` can be called in several ways:
+for example `Scripting.ObjectLayer` can be called in several ways:
 
-`rhsy.ObjectLayer(guid)` to get the layer of one object, returns a string  
-`rhsy.ObjectLayer(guid, string)` to set the layer of one object (fails if layer does not exist), no return value  
-`rhsy.ObjectLayer(guid, string, createLayerIfMissing = true )` to set the layer of one object, and create the layer if it does not exist yet, no return value  
-`rhsy.ObjectLayer(list of guids, string)` to set the layer of several objects (fails if layer does not exist), no return value    
-`rhsy.ObjectLayer(list of guids, string, createLayerIfMissing = true )` to set the layer of several objects, and create the layer if it does not exist yet , no return value
+`Scripting.ObjectLayer(guid)` to get the layer of one object, returns a string  
+`Scripting.ObjectLayer(guid, string)` to set the layer of one object (fails if layer does not exist), no return value  
+`Scripting.ObjectLayer(guid, string, createLayerIfMissing = true )` to set the layer of one object, and create the layer if it does not exist yet, no return value  
+`Scripting.ObjectLayer(list of guids, string)` to set the layer of several objects (fails if layer does not exist), no return value    
+`Scripting.ObjectLayer(list of guids, string, createLayerIfMissing = true )` to set the layer of several objects, and create the layer if it does not exist yet , no return value
 
 these are implemented with 3 overloads and optional parameters:
 ```fsharp   
@@ -79,7 +79,7 @@ these are implemented with 3 overloads and optional parameters:
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(string) The object's current layer</returns>
     static member ObjectLayer(objectId:Guid) : string = //GET
-        let obj = rhsy.CoerceRhinoObject(objectId)
+        let obj = Scripting.CoerceRhinoObject(objectId)
         let index = obj.Attributes.LayerIndex
         Doc.Layers.[index].FullPath
 
@@ -92,10 +92,10 @@ these are implemented with 3 overloads and optional parameters:
     ///     Set true to create Layer if it does not exist yet.</param>
     ///<returns>(unit) void, nothing</returns>
     static member ObjectLayer(objectId:Guid, layer:string, [<OPT;DEF(false)>]createLayerIfMissing:bool) : unit = //SET
-        let obj = rhsy.CoerceRhinoObject(objectId)   
+        let obj = Scripting.CoerceRhinoObject(objectId)   
         let layerIndex =
-            if createLayerIfMissing then  rhsy.getOrCreateLayer(layer, Color.randomColorForRhino, true, false)
-            else                          rhsy.CoerceLayer(layer).Index                 
+            if createLayerIfMissing then  Scripting.getOrCreateLayer(layer, Color.randomColorForRhino, true, false)
+            else                          Scripting.CoerceLayer(layer).Index                 
         obj.Attributes.LayerIndex <- layerIndex
         if not <| obj.CommitChanges() then failwithf "Set ObjectLayer failed for '%A' and '%A'"  layer objectId
         Doc.Views.Redraw()
@@ -110,10 +110,10 @@ these are implemented with 3 overloads and optional parameters:
     ///<returns>(unit) void, nothing</returns>
     static member ObjectLayer(objectIds:Guid seq, layer:string, [<OPT;DEF(false)>]createLayerIfMissing:bool) : unit = //MULTISET
         let layerIndex =
-            if createLayerIfMissing then  rhsy.getOrCreateLayer(layer, Color.randomColorForRhino, true, false)
-            else                          rhsy.CoerceLayer(layer).Index   
+            if createLayerIfMissing then  Scripting.getOrCreateLayer(layer, Color.randomColorForRhino, true, false)
+            else                          Scripting.CoerceLayer(layer).Index   
         for objectId in objectIds do
-            let obj = rhsy.CoerceRhinoObject(objectId)
+            let obj = Scripting.CoerceRhinoObject(objectId)
             obj.Attributes.LayerIndex <- layerIndex
             if not <| obj.CommitChanges() then failwithf "Set ObjectLayer failed for '%A' and '%A' of %d objects"  layer objectId (Seq.length objectIds)
         Doc.Views.Redraw()
@@ -121,22 +121,22 @@ these are implemented with 3 overloads and optional parameters:
 ```
 ## Extras
 in addition to all +900 functions from the rhinoscriptsyntax this library contains other useful utility functions.   
-For example the curried `rhsy.setLayer` or `rhsy.setUsername` can be used with the pipeline operator:
+For example the curried `Scripting.setLayer` or `Scripting.setUsername` can be used with the pipeline operator:
 
 The `|>>` operator applies a function but returns the input value:
 
 ```fsharp
-rhsy.AddLine(a,b)
-|>> rhsy.setLayer    "parent::myLayer"
-|>> rhsy.setName     "myName"
-|>  rhsy.setUserText "myKey" "myValue"
+Scripting.AddLine(a,b)
+|>> Scripting.setLayer    "parent::myLayer"
+|>> Scripting.setName     "myName"
+|>  Scripting.setUserText "myKey" "myValue"
 ```
 instead of 
 ```fsharp
-let myLine = rhsy.AddLine(a,b)
-rhsy.ObjectLayer(myLine, "parent::myLayer" )
-rhsy.ObjectName (myLine, "myName")
-rhsy.SetUserText(myLine, "myKey", "myValue")
+let myLine = Scripting.AddLine(a,b)
+Scripting.ObjectLayer(myLine, "parent::myLayer" )
+Scripting.ObjectName (myLine, "myName")
+Scripting.SetUserText(myLine, "myKey", "myValue")
 ```
 
 All additional functionality is  directly in the `src` folder  files in [https://github.com/goswinr/Rhino.Scripting/tree/master/src](https://github.com/goswinr/Rhino.Scripting/tree/master/src).

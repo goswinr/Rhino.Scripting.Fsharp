@@ -1,9 +1,8 @@
-namespace Rhino.Scripting
+﻿namespace Rhino
 
 open Rhino
 open Rhino.Geometry
 open FsEx.UtilMath
-
 open FsEx.SaveIgnore 
 
 /// This module provides curried functions to manipulate Rhino Line structs
@@ -30,7 +29,7 @@ module Line =
     let offset amount (ln:Line) = 
         let v = ln.Direction
         let lenXY = sqrt(v.X*v.X + v.Y*v.Y)
-        if lenXY  < 1e-9 then RhinoScriptingException.Raise "Rhino.Scripting: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString        
+        if lenXY  < 1e-9 then RhinoScriptingException.Raise "Rhino.Scripting.Extra: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString        
         let ov = Vector3d(-v.Y / lenXY  , v.X / lenXY , 0.0) // unitized, horizontal , perpendicular  vector
         let shift = ov * amount
         Line(ln.From + shift, ln.To + shift)  
@@ -39,7 +38,7 @@ module Line =
     /// includes start and endpoint of line
     let divide (segments:int) (ln:Line) =        
         match segments with 
-        | x when x < 1 -> RhinoScriptingException.Raise "Rhino.Scripting.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
+        | x when x < 1 -> RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
         | 1 -> [|ln.From;  ln.To|]
         | k -> 
             let r = Array.zeroCreate (k+1)
@@ -58,11 +57,11 @@ module Line =
     /// Returns point on lnB (the last parameter)
     let intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d = 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Line.intersectInOnePoint failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectInOnePoint failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
-            RhinoScriptingException.Raise "Rhino.Scripting.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
         b
     
     /// Finds intersection of two Infinite Lines.
@@ -72,7 +71,7 @@ module Line =
     /// Considers Lines infinte
     let intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Line.intersectSkew failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectSkew failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)        
         a,b
@@ -91,20 +90,20 @@ module Line =
     /// Finds intersection of two Finite Lines.
     /// Returns: 
     ///    an enpty array if they are paralell,
-    ///    an array with one point if they intersect by rhsy.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
+    ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
     ///    an array with two points where they are the closest to each other. (in same order as input)
     /// Fails if lines are paralell.
     /// Considers Lines finte
     let intersectFinite (lnA:Line) (lnB:Line) : Point3d[]= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingException.Raise "Rhino.Scripting.Line.intersectFinite failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectFinite failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         else
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb
             let a = lnA.PointAt(ca)
             let b = lnB.PointAt(cb) 
             let d = Pnt.distance a b
-            if  d < rhsy.Doc.ModelAbsoluteTolerance * 0.5 then 
+            if  d < Scripting.Doc.ModelAbsoluteTolerance * 0.5 then 
                 if d < RhinoMath.ZeroTolerance then [|a|]
                 else [| Pnt.divPt a b 0.5|]
             else [|a ; b|]
@@ -115,7 +114,7 @@ module Line =
     let distanceToLine (lnA:Line) (lnB:Line) :float= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
         if not ok then // paralell
-            //RhinoScriptingException.Raise "Rhino.Scripting.Line.intersect failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+            //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersect failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
             let pt = lnA.ClosestPoint(lnB.From, limitToFiniteSegment=false)
             (pt-lnB.From).Length
         else

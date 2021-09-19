@@ -1,14 +1,9 @@
-namespace Rhino.Scripting
+﻿namespace Rhino
 
 open System
-open Rhino
 open Rhino.Geometry
 open FsEx.SaveIgnore 
 open FsEx
-open Rhino.Geometry
-open Rhino.Geometry
-open System.Resources
-
 
 /// This module provides curried functions to manipulate Rhino Point3d
 /// It is NOT automatically opened.
@@ -93,9 +88,9 @@ module Pnt =
     let inline translateZ (zShift:float) (pt:Point3d ) =
         Point3d(pt.X, pt.Y, pt.Z+zShift)
    
-    /// Snap to point if within rhsy.Doc.ModelAbsoluteTolerance
+    /// Snap to point if within Scripting.Doc.ModelAbsoluteTolerance
     let snapIfClose (snapTo:Point3d) (pt:Point3d) =
-        if (snapTo-pt).Length < rhsy.Doc.ModelAbsoluteTolerance then snapTo else pt
+        if (snapTo-pt).Length < Scripting.Doc.ModelAbsoluteTolerance then snapTo else pt
     
     /// Every line has a normal vector in XY Plane.
     /// If line is vertical then XAxis is returned
@@ -160,10 +155,10 @@ module Pnt =
             
             let sp = Vector3d.CrossProduct(vp, n) |> Vec.setLength prevDist 
             let sn = Vector3d.CrossProduct(n, vn) |> Vec.setLength nextDist    
-            let lp = Line(thisPt + sp , vp)  //|>! (rhsy.Doc.Objects.AddLine>>ignore)
-            let ln = Line(thisPt + sn , vn)  //|>! (rhsy.Doc.Objects.AddLine>> ignore)               
+            let lp = Line(thisPt + sp , vp)  //|>! (Scripting.Doc.Objects.AddLine>>ignore)
+            let ln = Line(thisPt + sn , vn)  //|>! (Scripting.Doc.Objects.AddLine>> ignore)               
             let ok, tp , tn = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions            
-            if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Pnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+            if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Pnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
     
     /// returns angle in degree at midd point

@@ -20,9 +20,9 @@
     <Title>Rhino.Scripting.Extra</Title>  
     <PackageId>Rhino.Scripting.Extra</PackageId>  
 
-    <Version>0.0.1</Version>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
-    <FileVersion>0.0.1</FileVersion>
+    <Version>0.0.2</Version>
+    <AssemblyVersion>0.0.2</AssemblyVersion>
+    <FileVersion>0.0.2</FileVersion>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
     
     <Authors>GoswinR</Authors>
@@ -39,35 +39,32 @@
     <!--https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target-->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>      
     <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>   
+    <!--<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->   
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>    
     <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.Extra</PackageProjectUrl>
     <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Extra</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
-    <!--<PackageReadmeFile>READMEnuget.md</PackageReadmeFile>--><!-- using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->   
-    <PackageDescription>Utlities for scripting Rhino in F#</PackageDescription>    
+    <PackageReadmeFile>READMEnuget.md</PackageReadmeFile> <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->   
+    <PackageDescription>Additional functionality for scripting Rhino3D with F#</PackageDescription>    
     <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp</PackageTags>    
   </PropertyGroup>
 
   
   <ItemGroup>
     <!-- use PrivateAssets="all" ExcludeAssets="runtime" to exclude these dlls from the output folder https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#controlling-dependency-assets -->
-    <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
-    <!-- <PackageReference Include="RhinoCommon" Version="7.8.21196.5001" PrivateAssets="all" ExcludeAssets="runtime" /> -->
+    <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />    
 
-    <PackageReference Include="FsEx" Version="0.6.3" />
-    <PackageReference Include="Rhino6.Scripting" Version="0.0.1" /> <!-- would include FsEx, but not RhCommon-->
-    <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/Rhino.Scripting.dll" /> -->
-    <!-- <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/binRh6/net48/FsEx.dll" /> -->
+    <!--<PackageReference Include="FsEx" Version="0.6.4" />-->  
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.2" /> <!-- would include FsEx, but not RhCommon-->  
       
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" />   
-    <!--<None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />-->
+    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
     <None Include="Doc/logo128.png"    Pack="true" PackagePath="" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
 
     <Compile Include="Src/AutoOpenCurried.fs" />
