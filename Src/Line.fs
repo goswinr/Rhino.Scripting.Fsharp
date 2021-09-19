@@ -3,19 +3,19 @@
 open Rhino
 open Rhino.Geometry
 open FsEx.UtilMath
-open FsEx.SaveIgnore 
+open FsEx.SaveIgnore
 
 /// This module provides curried functions to manipulate Rhino Line structs
 /// It is NOT automatically opened.
 [<RequireQualifiedAccess>]
-module Line =
-    
+module Line = 
+
     /// Reverse or flip  the Line (same as Line.flip)
     let inline reverse (ln:Line) = Line(ln.To,ln.From)
-    
+
     /// Reverse or flip  the Line (same as Line.reverse)
     let inline flip (ln:Line) = Line(ln.To,ln.From)
-    
+
     /// Get point at center of line
     let inline mid (ln:Line) = (ln.To + ln.From)* 0.5
 
@@ -29,20 +29,20 @@ module Line =
     let offset amount (ln:Line) = 
         let v = ln.Direction
         let lenXY = sqrt(v.X*v.X + v.Y*v.Y)
-        if lenXY  < 1e-9 then RhinoScriptingException.Raise "Rhino.Scripting.Extra: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString        
+        if lenXY  < 1e-9 then RhinoScriptingException.Raise "Rhino.Scripting.Extra: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString
         let ov = Vector3d(-v.Y / lenXY  , v.X / lenXY , 0.0) // unitized, horizontal , perpendicular  vector
         let shift = ov * amount
-        Line(ln.From + shift, ln.To + shift)  
+        Line(ln.From + shift, ln.To + shift)
 
-    /// Returns an array of points of length: segment count plus one 
+    /// Returns an array of points of length: segment count plus one
     /// includes start and endpoint of line
-    let divide (segments:int) (ln:Line) =        
-        match segments with 
+    let divide (segments:int) (ln:Line) = 
+        match segments with
         | x when x < 1 -> RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
         | 1 -> [|ln.From;  ln.To|]
-        | k -> 
+        | k ->
             let r = Array.zeroCreate (k+1)
-            let v = ln.Direction   
+            let v = ln.Direction
             let st = ln.From
             let kk = float k
             r.[0] <- ln.From
@@ -63,7 +63,7 @@ module Line =
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
             RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
         b
-    
+
     /// Finds intersection of two Infinite Lines.
     /// Returns a point for each line where they are the closest to each other.
     /// (in same order as input)
@@ -73,22 +73,22 @@ module Line =
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
         if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectSkew failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
-        let b = lnB.PointAt(tb)        
+        let b = lnB.PointAt(tb)
         a,b
-    
+
 
     /// Checks if two Finite lines intersect.
     /// Also returns true for skew lines if the virtual Intersection Point's Domain is between 0.0 and 1.0 for both Lines
     let doIntersectFinite (lnA:Line) (lnB:Line) : bool= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if ok then 
-            0.0 <= ta && ta <= 1.0 && 0.0 <= tb && tb <= 1.0 
+        if ok then
+            0.0 <= ta && ta <= 1.0 && 0.0 <= tb && tb <= 1.0
         else
             false
 
 
     /// Finds intersection of two Finite Lines.
-    /// Returns: 
+    /// Returns:
     ///    an enpty array if they are paralell,
     ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
     ///    an array with two points where they are the closest to each other. (in same order as input)
@@ -101,9 +101,9 @@ module Line =
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb
             let a = lnA.PointAt(ca)
-            let b = lnB.PointAt(cb) 
+            let b = lnB.PointAt(cb)
             let d = Pnt.distance a b
-            if  d < Scripting.Doc.ModelAbsoluteTolerance * 0.5 then 
+            if  d < Scripting.Doc.ModelAbsoluteTolerance * 0.5 then
                 if d < RhinoMath.ZeroTolerance then [|a|]
                 else [| Pnt.divPt a b 0.5|]
             else [|a ; b|]
@@ -121,17 +121,17 @@ module Line =
             let a = lnA.PointAt(ta)
             let b = lnB.PointAt(tb)
             (a-b).Length
-    
+
     /// Returns the distance between a point and an Infinite Line.
     let distanceToPoint (pt:Point3d) (ln:Line) :float= 
         let cl = ln.ClosestPoint(pt, limitToFiniteSegment=false)
         (cl-pt).Length
 
     /// Returns a new transformed Line
-    let transform(xForm:Transform) (line:Line) =
+    let transform(xForm:Transform) (line:Line) = 
         let ln = Line(line.From,line.To)
-        if ln.Transform(xForm) then 
+        if ln.Transform(xForm) then
             ln
-        else  
+        else
             RhinoScriptingException.Raise "Line.transform failed on line %A with  %A" line xForm
-        
+
