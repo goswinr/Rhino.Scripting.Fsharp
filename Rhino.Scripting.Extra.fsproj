@@ -56,8 +56,8 @@
     <!-- use PrivateAssets="all" ExcludeAssets="runtime" to exclude these dlls from the output folder https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#controlling-dependency-assets -->
     <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
 
-    <!--<PackageReference Include="FsEx" Version="0.6.5" />-->
-    <PackageReference Include="Rhino6.Scripting" Version="0.0.2" /> <!-- would include FsEx, but not RhCommon-->
+    <!--<PackageReference Include="FsEx" Version="0.6.6" />-->
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.3" /> <!-- would include FsEx, but not RhCommon-->
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
