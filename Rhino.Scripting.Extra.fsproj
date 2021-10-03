@@ -57,13 +57,12 @@
     <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
 
-    <!--
-    <PackageReference Include="FsEx" Version="0.6.8" />
-    <PackageReference Include="Rhino6.Scripting" Version="0.0.4" /> 
-    -->
-    
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.5" />
+    <!--    
     <Reference Include="FsEx"            HintPath="..\..\..\GitHub\FsEx\bin\Release\netstandard2.0\FsEx.dll" />
     <Reference Include="Rhino.Scripting" HintPath="..\..\..\GitHub\Rhino.Scripting\binRh6\net48\Rhino.Scripting.dll" />
+    -->
+
 
   </ItemGroup>
 
