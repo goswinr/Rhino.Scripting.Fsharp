@@ -238,7 +238,7 @@ module AutoOpenCurried =
     ///<param name="geo">(GeometryBase) Geometry</param>
     ///<returns>(unit) void, nothing.</returns>
     static member draw (layer:string) (geo:'AnyRhinoGeometry) : unit = 
-        Scripting.Add(geo) |> Scripting.setLayer layer
+        Scripting.Add(geo,layer)  |> ignore 
 
 
     ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix.
