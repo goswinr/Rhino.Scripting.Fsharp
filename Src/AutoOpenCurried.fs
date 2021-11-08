@@ -333,7 +333,20 @@ module AutoOpenCurried =
     ///<param name="translationZ">(float) movement in Z direction</param>
     ///<param name="geo">(GeometryBase) The Geometry to move</param>
     ///<returns>(unit) void, nothing.</returns>
-    static member moveGeoZ (translationZ:float)  (geo:GeometryBase): unit = 
+    static member moveGeoZ (translationZ:float) (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(0.0, 0.0, translationZ)) then
             RhinoScriptingException.Raise "Rhino.Scripting.Extra.moveGeoZ to from geo:'%A' translation:'%f'"  geo translationZ
-
+    
+    ///<summary>Enables or disables a Curve object's annotation arrows.
+    /// The size of the arrow cannot be changed. For an adjustable arrow size use a dimension leader object.
+    /// Same as Scripting.CurveArrows(curveId,arrowStyle)</summary>
+    ///<param name="arrowStyle">(int) The style of annotation arrow to be displayed.
+    ///    0 = no arrows
+    ///    1 = display arrow at start of Curve
+    ///    2 = display arrow at end of Curve
+    ///    3 = display arrow at both start and end of Curve</param>
+    ///<param name="curveId">(Guid) Identifier of a Curve</param>
+    ///<returns>(unit) void, nothing.</returns>
+    static member addArrows (arrowStyle:int) (curveId:Guid) : unit = 
+        Scripting.CurveArrows(curveId,arrowStyle)
+        
