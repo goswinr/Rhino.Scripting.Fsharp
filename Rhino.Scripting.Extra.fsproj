@@ -69,15 +69,14 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
-    <None Include="Doc/logo128.png"    Pack="true" PackagePath="" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
+    <None Include="Doc/logo128.png" Pack="true" PackagePath="" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
 
     <Compile Include="Src/AutoOpenCurried.fs" />
-    <Compile Include="Src/Vec.fs" />
-    <Compile Include="Src/Pnt.fs" />
-    <Compile Include="Src/Line.fs" />
+    <Compile Include="Src/RhVec.fs" />
+    <Compile Include="Src/RhPnt.fs" />
+    <Compile Include="Src/RhLine.fs" />
     <Compile Include="Src/AutoOpenVector.fs" />
     <Compile Include="Src/Topology.fs" />
-    <Compile Include="Src/Quat.fs" />
     <Compile Include="Src/ExtraCurve.fs" />
     <Compile Include="Src/ExtrasBrep.fs" />
     <Compile Include="Src/ExtrasMesh.fs" />

@@ -25,8 +25,8 @@ module ExtrasCurve =
     static member FilletArc  (prevPt:Point3d, midPt:Point3d, nextPt:Point3d, radius:float)  : Arc   = 
         let A = prevPt-midPt
         let B = nextPt-midPt
-        let uA = A |> Vec.unitize
-        let uB = B |> Vec.unitize
+        let uA = A |> RhVec.unitize
+        let uB = B |> RhVec.unitize
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
@@ -98,8 +98,8 @@ module ExtrasCurve =
 
 
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line A projected in arc plane
-        let uB = (lineB.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line B projected in arc plane
+        let uA = (lineA.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line A projected in arc plane
+        let uB = (lineB.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line B projected in arc plane
 
         // calculate trim
         let alphaDouble = 
@@ -130,8 +130,8 @@ module ExtrasCurve =
 
 
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line A projected in arc plane
-        let uB = (lineB.Mid - arcPl.Origin) |> Vec.projectToPlane arcPl |> Vec.unitize // vector of line B projected in arc plane
+        let uA = (lineA.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line A projected in arc plane
+        let uB = (lineB.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line B projected in arc plane
 
         // calculate trim
         let alphaDouble = 
@@ -144,13 +144,13 @@ module ExtrasCurve =
 
         let arcStart0 =  arcPl.Origin + uA * trim // still on arc plane
         let arcEnd0 =    arcPl.Origin + uB * trim
-        let arcStart =  arcStart0 |> Vec.projectToLine lineA direction |> Pnt.snapIfClose lineA.From |> Pnt.snapIfClose lineA.To
-        let arcEnd   =  arcEnd0   |> Vec.projectToLine lineB direction |> Pnt.snapIfClose lineB.From |> Pnt.snapIfClose lineB.To
+        let arcStart =  arcStart0 |> RhVec.projectToLine lineA direction |> RhPnt.snapIfClose lineA.From |> RhPnt.snapIfClose lineA.To
+        let arcEnd   =  arcEnd0   |> RhVec.projectToLine lineB direction |> RhPnt.snapIfClose lineB.From |> RhPnt.snapIfClose lineB.To
         let arc = Arc(arcStart0, - uA , arcEnd0)
 
         if alphaDouble > Math.PI * 0.49999 && not makeSCurve then // fillet bigger than 89.999 degrees, one arc from 3 points
-            let miA = Line.intersectInOnePoint lineA axis
-            let miB = Line.intersectInOnePoint lineB axis
+            let miA = RhLine.intersectInOnePoint lineA axis
+            let miB = RhLine.intersectInOnePoint lineB axis
             let miPt  = (miA + miB) * 0.5 // if lines are skew
             let midWei = sin alpha
             let knots=    [| 0. ; 0. ; 1. ; 1.|]
@@ -163,14 +163,14 @@ module ExtrasCurve =
             let trim2 = trim - radius * tan(betaH)
             let ma, mb = 
                 if makeSCurve then
-                    arcPl.Origin + uA * trim2 |> Vec.projectToLine lineA direction ,
-                    arcPl.Origin + uB * trim2 |> Vec.projectToLine lineB direction
+                    arcPl.Origin + uA * trim2 |> RhVec.projectToLine lineA direction ,
+                    arcPl.Origin + uB * trim2 |> RhVec.projectToLine lineB direction
                 else
-                    let miA = Line.intersectInOnePoint lineA axis
-                    let miB = Line.intersectInOnePoint lineB axis
+                    let miA = RhLine.intersectInOnePoint lineA axis
+                    let miB = RhLine.intersectInOnePoint lineB axis
                     let miPt  = (miA + miB) * 0.5 // if lines are skew
-                    arcPl.Origin + uA * trim2 |> Vec.projectToLine (Line(miPt,arcStart)) direction ,
-                    arcPl.Origin + uB * trim2 |> Vec.projectToLine (Line(miPt,arcEnd  )) direction
+                    arcPl.Origin + uA * trim2 |> RhVec.projectToLine (Line(miPt,arcStart)) direction ,
+                    arcPl.Origin + uB * trim2 |> RhVec.projectToLine (Line(miPt,arcEnd  )) direction
 
             let gamma = Math.PI*0.5 - betaH
             let midw= sin(gamma)

@@ -8,7 +8,7 @@ open FsEx.SaveIgnore
 /// This module provides curried functions to manipulate Rhino Line structs
 /// It is NOT automatically opened.
 [<RequireQualifiedAccess>]
-module Line = 
+module RhLine = 
 
     /// Reverse or flip  the Line (same as Line.flip)
     let inline reverse (ln:Line) = Line(ln.To,ln.From)
@@ -102,10 +102,10 @@ module Line =
             let cb = clamp 0. 1. tb
             let a = lnA.PointAt(ca)
             let b = lnB.PointAt(cb)
-            let d = Pnt.distance a b
+            let d = RhPnt.distance a b
             if  d < Scripting.Doc.ModelAbsoluteTolerance * 0.5 then
                 if d < RhinoMath.ZeroTolerance then [|a|]
-                else [| Pnt.divPt a b 0.5|]
+                else [| RhPnt.divPt a b 0.5|]
             else [|a ; b|]
 
     /// Returns the distance between two Infinite Lines.

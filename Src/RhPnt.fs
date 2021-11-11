@@ -8,8 +8,8 @@ open FsEx
 /// This module provides curried functions to manipulate Rhino Point3d
 /// It is NOT automatically opened.
 [<RequireQualifiedAccess>]
-module Pnt = 
-    //depends on Vec module
+module RhPnt = 
+    //depends on RhVec module
 
     /// Returns the distance between two points
     let inline distance (a:Point3d) (b:Point3d) = let v = a-b in sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
@@ -39,10 +39,10 @@ module Pnt =
     /// going from a point in the direction of another point.
     let extendToZLevel (fromPt:Point3d)( toPt:Point3d) (z:float) = 
         let v = toPt - fromPt
-        if fromPt.Z < toPt.Z && z < fromPt.Z  then RhinoScriptingException.Raise "Pnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
-        if fromPt.Z > toPt.Z && z > fromPt.Z  then RhinoScriptingException.Raise "Pnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
+        if fromPt.Z < toPt.Z && z < fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
+        if fromPt.Z > toPt.Z && z > fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
         let dot = abs ( v * Vector3d.ZAxis)
-        if dot < 0.0001 then  RhinoScriptingException.Raise "Pnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. taget Z %f" fromPt toPt z
+        if dot < 0.0001 then  RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. taget Z %f" fromPt toPt z
         let diffZ = abs (fromPt.Z - z)
         let fac = diffZ / dot
         fromPt + v * fac
@@ -96,10 +96,10 @@ module Pnt =
     /// If line is vertical then XAxis is returned
     /// Rotated counter clockwise in top view.
     /// result is unitized
-    /// see also : Vec.perpendicularVecInXY
+    /// see also : RhVec.perpendicularVecInXY
     let normalOfTwoPointsInXY(fromPt:Point3d, toPt:Point3d) = 
         let x = toPt.Y - fromPt.Y
-        let y = fromPt.X - toPt.X  // this is the same as: Vec.cross v Vector3d.ZAxis
+        let y = fromPt.X - toPt.X  // this is the same as: RhVec.cross v Vector3d.ZAxis
         let len = sqrt(x*x + y*y)
         if len < RhinoMath.SqrtEpsilon then Vector3d.XAxis
         else Vector3d(x/len, y/len, 0.0)
@@ -116,11 +116,11 @@ module Pnt =
         let v = toPt - fromPt
         let normHor = 
             Vector3d.CrossProduct(v, Vector3d.ZAxis)
-            |> Vec.unitizeWithAlternative Vector3d.XAxis
+            |> RhVec.unitizeWithAlternative Vector3d.XAxis
 
         let normFree = 
             Vector3d.CrossProduct(v, normHor)
-            |> Vec.unitizeWithAlternative Vector3d.ZAxis
+            |> RhVec.unitizeWithAlternative Vector3d.ZAxis
 
         let shift = distHor * normHor + distNormal * normFree
         fromPt +  shift, toPt + shift
@@ -145,32 +145,32 @@ module Pnt =
                             orientation:Vector3d) : struct(Vector3d* Vector3d * Point3d * Vector3d) = 
         let vp = prevPt - thisPt
         let vn = nextPt - thisPt
-        if Vec.isAngleBelowQuaterDegree(vp, vn) then // TODO refine erroe criteria
+        if RhVec.isAngleBelowQuaterDegree(vp, vn) then // TODO refine erroe criteria
             struct(Vector3d.Zero, Vector3d.Zero, Point3d.Origin, Vector3d.Zero)
         else
             let n = 
                 Vector3d.CrossProduct(vp, vn)
-                |> Vec.unitize
-                |> Vec.matchOrientation orientation
+                |> RhVec.unitize
+                |> RhVec.matchOrientation orientation
 
-            let sp = Vector3d.CrossProduct(vp, n) |> Vec.setLength prevDist
-            let sn = Vector3d.CrossProduct(n, vn) |> Vec.setLength nextDist
+            let sp = Vector3d.CrossProduct(vp, n) |> RhVec.setLength prevDist
+            let sn = Vector3d.CrossProduct(n, vn) |> RhVec.setLength nextDist
             let lp = Line(thisPt + sp , vp)  //|>! (Scripting.Doc.Objects.AddLine>>ignore)
             let ln = Line(thisPt + sn , vn)  //|>! (Scripting.Doc.Objects.AddLine>> ignore)
             let ok, tp , tn = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
-            if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Pnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+            if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
     /// returns angle in degree at midd point
     let angelInCorner(prevPt:Point3d, thisPt:Point3d, nextPt:Point3d) = 
         let a = prevPt-thisPt
         let b = nextPt-thisPt
-        Vec.angle180 a b
+        RhVec.angle180 a b
 
 
     /// returns the closest point index form a Point list  to a given Point
     let closestPointIdx (pt:Point3d) (pts:Rarr<Point3d>) : int = 
-        if pts.Count = 0 then RhinoScriptingException.Raise "Pnt.closestPoint empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPoint empty List of Points: pts"
         let mutable mi = -1
         let mutable mid = Double.MaxValue
         for i=0 to pts.LastIndex do
@@ -187,8 +187,8 @@ module Pnt =
 
     /// returns the indices of the points that are closest to each other
     let closestPointsIdx (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) = 
-        if xs.Count = 0 then RhinoScriptingException.Raise "Pnt.closestPointsIdx empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingException.Raise "Pnt.closestPointsIdx empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPointsIdx empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPointsIdx empty List of Points: ys"
         let mutable xi = -1
         let mutable yj = -1
         let mutable mid = Double.MaxValue
@@ -204,8 +204,8 @@ module Pnt =
 
     /// returns the smallest Distance between Point Sets
     let minDistBetweenPointSets (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) = 
-        if xs.Count = 0 then RhinoScriptingException.Raise "Pnt.minDistBetweenPointSets empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingException.Raise "Pnt.minDistBetweenPointSets empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: ys"
         let (i,j) = closestPointsIdx xs ys
         distance xs.[i]  ys.[j]
 
@@ -213,8 +213,8 @@ module Pnt =
     /// basicaly the mos lonely point in 'findPointFrom' list with respect to 'checkAgainst' list
     /// returns findPointFromIdx * checkAgainstIdx
     let mostDistantPointIdx (findPointFrom:Rarr<Point3d>) (checkAgainst:Rarr<Point3d>) : int*int= 
-        if findPointFrom.Count = 0 then RhinoScriptingException.Raise "Pnt.mostDistantPoint empty List of Points: findPointFrom"
-        if checkAgainst.Count = 0 then RhinoScriptingException.Raise "Pnt.mostDistantPoint empty List of Points: checkAgainst"
+        if findPointFrom.Count = 0 then RhinoScriptingException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
+        if checkAgainst.Count = 0 then RhinoScriptingException.Raise "RhPnt.mostDistantPoint empty List of Points: checkAgainst"
         let mutable maxd = Double.MinValue
         let mutable findPointFromIdx = -1
         let mutable checkAgainstTempIdx = -1
@@ -243,7 +243,7 @@ module Pnt =
     /// Culls points if they are to close to previous or next item
     /// Last and first points stay the same
     let cullDuplicatePointsInSeq (tolerance) (pts:Rarr<Point3d>)  = 
-        if pts.Count = 0 then RhinoScriptingException.Raise "Pnt.cullDuplicatePointsInSeq empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingException.Raise "RhPnt.cullDuplicatePointsInSeq empty List of Points: pts"
         if pts.Count = 1 then
             pts
         else

@@ -21,19 +21,19 @@ module AutoOpenVector =
     type Scripting with
         (*
         [<Obsolete>]
-        /// Use Vec.angle .. instead
+        /// Use RhVec.angle .. instead
         ///projects to Plane an returns angle in degrees in Plane between -180 and + 180
         static member AngleInPlane180( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> Vec.unitize
+            let v = projectToPlane plane vector |> RhVec.unitize
             let dot = v * plane.XAxis
             let ang = acos dot  |> toDegrees
             if v*plane.YAxis < 0.0 then -ang else ang
 
         [<Obsolete>]
-        /// Use Vec.angle .. instead
+        /// Use RhVec.angle .. instead
         ///projects to Plane an returns angle in degrees in Plane between 0 and 360
         static member AngleInPlane360( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> Vec.unitize
+            let v = projectToPlane plane vector |> RhVec.unitize
             let dot = v * plane.XAxis
             let ang = acos dot  |> toDegrees
             if v*plane.YAxis < 0.0 then 360.0-ang else ang
@@ -113,7 +113,7 @@ module AutoOpenVector =
                 for t, n in Seq.thisNext pts do
                     let a = t-cen
                     let b = n-cen
-                    let x = Vector3d.CrossProduct(a, b)  |> Vec.matchOrientation v // TODO do this matching?
+                    let x = Vector3d.CrossProduct(a, b)  |> RhVec.matchOrientation v // TODO do this matching?
                     v <- v + x
                 if v.IsTiny() then RhinoScriptingException.Raise "Rhino.Scripting.Extra.NormalOfPoints: points are in a line  %s" (toNiceString pts)
                 else
@@ -171,7 +171,7 @@ module AutoOpenVector =
                     if   lenDistNorm = 0 then 0.0
                     elif lenDistNorm = 1 then normDists0.[0]
                     else RhinoScriptingException.Raise "Rhino.Scripting.Extra.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (toNiceString points)
-                let a, b = Pnt.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
+                let a, b = RhPnt.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
                 rarr { a; b}
             else // regular case more than 2 points
                 let lastIsFirst = (points.[0] - points.Last).Length < Scripting.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
@@ -201,30 +201,30 @@ module AutoOpenVector =
                     if i=0 then
                         if lastIsFirst then
                             let prev = points.GetNeg(-2) // because -1 is same as 0
-                            let struct( _, _, pt, N) = Pnt.findOffsetCorner(prev, t, n, offDists.Last, offDists.[0], refNormal)
+                            let struct( _, _, pt, N) = RhPnt.findOffsetCorner(prev, t, n, offDists.Last, offDists.[0], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         else
-                            let struct( _, sn, pt, N) = Pnt.findOffsetCorner(p, t, n, offDists.Last, offDists.[0], refNormal)
+                            let struct( _, sn, pt, N) = RhPnt.findOffsetCorner(p, t, n, offDists.Last, offDists.[0], refNormal)
                             Ns.Add N
                             if loop then Pts.Add pt
                             else         Pts.Add (t + sn)
                     // last one:
                     elif i = lastIndex  then
                         if lastIsFirst then
-                            let struct(_, _, pt, N) = Pnt.findOffsetCorner(p, t, points.[1], offDists.[i-1], offDists.[0], refNormal)
+                            let struct(_, _, pt, N) = RhPnt.findOffsetCorner(p, t, points.[1], offDists.[i-1], offDists.[0], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         elif loop then
-                            let struct( _, _, pt, N) = Pnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
+                            let struct( _, _, pt, N) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         else
-                            let struct( sp, _, _, N) = Pnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i-1], refNormal) // or any next off dist since only sp is used
+                            let struct( sp, _, _, N) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i-1], refNormal) // or any next off dist since only sp is used
                             Pts.Add (t + sp)
                             Ns.Add N
                     else
-                        let struct( _, _, pt, N ) = Pnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
+                        let struct( _, _, pt, N ) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
                         Pts.Add pt
                         Ns.Add N
                 if lenDistNorm > 0 then

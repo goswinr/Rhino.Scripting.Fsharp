@@ -10,7 +10,7 @@ open FsEx.SaveIgnore
 /// This module provides curried functions to manipulate Rhino Vector3d
 /// It is NOT automatically opened.
 [<RequireQualifiedAccess>]
-module Vec = 
+module RhVec = 
 
     /// Converts Angels from Degrees to Radians
     let inline internal toRadians degrees = 0.0174532925199433 * degrees // 0.0174532925199433 = Math.PI / 180.
@@ -59,14 +59,14 @@ module Vec =
     /// abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isVertical (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Cannot not check very tiny vector for verticality %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for verticality %A" v
         abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
 
     /// Checks if a vector is horizontal  by doing:
     /// abs(v.Z) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isHorizontal (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Cannot not check very tiny vector for horizontality %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for horizontality %A" v
         abs(v.Z) < RhinoMath.SqrtEpsilon
 
     /// Cross product
@@ -81,13 +81,13 @@ module Vec =
     let inline unitize (v:Vector3d) = 
         let len = sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) // see v.Unitized() type extension too
         if len > 1e-9 then v * (1./len)
-        else RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Vec.unitize: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
+        else RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec RhVec.unitize: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
 
     /// Unitize vector, if input vector is shorter than 1e-6 alternative vector is returned (without beeing unitized).
     let inline unitizeWithAlternative (unitVectorAlt:Vector3d) (v:Vector3d) = 
         let l = v.SquareLength
         if l < RhinoMath.ZeroTolerance  then  //sqrt RhinoMath.ZeroTolerance = 1e-06
-            unitVectorAlt //|> Vec.unitize
+            unitVectorAlt //|> RhVec.unitize
         else
             let f = 1.0 / sqrt(l)
             Vector3d(v.X*f , v.Y*f , v.Z*f)
@@ -104,7 +104,7 @@ module Vec =
     /// Returns Vector3d(v.X, v.Y, 0.0)
     let inline projectToXYPlane (v:Vector3d) = 
         let r = Vector3d(v.X, v.Y, 0.0)
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.projectToXYPlane: Cannot projectToXYPlane for vertical vector %A" v
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToXYPlane: Cannot projectToXYPlane for vertical vector %A" v
         r
 
     /// Project vector to Plane
@@ -113,7 +113,7 @@ module Vec =
         let pt = pl.Origin + v
         let clpt = pl.ClosestPoint(pt)
         let r = clpt-pl.Origin
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
         r
 
     /// Project point onto a finite line in directin of v
@@ -122,14 +122,14 @@ module Vec =
     let projectToLine (ln:Line) (v:Vector3d) (pt:Point3d) = 
         let h = Line(pt,v)
         let ok,tln,th = Intersect.Intersection.LineLine(ln,h)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.projectToLine: project in direction failed. (are they paralell?)"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToLine: project in direction failed. (are they paralell?)"
         let a = ln.PointAt(tln)
         let b = h.PointAt(th)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then
             //Scripting.Doc.Objects.AddLine ln   |> Scripting.setLayer "Error-projectToLine"
             //Scripting.Doc.Objects.AddLine h    |> Scripting.setLayer "Error-projectToLineDirection"
             //Scripting.Doc.Objects.AddPoint pt  |> Scripting.setLayer "Error-projectToLineFrom"
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.projectToLine: missed Line by: %g " (a-b).Length
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToLine: missed Line by: %g " (a-b).Length
         a
 
 
@@ -210,8 +210,8 @@ module Vec =
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// input vector does not need to be unitized
     let inline angleTwoPiProjectedInXYPlane (a:Vector3d) (b:Vector3d)   = 
-        if abs(a.X)<RhinoMath.SqrtEpsilon && abs(a.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Vec.angleTwoPiProjectedInXYPlane: input vector a is vertical or zero length:%A" a
-        if abs(b.X)<RhinoMath.SqrtEpsilon && abs(b.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Vec.angleTwoPiProjectedInXYPlane: input vector b is vertical or zero length:%A" b
+        if abs(a.X)<RhinoMath.SqrtEpsilon && abs(a.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector a is vertical or zero length:%A" a
+        if abs(b.X)<RhinoMath.SqrtEpsilon && abs(b.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector b is vertical or zero length:%A" b
         let va = Vector3d(a.X, a.Y, 0.0)  // project to xy plane
         let vb = Vector3d(b.X, b.Y, 0.0)  // project to xy plane
         let ang = anglePi va vb //TODO could be optimized with 2D math
@@ -230,7 +230,7 @@ module Vec =
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// input vector does not need to be unitized
     let inline angleTwoPiProjectedToXAxis(vec:Vector3d)   = 
-        if abs(vec.X)<RhinoMath.SqrtEpsilon && abs(vec.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Vec.angleTwoPiProjectedToXAxis: input vector is vertical or zero length:%A" vec
+        if abs(vec.X)<RhinoMath.SqrtEpsilon && abs(vec.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedToXAxis: input vector is vertical or zero length:%A" vec
         let v = Vector3d(vec.X, vec.Y, 0.0) |> unitize // project to xy plane
         let ang = anglePiFast Vector3d.XAxis v //TODO could be optimized with 2D math
         if (cross Vector3d.XAxis v).Z >= 0.0 then  ang
@@ -308,7 +308,7 @@ module Vec =
     /// in relation to XY Plane
     /// 100% = 45 degrees
     let slopePercent (v:Vector3d) = 
-        if abs(v.Z) < RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.slopePercent: Can't get Slope from vertical vector %A" v
+        if abs(v.Z) < RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.slopePercent: Can't get Slope from vertical vector %A" v
         let f = Vector3d(v.X, v.Y, 0.0)
         100.0 * (v.Z/f.Length)
 
@@ -317,7 +317,7 @@ module Vec =
     /// Fails on tiny vectors (v.SquareLength < RhinoMath.SqrtEpsilon)
     let inline setLength (len:float) (v:Vector3d) = 
         let l  = v.SquareLength
-        if l < RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.setLength: Cant set length of tiny vector %A" v
+        if l < RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.setLength: Cant set length of tiny vector %A" v
         let f = len / sqrt(l) in Vector3d(v.X*f, v.Y*f, v.Z*f)
 
     /// Reverse vector if Z part is smaller than 0.0
@@ -348,21 +348,21 @@ module Vec =
         //let rnd  =  Random()
         //let next()   =  -1.0  +  2.0 * rnd.NextDouble()
         //for i = 0 to 20 do
-        //    let v  =  Vector3d(next()   , next()  , next()  ) |> Vec.unitize
+        //    let v  =  Vector3d(next()   , next()  , next()  ) |> RhVec.unitize
         //    let o  =  Point3d.Origin
         //    let e  =  o + v
         //    Scripting.AddLine(o, e)  |> ignore
-        //    let p  =  Vec.perpendicularVecInXY(e-o) |> Vec.scale 0.1
-        //    let b  =  Pnt.normalOfTwoPointsInXY(o, e) |> Vec.scale 0.2
-        //    let g  =  Vec.cross (e-o) Vector3d.ZAxis|> Vec.scale 0.2
+        //    let p  =  RhVec.perpendicularVecInXY(e-o) |> RhVec.scale 0.1
+        //    let b  =  RhPnt.normalOfTwoPointsInXY(o, e) |> RhVec.scale 0.2
+        //    let g  =  RhVec.cross (e-o) Vector3d.ZAxis|> RhVec.scale 0.2
         //    //Scripting.AddLine(e, e + p)  |> ignore
         //    //Scripting.AddLine(e, e + b)  |> ignore
         //    Scripting.AddLine(e, e + g)  |> ignore
         let x = v.Y
-        let y = -v.X  // this is the same as: Vec.cross v Vector3d.ZAxis
+        let y = -v.X  // this is the same as: RhVec.cross v Vector3d.ZAxis
         let len = sqrt(x*x + y*y)
         if len < RhinoMath.SqrtEpsilon then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.perpendicularVecInXY: Cannot find perpendicularVecInXY for vertical vector %A" v
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.perpendicularVecInXY: Cannot find perpendicularVecInXY for vertical vector %A" v
         else
             Vector3d(x, y, 0.0)
 
@@ -374,7 +374,7 @@ module Vec =
     let inline perpendicularVecInVerticalPlane (v:Vector3d) = 
         let hor = Vector3d(v.Y, -v.X, 0.0)
         let r = cross v hor
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec.perpendicularVecInVerticalPlane: Cannot find perpendicularVecInVerticalPlane for vertical vector %A" v
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.perpendicularVecInVerticalPlane: Cannot find perpendicularVecInVerticalPlane for vertical vector %A" v
         if v.Z < 0.0 then -r else r
 
 
@@ -387,16 +387,16 @@ module Vec =
         //let b = nextPt - thisPt
         let sa = a.SquareLength
         if sa < RhinoMath.SqrtEpsilon then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
         let sb = b.SquareLength
         if sb < RhinoMath.SqrtEpsilon then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
         let lena = sqrt sa
         let lenb = sqrt sb
         if lena < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
         if lenb < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
         let au = a * (1.0 / lena)
         let bu = b * (1.0 / lenb)
         abs(bu*au) > 0.999847695156391 // = cosine of 1 degree (2 degrees would be =  0.999390827019096)
@@ -411,16 +411,16 @@ module Vec =
         //let b = nextPt - thisPt
         let sa = a.SquareLength
         if sa < RhinoMath.SqrtEpsilon then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
         let sb = b.SquareLength
         if sb < RhinoMath.SqrtEpsilon then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
         let lena = sqrt sa
         let lenb = sqrt sb
         if lena < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
         if lenb < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.Vec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
         let au = a * (1.0 / lena)
         let bu = b * (1.0 / lenb)
         abs(bu*au) > 0.999990480720734 // = cosine of 0.25 degree: printfn "%.18f" (cos( 0.25 * (System.Math.PI / 180.)))
