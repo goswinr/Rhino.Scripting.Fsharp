@@ -1,4 +1,4 @@
-namespace Rhino
+﻿namespace Rhino
 
 open Rhino
 open Rhino.Geometry
@@ -209,6 +209,7 @@ module RhVec =
     /// Considering positve rotation round the World ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// input vector does not need to be unitized
+    [<Obsolete(" Think this is actually not a correct implementation")>]
     let inline angleTwoPiProjectedInXYPlane (a:Vector3d) (b:Vector3d)   = 
         if abs(a.X)<RhinoMath.SqrtEpsilon && abs(a.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector a is vertical or zero length:%A" a
         if abs(b.X)<RhinoMath.SqrtEpsilon && abs(b.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector b is vertical or zero length:%A" b
@@ -222,6 +223,7 @@ module RhVec =
     /// Considering positve rotation round the World ZAxis
     /// Range:  0 to 360 degrees
     /// input vector does not need to be unitized
+    [<Obsolete(" Think this is actually not a correct implementation")>]
     let inline angle360ProjectedInXYPlane (a:Vector3d) (b:Vector3d)   = angleTwoPiProjectedInXYPlane a b |> toDegrees
 
 
