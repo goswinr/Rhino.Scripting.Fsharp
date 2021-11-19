@@ -35,7 +35,7 @@ module AutoOpenCurried =
     ///<param name="objectIds">(Guid seq) The identifiers of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setLayers (layer:string) (objectIds:seq<Guid>) : unit = 
-        Scripting.ObjectLayer(objectIds,layer, createLayerIfMissing=true)
+        Scripting.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
 
 
     ///<summary>Returns the full layername of an object.

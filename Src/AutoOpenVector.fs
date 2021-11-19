@@ -39,36 +39,38 @@ module AutoOpenVector =
             if v*plane.YAxis < 0.0 then 360.0-ang else ang
         *)
 
-        /// Draws a line with a Curve Arrows
+        /// Draws a line with a Curve Arrows from a Point.
         static member DrawVector(   vector:Vector3d,
                                     fromPoint:Point3d,
-                                    [<OPT;DEF("")>]layer:string ) : unit  = 
+                                    [<OPT;DEF("")>]layer:string ) : Guid  = 
             let l =Scripting.AddLine(fromPoint, fromPoint + vector )
             Scripting.CurveArrows(l, 2)
-            if layer<>"" then
-                Scripting.ObjectLayer(l, layer, createLayerIfMissing=true)
+            if layer<>"" then Scripting.ObjectLayer(l, layer, createLayerIfMissing=true)
+            l
 
-        /// Draws a line with a Curve Arrows
-        static member DrawVector( vector:Vector3d) : unit  = 
+        /// Draws a line with a Curve Arrows.
+        static member DrawVector( vector:Vector3d) : Guid  = 
             let l = Scripting.AddLine(Point3d.Origin, Point3d.Origin + vector )
             Scripting.CurveArrows(l, 2)
+            l
 
 
         /// Draws the axes of a Plane and adds TextDots to lable them.
         static member DrawPlane(    pl:Plane,
                                     [<OPT;DEF(1000.0)>]scale:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
-                                    [<OPT;DEF("")>]layer:string ) : unit  = 
+                                    [<OPT;DEF("")>]layer:string ) : Rarr<Guid>  = 
             let a=Scripting.AddLine(pl.Origin, pl.Origin + pl.XAxis*scale)
             let b=Scripting.AddLine(pl.Origin, pl.Origin + pl.YAxis*scale)
             let c=Scripting.AddLine(pl.Origin, pl.Origin + pl.ZAxis*scale*0.5)
             let e=Scripting.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*scale)
             let f=Scripting.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*scale)
             let g=Scripting.AddTextDot("z"+suffixInDot, pl.Origin+ pl.ZAxis*scale*0.5)
+            let es = rarr { a;b;c;e;f;g }
             let gg=Scripting.AddGroup()
-            if layer <>"" then  Scripting.ObjectLayer([a;b;c;e;f;g], layer)
-            Scripting.AddObjectToGroup([a;b;c;e;f;g], gg)
-
+            if layer <>"" then  Scripting.ObjectLayer(es, layer)
+            Scripting.AddObjectToGroup(es, gg)
+            es
 
         /// returns a point that is at a given distance from a point in the direction of another point.
         static member DistPt(fromPt:Point3d, dirPt:Point3d, distance:float) : Point3d  = 

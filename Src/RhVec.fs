@@ -1,4 +1,4 @@
-﻿namespace Rhino
+namespace Rhino
 
 open Rhino
 open Rhino.Geometry
@@ -381,7 +381,7 @@ module RhVec =
 
     /// Checks if Angle between two vectors is Below one Degree
     /// Ignores vector orientation
-    /// Fails on zero length vectors, tolerance 0.00012
+    /// Fails on zero length vectors, tolerance 1e-12
     let isAngleBelow1Degree(a:Vector3d, b:Vector3d) = //(prevPt:Point3d, thisPt:Point3d, nextPt:Point3d) = 
         //let a = prevPt - thisPt
         //let b = nextPt - thisPt
@@ -405,7 +405,7 @@ module RhVec =
 
     /// Checks if Angle between two vectors is Below 0.25 Degrees
     /// Ignores vector orientation
-    /// Fails on zero length vectors, tolerance 0.00012
+    /// Fails on zero length vectors, tolerance 1e-12
     let isAngleBelowQuaterDegree(a:Vector3d, b:Vector3d) = //(prevPt:Point3d, thisPt:Point3d, nextPt:Point3d) = 
         //let a = prevPt - thisPt
         //let b = nextPt - thisPt

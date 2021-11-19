@@ -42,7 +42,7 @@ module RhPnt =
         if fromPt.Z < toPt.Z && z < fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
         if fromPt.Z > toPt.Z && z > fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
         let dot = abs ( v * Vector3d.ZAxis)
-        if dot < 0.0001 then  RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. taget Z %f" fromPt toPt z
+        if dot < 0.0001 then  RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. target Z %f" fromPt toPt z
         let diffZ = abs (fromPt.Z - z)
         let fac = diffZ / dot
         fromPt + v * fac
