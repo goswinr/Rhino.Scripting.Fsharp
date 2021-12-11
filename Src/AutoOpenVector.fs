@@ -55,7 +55,7 @@ module AutoOpenVector =
             l
 
 
-        /// Draws the axes of a Plane and adds TextDots to lable them.
+        /// Draws the axes of a Plane and adds TextDots to label them.
         static member DrawPlane(    pl:Plane,
                                     [<OPT;DEF(1000.0)>]scale:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
@@ -78,7 +78,7 @@ module AutoOpenVector =
             let sc = distance/v.Length
             fromPt + v*sc
 
-        /// returns a Point by evaluation a line between two point with a normalized patrameter.
+        /// returns a Point by evaluation a line between two point with a normalized parameter.
         /// e.g. rel=0.5 will return the middle point, rel=1.0 the endPoint
         /// if the rel parameter is omitted it is set to 0.5
         static member DivPt(fromPt:Point3d, toPt:Point3d, [<OPT;DEF(0.5)>]rel:float) : Point3d  = 
@@ -86,7 +86,7 @@ module AutoOpenVector =
             fromPt + v*rel
 
 
-        /// returns the averge of many points
+        /// returns the average of many points
         static member MeanPoint(pts:Point3d seq) : Point3d  = 
             let mutable p = Point3d.Origin
             let mutable k = 0.0
@@ -96,7 +96,7 @@ module AutoOpenVector =
             p/k
 
         /// Finds the mean normal of many points.
-        /// It finds the center point and then takes corossproducts iterating all points in pairs of two.
+        /// It finds the center point and then takes crossproducts iterating all points in pairs of two.
         /// The first two points define the orientation of the normal.
         /// Considers current order of points too, counterclockwise in xy Plane is z
         static member NormalOfPoints(pts:Point3d IList) : Vector3d  = 
@@ -145,11 +145,11 @@ module AutoOpenVector =
                 else None
             else None
 
-        /// Offsets a Polyline in 3D space by finding th local offest in each corner.
+        /// Offsets a Polyline in 3D space by finding th local offset in each corner.
         /// Offset distances can vary per segment, Positive distance is offset inwards, negative outwards.
         /// Normal distances define a perpendicular offset at each corner.
         /// Auto detects if given points are from a closed Polyline (first point = last point) and loops them
-        /// Distances Sequence  must have exact count , be a singelton ( for repeating) or empty seq ( for ignoring)
+        /// Distances Sequence  must have exact count , be a singleton ( for repeating) or empty seq ( for ignoring)
         /// Auto detects points from closed polylines and loops them
         static member OffsetPoints(     points: IList<Point3d>,  // IList so it can take a Point3dList class too
                                         offsetDistances: float seq,
@@ -247,7 +247,7 @@ module AutoOpenVector =
                     if v <> Vector3d.Zero || i > (2 * ns.Count) then ii
                     else searchForward (i + 1) ns
 
-                // fix colinear segments by nearest neigbours that are ok
+                // fix collinear segments by nearest neighbors that are ok
                 for i, n in Seq.indexed Ns do // ns might be shorter than pts if lastIsFirst= true
                     if n = Vector3d.Zero then
                         let pi = searchBack (i-1) Ns
@@ -262,16 +262,16 @@ module AutoOpenVector =
                         let nclp = nln.ClosestPoint(npt, limitToFiniteSegment=false)
                         let nv = npt - nclp
                         //print (pi,"prev i")
-                        //print (i,"is colinear")
+                        //print (i,"is collinear")
                         //print (ni,"next i")
                         if offDists.[pi] <> offDists.[saveIdx (ni-1) distsNeeded] then
-                            RhinoScriptingException.Raise "Rhino.Scripting.Extra.OffsetPoints: can't fix colinear at index %d with index %d and %d because offset distances are missmatching: %f, %f" i pi ni offDists.[pi] offDists.[saveIdx (ni-1) pointk]
+                            RhinoScriptingException.Raise "Rhino.Scripting.Extra.OffsetPoints: can't fix collinear at index %d with index %d and %d because offset distances are mismatching: %f, %f" i pi ni offDists.[pi] offDists.[saveIdx (ni-1) pointk]
                         Pts.[i] <- points.[i] + (nv + pv)*0.5
                 if lastIsFirst then Pts.[lastIndex] <- Pts.[0]
                 Pts
 
 
-        /// Offsets a Polyline in 3D space by finding th local offest in each corner.
+        /// Offsets a Polyline in 3D space by finding th local offset in each corner.
         /// Positive distance is offset inwards, negative outwards.
         /// Normal distances define a perpendicular offset at each corner.
         /// Auto detects if given points are from a closed Polyline (first point = last point) and loops them

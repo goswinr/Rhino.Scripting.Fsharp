@@ -52,12 +52,12 @@ module RhLine =
             r
 
     /// Finds intersection of two Infinite Lines.
-    /// Fails if lines are paralell or skew by more than 1e-6 units
-    /// Considers Lines Infinte
+    /// Fails if lines are parallel or skew by more than 1e-6 units
+    /// Considers Lines Infinite
     /// Returns point on lnB (the last parameter)
     let intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d = 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectInOnePoint failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
@@ -67,11 +67,11 @@ module RhLine =
     /// Finds intersection of two Infinite Lines.
     /// Returns a point for each line where they are the closest to each other.
     /// (in same order as input)
-    /// Fails if lines are paralell.
-    /// Considers Lines infinte
+    /// Fails if lines are parallel.
+    /// Considers Lines infinite
     let intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectSkew failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         a,b
@@ -89,14 +89,14 @@ module RhLine =
 
     /// Finds intersection of two Finite Lines.
     /// Returns:
-    ///    an enpty array if they are paralell,
+    ///    an empty array if they are parallel,
     ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
     ///    an array with two points where they are the closest to each other. (in same order as input)
-    /// Fails if lines are paralell.
-    /// Considers Lines finte
+    /// Fails if lines are parallel.
+    /// Considers Lines finite
     let intersectFinite (lnA:Line) (lnB:Line) : Point3d[]= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectFinite failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         else
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb
@@ -113,8 +113,8 @@ module RhLine =
     /// works even if lines are parallel.
     let distanceToLine (lnA:Line) (lnB:Line) :float= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then // paralell
-            //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersect failed, paralell ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then // parallel
+            //RhinoScriptingException.Raise "Rhino.Scripting.Extra.Line.intersect failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
             let pt = lnA.ClosestPoint(lnB.From, limitToFiniteSegment=false)
             (pt-lnB.From).Length
         else

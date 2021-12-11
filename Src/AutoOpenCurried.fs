@@ -38,7 +38,7 @@ module AutoOpenCurried =
         Scripting.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
 
 
-    ///<summary>Returns the full layername of an object.
+    ///<summary>Returns the full layer-name of an object.
     /// parent layers are separated by <c>::</c>.</summary>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(string) The object's current layer.</returns>
@@ -110,7 +110,7 @@ module AutoOpenCurried =
     static member setUserTexts( key:string) ( value :string) (objectIds:seq<Guid>) : unit = 
         Scripting.SetUserText(objectIds, key, value)
 
-    ///<summary>Append a string to a possibly already existing usertext value.</summary>
+    ///<summary>Append a string to a possibly already existing user-text value.</summary>
     ///<param name="key">(string) The key name to set</param>
     ///<param name="value">(string) The string value to append. Cannot be empty string. use Scripting.DeleteUserText to delete keys</param>
     ///<param name="objectId">(Guid) The identifier of the objects</param>
@@ -162,7 +162,7 @@ module AutoOpenCurried =
         Scripting.TryGetUserText(objectId, key)
 
     ///<summary>Copies all user text keys and values from  one object to another
-    ///from both Geometry and Object.Attributes. Existing values are overwitten.</summary>
+    ///from both Geometry and Object.Attributes. Existing values are overwritten.</summary>
     ///<param name="sourceId">(Guid) The object to take all keys from </param>
     ///<param name="targetId">(Guid) The object to write  all keys to </param>
     ///<returns>(unit) void, nothing.</returns>
@@ -180,7 +180,7 @@ module AutoOpenCurried =
             if not <|de.Attributes.SetUserString(key,sc.Attributes.GetUserString(key))then
                 RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchAllUserText: Attributes failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
 
-    ///<summary>Copies the value for a given user text key from a scource object to a target object.</summary>
+    ///<summary>Copies the value for a given user text key from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take all keys from </param>
     ///<param name="key">(string) The key name to set</param>
     ///<param name="targetId">(Guid) The object to write  all keys to </param>
@@ -190,7 +190,7 @@ module AutoOpenCurried =
         let v = Scripting.GetUserText(sourceId,key)
         if not <| de.Attributes.SetUserString(key,v) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchUserText: failed to set key '%s' to '%s' on %s" key v (toNiceString targetId)
 
-    ///<summary>Copies the object name from a scource object to a target object.</summary>
+    ///<summary>Copies the object name from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take the name from </param>
     ///<param name="targetId">(Guid) The object to write the name to </param>
     ///<returns>(unit) void, nothing.</returns>
@@ -199,12 +199,12 @@ module AutoOpenCurried =
         let de = Scripting.CoerceRhinoObject(targetId)
         let n = sc.Attributes.Name
         if isNull n then
-            RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchName: scource object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
+            RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchName: source object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
         de.Attributes.Name <- n
         if not <| de.CommitChanges() then
             RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchName failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
-    ///<summary>Puts target object on the same Layer as a scource object .</summary>
+    ///<summary>Puts target object on the same Layer as a source object .</summary>
     ///<param name="sourceId">(Guid) The object to take the layer from </param>
     ///<param name="targetId">(Guid) The object to change the layer</param>
     ///<returns>(unit) void, nothing.</returns>
@@ -216,7 +216,7 @@ module AutoOpenCurried =
             RhinoScriptingException.Raise "Rhino.Scripting.Extra.matchLayer failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
 
-    ///<summary>Matches all properties( layer, name, user text, ....) from a scource object to a target object by duplicating attributes.
+    ///<summary>Matches all properties( layer, name, user text, ....) from a source object to a target object by duplicating attributes.
     /// and copying user strings on geometry. .</summary>
     ///<param name="sourceId">(Guid) The object to take all keys from </param>
     ///<param name="targetId">(Guid) The object to write  all keys to </param>

@@ -17,8 +17,8 @@ module RhPnt =
     /// Returns the horizontal distance between two points(ignoring their Z Value)
     let inline distanceXY (a:Point3d) (b:Point3d) = let x = a.X-b.X in let y=a.Y-b.Y in  sqrt(x*x + y*y)
 
-    /// Returns the squared distance bewteen two points.
-    /// This operation is slighty faster than the distance function, and sufficient for many algorithms like finding closest points.
+    /// Returns the squared distance between two points.
+    /// This operation is slightly faster than the distance function, and sufficient for many algorithms like finding closest points.
     let inline distanceSq (a:Point3d) (b:Point3d) = let v = a-b in  v.X*v.X + v.Y*v.Y + v.Z*v.Z
 
 
@@ -29,7 +29,7 @@ module RhPnt =
         fromPt + v*sc
 
 
-    /// returns a Point by evaluation a line between two point with a normalized patrameter.
+    /// returns a Point by evaluation a line between two point with a normalized parameter.
     /// e.g. rel=0.5 will return the middle point, rel=1.0 the endPoint
     let inline divPt(fromPt:Point3d)( toPt:Point3d)(rel:float) : Point3d  = 
         let v = toPt - fromPt
@@ -66,7 +66,7 @@ module RhPnt =
     /// Gets the Z value of  Point3d
     let inline getZ (pt:Point3d) =  pt.Z
 
-    /// Applies a transformation matrix, retun new point
+    /// Applies a transformation matrix, return new point
     let transform (xForm:Transform) (pt:Point3d ) = 
         let p = Point3d(pt) //copy first !
         p.Transform(xForm)
@@ -76,15 +76,15 @@ module RhPnt =
     let inline translate (shift:Vector3d) (pt:Point3d ) = 
         pt + shift
 
-    /// Add to X coordinat of point
+    /// Add to X coordinate of point
     let inline translateX (xShift:float) (pt:Point3d ) = 
         Point3d(pt.X+xShift, pt.Y, pt.Z)
 
-    /// Add to Y coordinat of point
+    /// Add to Y coordinate of point
     let inline translateY (yShift:float) (pt:Point3d ) = 
         Point3d(pt.X, pt.Y+yShift, pt.Z)
 
-    /// Add to Z coordinat of point
+    /// Add to Z coordinate of point
     let inline translateZ (zShift:float) (pt:Point3d ) = 
         Point3d(pt.X, pt.Y, pt.Z+zShift)
 
@@ -105,10 +105,10 @@ module RhPnt =
         else Vector3d(x/len, y/len, 0.0)
 
     /// Offsets two points by two given distances.
-    /// The fist distance (distHor) is applied in in XY Plane
+    /// The fist distance (distHor) is applied in XY Plane
     /// The second distance (distNormal) is applied perpendicular to the line (made by the two points) and perpendicular to the horizontal offset direction.
     /// this is in Wolrd.Z direction if both points are at the same Z level.
-    /// If points are closer than than 1e-6 units the World.XAxis is used as first direction and World.ZAxis as second direction.
+    /// If points are closer than 1e-6 units the World.XAxis is used as first direction and World.ZAxis as second direction.
     let offsetTwoPt(    fromPt:Point3d,
                         toPt:Point3d,
                         distHor:float,
@@ -127,16 +127,16 @@ module RhPnt =
 
 
 
-    /// Finds the inner offset point in a corner ( difind by a Polyline from 3 points ( prevPt, thisPt and nextPt)
-    /// The offset from first and second segment are given speratly and can vary (prevDist and nextDist).
+    /// Finds the inner offset point in a corner ( defined by a Polyline from 3 points ( prevPt, thisPt and nextPt)
+    /// The offset from first and second segment are given separately and can vary (prevDist and nextDist).
     /// Use negative distance for outer offset
-    /// The orientation parameter is only aproximate, it might flip the output normal, so that the  dot-product is positive.
+    /// The orientation parameter is only approximate, it might flip the output normal, so that the  dot-product is positive.
     /// Returns a Value tuple of :
     ///   - the first segment offset vector in actual length  ,
     ///   - second segment offset vector,
-    ///   - the offsseted corner,
-    ///   - and the unitized normal at the corner. fliped if needed to match orientation of the orintation input vector (positive dot product)
-    /// If Points are  colinear returns: Vector3d.Zero, Vector3d.Zero, Point3d.Origin, Vector3d.Zero
+    ///   - the offset corner,
+    ///   - and the unitized normal at the corner. flipped if needed to match orientation of the orientation input vector (positive dot product)
+    /// If Points are  collinear returns: Vector3d.Zero, Vector3d.Zero, Point3d.Origin, Vector3d.Zero
     let findOffsetCorner(   prevPt:Point3d,
                             thisPt:Point3d,
                             nextPt:Point3d,
@@ -145,7 +145,7 @@ module RhPnt =
                             orientation:Vector3d) : struct(Vector3d* Vector3d * Point3d * Vector3d) = 
         let vp = prevPt - thisPt
         let vn = nextPt - thisPt
-        if RhVec.isAngleBelowQuaterDegree(vp, vn) then // TODO refine erroe criteria
+        if RhVec.isAngleBelowQuaterDegree(vp, vn) then // TODO refine error criteria
             struct(Vector3d.Zero, Vector3d.Zero, Point3d.Origin, Vector3d.Zero)
         else
             let n = 
@@ -161,7 +161,7 @@ module RhPnt =
             if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
-    /// returns angle in degree at midd point
+    /// returns angle in degree at mid point
     let angelInCorner(prevPt:Point3d, thisPt:Point3d, nextPt:Point3d) = 
         let a = prevPt-thisPt
         let b = nextPt-thisPt
@@ -210,7 +210,7 @@ module RhPnt =
         distance xs.[i]  ys.[j]
 
     /// find the index of the point that has the biggest distance to any point from the other set
-    /// basicaly the mos lonely point in 'findPointFrom' list with respect to 'checkAgainst' list
+    /// basically the mos lonely point in 'findPointFrom' list with respect to 'checkAgainst' list
     /// returns findPointFromIdx * checkAgainstIdx
     let mostDistantPointIdx (findPointFrom:Rarr<Point3d>) (checkAgainst:Rarr<Point3d>) : int*int= 
         if findPointFrom.Count = 0 then RhinoScriptingException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
@@ -262,10 +262,10 @@ module RhPnt =
                     res.Add pt
             res
 
-    /// similar to Join Polylines this tries to find continous sequences of points
-    /// tolGap is the maximun allowable gap between the start and the endpoint of to segments
+    /// similar to Join Polylines this tries to find continuous sequences of points
+    /// tolGap is the maximum allowable gap between the start and the endpoint of to segments
     /// search starts from the segment with the most points
-    /// both start and ened point of each point list is checked for adjacency
+    /// both start and end point of each point list is checked for adjacency
     let findContinousPoints (tolGap:float)  (ptss: Rarr<Rarr<Point3d>>)  = 
         let i =  ptss |> Rarr.maxIndBy Rarr.length
         let res = ptss.Pop(i)

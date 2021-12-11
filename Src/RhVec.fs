@@ -59,14 +59,14 @@ module RhVec =
     /// abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isVertical (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for verticality %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for being vertical %A" v
         abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
 
     /// Checks if a vector is horizontal  by doing:
     /// abs(v.Z) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isHorizontal (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for horizontality %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec Cannot not check very tiny vector for being horizontal %A" v
         abs(v.Z) < RhinoMath.SqrtEpsilon
 
     /// Cross product
@@ -77,13 +77,13 @@ module RhVec =
                     a.X * b.Y - a.Y * b.X )
 
     /// Unitizes the vector
-    /// fails if length is les than 1e-9 units
+    /// fails if length is less than 1e-9 units
     let inline unitize (v:Vector3d) = 
         let len = sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) // see v.Unitized() type extension too
         if len > 1e-9 then v * (1./len)
         else RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec RhVec.unitize: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
 
-    /// Unitize vector, if input vector is shorter than 1e-6 alternative vector is returned (without beeing unitized).
+    /// Unitize vector, if input vector is shorter than 1e-6 alternative vector is returned (without being unitized).
     let inline unitizeWithAlternative (unitVectorAlt:Vector3d) (v:Vector3d) = 
         let l = v.SquareLength
         if l < RhinoMath.ZeroTolerance  then  //sqrt RhinoMath.ZeroTolerance = 1e-06
@@ -116,13 +116,13 @@ module RhVec =
         if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
         r
 
-    /// Project point onto a finite line in directin of v
+    /// Project point onto a finite line in direction of v
     /// Fails if line is missed by tolerance 1e-6
     //and draws debug objects on layer 'Error-projectToLine'
     let projectToLine (ln:Line) (v:Vector3d) (pt:Point3d) = 
         let h = Line(pt,v)
         let ok,tln,th = Intersect.Intersection.LineLine(ln,h)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToLine: project in direction failed. (are they paralell?)"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.RhVec.projectToLine: project in direction failed. (are they parallel?)"
         let a = ln.PointAt(tln)
         let b = h.PointAt(th)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then
@@ -149,10 +149,10 @@ module RhVec =
         // 2*asin(|u-v|/2) gives us the angle between u and v.
         // The largest possible value of |u-v| occurs with perpendicular
         // vectors and is sqrt(2)/2 which is well away from extreme slope
-        // at +/-1. (See Windows OS Bug #1706299 for details) (form WPF refrence scource code)
+        // at +/-1. (See Windows OS Bug #1706299 for details) (form WPF reference source code)
         //INPUT MUST BE UNITIZED
         let dot = a * b
-        if -0.98 < dot && dot < 0.98 then acos dot // TODO test and compare this to real Acossafe function !!! also to find thershold for switching !!  0.98 ??
+        if -0.98 < dot && dot < 0.98 then acos dot // TODO test and compare this to real Acossafe function !!! also to find threshold for switching !!  0.98 ??
         else
             if dot < 0. then System.Math.PI - 2.0 * asin((-a - b).Length * 0.5)
             else                              2.0 * asin(( a - b).Length * 0.5)
@@ -189,7 +189,7 @@ module RhVec =
     //--------------------angels 360:---------------------------
 
     /// Returns positive angle between two Vectors in Radians projected to a Plane
-    /// Considering positve rotation round a Planes ZAxis
+    /// Considering positive rotation round a Planes ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// Unitizes the input vectors
     let inline angleTwoPiProjected (pl:Geometry.Plane) (a:Vector3d) (b:Vector3d)  = 
@@ -200,13 +200,13 @@ module RhVec =
         else                                    Math.PI * 2. - ang
 
     /// Returns positive angle between two Vectors in Degrees projected to a Plane
-    /// Considering positve rotation round a Planes ZAxis
+    /// Considering positive rotation round a Planes ZAxis
     /// Range:  0 to 360 degrees
     /// Unitizes the input vectors
     let inline angle360Projected (pl:Geometry.Plane) (a:Vector3d) (b:Vector3d)  =  angleTwoPiProjected pl a b|> toDegrees
 
     /// Returns positive angle of two Vector projected in XY Plane in Radians
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// input vector does not need to be unitized
     [<Obsolete(" Think this is actually not a correct implementation")>]
@@ -220,7 +220,7 @@ module RhVec =
         else                           Math.PI * 2. - ang
 
     /// Returns positive angle of two Vector projected in XY Plane in Degrees
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range:  0 to 360 degrees
     /// input vector does not need to be unitized
     [<Obsolete(" Think this is actually not a correct implementation")>]
@@ -228,7 +228,7 @@ module RhVec =
 
 
     /// Returns positive angle of Vector to XAxis  projected in XY Plane in Radians
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// input vector does not need to be unitized
     let inline angleTwoPiProjectedToXAxis(vec:Vector3d)   = 
@@ -239,7 +239,7 @@ module RhVec =
         else                                       Math.PI * 2. - ang
 
     /// Returns positive angle of Vector to XAxis projected in XY Plane in Degrees
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range: 0 to 360 degrees
     /// input vector does not need to be unitized
     let inline angle360ProjectedToXAxis(v:Vector3d)   =  angleTwoPiProjectedToXAxis v |> toDegrees
@@ -247,7 +247,7 @@ module RhVec =
 
     /// Returns positive angle between two vectors in Radians
     /// Not projected to Plane.
-    /// Considering positve rotation round a Planes ZAxis
+    /// Considering positive rotation round a Planes ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// Unitizes the input vectors
     [<Obsolete>]
@@ -258,7 +258,7 @@ module RhVec =
 
     /// Returns positive angle between two vectors in Degrees
     /// Not projected to Plane.
-    /// Considering positve rotation round a Planes ZAxis
+    /// Considering positive rotation round a Planes ZAxis
     /// Range:  0 to 360 degrees
     /// Unitizes the input vectors
     [<Obsolete>]
@@ -269,7 +269,7 @@ module RhVec =
 
     /// Returns positive angle between two vectors in Radians
     /// Not projected to Plane.
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
     /// Unitizes the input vectors
     [<Obsolete>]
@@ -280,7 +280,7 @@ module RhVec =
 
     /// Returns positive angle between two vectors in Degrees
     /// Not projected to Plane.
-    /// Considering positve rotation round the World ZAxis
+    /// Considering positive rotation round the World ZAxis
     /// Range:  0 to 360 degrees
     /// Unitizes the input vectors
     [<Obsolete>]
@@ -370,7 +370,7 @@ module RhVec =
 
 
     /// Returns a vector that is perpendicular to the given vector an in the same vertical Plane .
-    /// Projected into the XY Plane input and output vectors are parallell and of same orientation.
+    /// Projected into the XY Plane input and output vectors are parallel and of same orientation.
     /// Not of same length, not unitized
     /// Fails on vertical input vector where resulting vector would be of almost zero length (RhinoMath.SqrtEpsilon)
     let inline perpendicularVecInVerticalPlane (v:Vector3d) = 

@@ -20,7 +20,7 @@ module ExtrasCurve =
     ///<param name="prevPt">(Point3d)The first point of polyline</param>
     ///<param name="midPt">(Point3d)The middle point of polyline, that will get the fillet</param>
     ///<param name="nextPt">(Point3d)The last (or third) point of polyline</param>
-    ///<param name="radius">(float)The radius of the fillet to atempt to creat</param>
+    ///<param name="radius">(float)The radius of the fillet to attempt to create</param>
     ///<returns>An Arc Geometry.</returns>
     static member FilletArc  (prevPt:Point3d, midPt:Point3d, nextPt:Point3d, radius:float)  : Arc   = 
         let A = prevPt-midPt
@@ -30,7 +30,7 @@ module ExtrasCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletArc: Can't fillet points that are colinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
+            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
@@ -41,9 +41,9 @@ module ExtrasCurve =
         let arcEnd =    midPt + uB * trim
         Arc(arcStart, - uA , arcEnd)
 
-    ///<summary>Fillest some corners of polyline.</summary>
-    ///<param name="fillets">(int*float Rarr)The index of the cornes to filet and the fillet radius</param>
-    ///<param name="polyline">(Point3d Rarr) The Polyline as pointlist </param>
+    ///<summary>Fillet some corners of polyline.</summary>
+    ///<param name="fillets">(int*float Rarr)The index of the corners to fillet and the fillet radius</param>
+    ///<param name="polyline">(Point3d Rarr) The Polyline as point-list </param>
     ///<returns>a PolyCurve object.</returns>
     static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve = 
         for i in fillets.Keys do
@@ -82,19 +82,19 @@ module ExtrasCurve =
 
 
     ///<summary>Returns the needed trimming of two planar Surfaces in order to fit a fillet of given radius.
-    ///    the Lines can be anywhere on Plane ( except paralel to axis).</summary>
+    ///    the Lines can be anywhere on Plane ( except parallel to axis).</summary>
     ///<param name="radius">(float) radius of filleting cylinder</param>
-    ///<param name="direction">(float) direction of filleting cylinder usually the intersection of the two  Planes to fillet, this might be the cross profuct of the two lines, but the lines might also be skew </param>
-    ///<param name="lineA">(Line) First line to fillet, must not be prependicular to direction, the lines might also be skew  </param>
-    ///<param name="lineB">(Line) Second line to fillet, must not be prependicular to direction or first line, the lines might also be skew  </param>
+    ///<param name="direction">(float) direction of filleting cylinder usually the intersection of the two  Planes to fillet, this might be the cross product of the two lines, but the lines might also be skew </param>
+    ///<param name="lineA">(Line) First line to fillet, must not be perpendicular to direction, the lines might also be skew  </param>
+    ///<param name="lineB">(Line) Second line to fillet, must not be perpendicular to direction or first line, the lines might also be skew  </param>
     ///<returns>The needed trimming of two planar Surfaces in order to fit a fillet of given radius.
-    ///    the Lines can be anywhere on Plane ( except paralel to axis).</returns>
+    ///    the Lines can be anywhere on Plane ( except parallel to axis).</returns>
     static member filletSkewLinesTrims (radius:float) (direction:Vector3d) (lineA:Line) (lineB:Line) : float  = 
         let ok,axis = 
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  paralell?"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)
@@ -115,9 +115,9 @@ module ExtrasCurve =
     ///    but it always lies on the Surface of a cylinder with the given direction and radius .</summary>
     ///<param name="makeSCurve">(bool)only relevant if Curves are skew: make S-curve if true or kink if false</param>
     ///<param name="radius">(float) radius of filleting cylinder</param>
-    ///<param name="direction">(float) direction of filleting cylinder usually the intersection of the two  Planes to fillet, this might be the cross profuct of the two lines, but the lines might also be skew </param>
-    ///<param name="lineA">(Line) First line to fillet, must not be prependicular to direction, the lines might also be skew  </param>
-    ///<param name="lineB">(Line) Second line to fillet, must not be prependicular to direction or first line, the lines might also be skew  </param>
+    ///<param name="direction">(float) direction of filleting cylinder usually the intersection of the two  Planes to fillet, this might be the cross product of the two lines, but the lines might also be skew </param>
+    ///<param name="lineA">(Line) First line to fillet, must not be perpendicular to direction, the lines might also be skew  </param>
+    ///<param name="lineB">(Line) Second line to fillet, must not be perpendicular to direction or first line, the lines might also be skew  </param>
     ///<returns>(NurbsCurve)Fillet Curve Geometry,
     ///    the true fillet arc on cylinder(wrong ends),
     ///    the point where fillet would be at radius 0, (same Plane as arc) .</returns>
@@ -126,7 +126,7 @@ module ExtrasCurve =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLines: Can't intersect Planes , are lineA and lineB  paralell?"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLines: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)

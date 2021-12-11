@@ -58,7 +58,7 @@ module ExtrasMesh =
             Scripting.MeshAddQuadFaceToLastTwo (m, l.From ,l.To)
 
 
-        /// Adds a welded quad and tria face to simulate Pentagon, Call  Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
+        /// Adds a welded quad and triangle face to simulate Pentagon, Call  Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         /// Obsolete? Use built in Ngons instead ?
         static member MeshAddPentaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d, e:Point3d) = 
             let a = m.Vertices.Add (a.X,a.Y,a.Z)

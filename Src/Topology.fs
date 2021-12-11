@@ -7,7 +7,7 @@ open FsEx.UtilMath
 [<RequireQualifiedAccess>]
 module Topology = 
 
-    // The same fuction exist on FsEX.Rarr module too but with extra error checking.
+    // The same function exist on FsEX.Rarr module too but with extra error checking.
     // Swap the values of two given indices in Rarr
     let inline private swap i j (xs:Rarr<'T>) :unit = 
         if i<>j then
@@ -15,7 +15,7 @@ module Topology =
             xs.[i] <- xs.[j]
             xs.[j] <- ti
 
-    // The same fuction exist on FsEX.Rarr module too but with extra error checking.
+    // The same function exist on FsEX.Rarr module too but with extra error checking.
     // Like Rarr.minIndexBy but starting to search only from a given index
     let inline private minIndexByFrom  (compareBy: 'T -> 'U)  fromIdx (xs:Rarr<'T>) : int = 
         let mutable idx = fromIdx
@@ -34,7 +34,7 @@ module Topology =
     let sortToLoop(getLine: 'T -> Line) (xs:Rarr<'T>)  = 
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
-            //  TODO could be optimised using a R-Tree for very large lists instead of minBy function
+            //  TODO could be optimized using a R-Tree for very large lists instead of minBy function
             let nextIdx = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
             xs |> swap (i+1) nextIdx
 
@@ -45,10 +45,10 @@ module Topology =
     let sortToLoopWithReversing (getLine: 'T -> Line) (reverseInPlace: int -> 'T -> unit) (xs:Rarr<'T>) : unit = 
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
-            // TODO could be optimised using a R-Tree for very large lists instead of minBy function
+            // TODO could be optimized using a R-Tree for very large lists instead of minBy function
             let nextIdxSt = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
             let nextIdxEn = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).To   ,  thisLine.To) ) (i+1)
-            // check if closest endpoint is closer than closest startpoint
+            // check if closest endpoint is closer than closest start-point
             if  Scripting.DistanceSquare ((getLine xs.[nextIdxSt]).From ,  thisLine.To) <= 
                 Scripting.DistanceSquare ((getLine xs.[nextIdxEn]).To   ,  thisLine.To) then
                     xs |> swap (i+1) nextIdxSt

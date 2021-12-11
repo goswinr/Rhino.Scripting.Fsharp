@@ -13,13 +13,13 @@ open FsEx.SaveIgnore
 [<AutoOpen>]
 module ExtrasBrep = 
 
-  type Scripting with // TODO chnage to Brep type extensions ??!!
+  type Scripting with // TODO change to Brep type extensions ??!!
 
-    ///<summary>Creates a Brep in the Shape of a Sloted Hole. Closed with caps. </summary>
+    ///<summary>Creates a Brep in the Shape of a Slotted Hole. Closed with caps. </summary>
     ///<param name="plane">(Plane)Origin = center of hole</param>
-    ///<param name="length">(float) total length of sloted hole</param>
-    ///<param name="width">(float) width = radius of sloted hole</param>
-    ///<param name="height">(float) height of sloted hole volume</param>
+    ///<param name="length">(float) total length of slotted hole</param>
+    ///<param name="width">(float) width = radius of slotted hole</param>
+    ///<param name="height">(float) height of slotted hole volume</param>
     ///<returns>(Brep) Closed Brep Geometry.</returns>
     static member CreateSlotedHoleVolume( plane:Plane, length, width, height) : Brep  = 
         if length<width then RhinoScriptingException.Raise "Rhino.Scripting.Extra.SlotedHole: length= %g must be more than width= %g" length width
@@ -86,7 +86,7 @@ module ExtrasBrep =
 
     ///<summary>Creates a Brep in the Shape of a Countersunk Screw Hole , 45 degrees slope
     ///    a caped cone and a cylinder. one closed polysurface </summary>
-    ///<param name="plane">(Plane) Origin is center of conebase or head</param>
+    ///<param name="plane">(Plane) Origin is center of cone-base or head</param>
     ///<param name="outerDiameter">(float) diameter of cone base</param>
     ///<param name="innerDiameter">(float) Diameter of cylinder</param>
     ///<param name="length">(float) total length of the screw brep</param>
@@ -101,7 +101,7 @@ module ExtrasBrep =
         plane.Rotate(Math.PI * 0.5, plane.ZAxis)|> RhinoScriptingException.FailIfFalse "rotate plane" // so that seam of cone an cylinder align
         let cySrf = Scripting.CreateCylinder(plane, innerDiameter, length)
         let bs = Brep.CreateBooleanUnion( [coneSrf; cySrf], Scripting.Doc.ModelAbsoluteTolerance)
-        if bs.Length <> 1 then RhinoScriptingException.Raise "Rhino.Scripting.Extra.%d items as result from creating countersunc screw" bs.Length
+        if bs.Length <> 1 then RhinoScriptingException.Raise "Rhino.Scripting.Extra.%d items as result from creating countersunk screw" bs.Length
         let brep = bs.[0]
         if brep.SolidOrientation = BrepSolidOrientation.Inward then brep.Flip()
         brep
@@ -111,11 +111,11 @@ module ExtrasBrep =
         if brep.SolidOrientation = BrepSolidOrientation.Inward then
             brep.Flip()
         brep
-    ///<summary>Transfroms a planar 2D curve in XY plane to the given plane and then extrudes it with CapPlanarHoles, with option extensions at both ends.</summary>
-    ///<param name="curveToExtrudeInWorldXY">(Curve) A curve in wolrd XY plane</param>
+    ///<summary>Transforms a planar 2D curve in XY plane to the given plane and then extrudes it with CapPlanarHoles, with option extensions at both ends.</summary>
+    ///<param name="curveToExtrudeInWorldXY">(Curve) A curve in world XY plane</param>
     ///<param name="plane">(Plane) A plane with any orientation</param>
     ///<param name="height">(float) the hight to extrude along the Z axis of plane</param>
-    ///<param name="extraHeightPerSide">(float) Optional, Default Value: <c>0.0</c> , extra extension of the extrusion on boyh sides </param>
+    ///<param name="extraHeightPerSide">(float) Optional, Default Value: <c>0.0</c> , extra extension of the extrusion on both sides </param>
     ///<returns>(Brep) Brep Geometry.</returns>
     static member CreateExrusionAtPlane(curveToExtrudeInWorldXY:Curve, plane:Plane, height, [<OPT;DEF(0.0)>]extraHeightPerSide:float) : Brep = 
         let mutable pl = Plane(plane)
@@ -134,7 +134,7 @@ module ExtrasBrep =
 
     ///<summary>Subtracts trimmer from brep (= BooleanDifference),
     /// so that a single brep is returned,
-    /// draws objects and zooms on them if an error occures.</summary>
+    /// draws objects and zooms on them if an error occurs.</summary>
     ///<param name="trimmer">(Brep)the volume to cut out</param>
     ///<param name="keep">(Brep) The volume to keep</param>
     ///<param name="subtractionLocations">(int) Optional, The amount of locations where the brep is expected to be cut
@@ -224,7 +224,7 @@ module ExtrasBrep =
             //printf "Mesh from closed Brep is not closed, see debug layer"
             //if  m0.IsValid && m0.IsClosed && ( g := Scripting.Doc.Objects.AddMesh m0 ; !g <> Guid.Empty) then
             //    Ok !g
-            //else                        //if it fails it uses ExtractRenderMesh command and returns both mesh and temporay created brep Guid</
+            //else                        //if it fails it uses ExtractRenderMesh command and returns both mesh and temporary created brep Guid</
             //    let mb = brep |> Scripting.Doc.Objects.AddBrep
             //    Scripting.EnableRedraw(true)
             //    Scripting.Doc.Views.Redraw()
