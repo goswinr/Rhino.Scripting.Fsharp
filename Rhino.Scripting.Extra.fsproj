@@ -53,17 +53,19 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Rhino6.Scripting" Version="0.0.5" />
+
+     <PackageReference Update="FSharp.Core" Version="6.0.1" /><!-- because FsEx is build with dotnet SDK 6.0, Update is only neded when building this with dotnet sdk 5.0-->
+
     <!-- use PrivateAssets="all" ExcludeAssets="runtime" to exclude these dlls from the output folder https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#controlling-dependency-assets -->
     <PackageReference Include="RhinoCommon" Version="6.0.18016.23451" PrivateAssets="all" ExcludeAssets="runtime" />
+
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
 
-    <PackageReference Include="Rhino6.Scripting" Version="0.0.5" />
     <!--    
     <Reference Include="FsEx"            HintPath="..\..\..\GitHub\FsEx\bin\Release\netstandard2.0\FsEx.dll" />
     <Reference Include="Rhino.Scripting" HintPath="..\..\..\GitHub\Rhino.Scripting\binRh6\net48\Rhino.Scripting.dll" />
     -->
-
-
   </ItemGroup>
 
   <ItemGroup>
