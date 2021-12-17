@@ -19,7 +19,7 @@ open FsEx.ExtensionsIList
 module AutoOpenVector = 
 
     type Scripting with
-        (*
+        (* TODO delete
         [<Obsolete>]
         /// Use RhVec.angle .. instead
         ///projects to Plane an returns angle in degrees in Plane between -180 and + 180

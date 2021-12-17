@@ -208,8 +208,7 @@ module RhVec =
     /// Returns positive angle of two Vector projected in XY Plane in Radians
     /// Considering positive rotation round the World ZAxis
     /// Range: 0.0 to 2 PI ( = 0 to 360 degrees)
-    /// input vector does not need to be unitized
-    [<Obsolete(" Think this is actually not a correct implementation")>]
+    /// input vector does not need to be unitized    
     let inline angleTwoPiProjectedInXYPlane (a:Vector3d) (b:Vector3d)   = 
         if abs(a.X)<RhinoMath.SqrtEpsilon && abs(a.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector a is vertical or zero length:%A" a
         if abs(b.X)<RhinoMath.SqrtEpsilon && abs(b.Y)<RhinoMath.SqrtEpsilon then RhinoScriptingException.Raise "RhVec.angleTwoPiProjectedInXYPlane: input vector b is vertical or zero length:%A" b
@@ -222,8 +221,7 @@ module RhVec =
     /// Returns positive angle of two Vector projected in XY Plane in Degrees
     /// Considering positive rotation round the World ZAxis
     /// Range:  0 to 360 degrees
-    /// input vector does not need to be unitized
-    [<Obsolete(" Think this is actually not a correct implementation")>]
+    /// input vector does not need to be unitized    
     let inline angle360ProjectedInXYPlane (a:Vector3d) (b:Vector3d)   = angleTwoPiProjectedInXYPlane a b |> toDegrees
 
 
@@ -244,6 +242,7 @@ module RhVec =
     /// input vector does not need to be unitized
     let inline angle360ProjectedToXAxis(v:Vector3d)   =  angleTwoPiProjectedToXAxis v |> toDegrees
 
+    (* obsolete! TODO delete
 
     /// Returns positive angle between two vectors in Radians
     /// Not projected to Plane.
@@ -288,7 +287,7 @@ module RhVec =
         let r = angle180 a b
         if (cross a b).Z  >= 0.0 then r
         else                          360. - r
-
+    *)
 
      //--------------------end angels 360:---------------------------
 
