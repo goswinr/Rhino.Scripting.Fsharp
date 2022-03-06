@@ -37,6 +37,19 @@ module AutoOpenCurried =
     static member setLayers (layer:string) (objectIds:seq<Guid>) : unit = 
         Scripting.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
 
+///<summary>Modifies the layer of an object.</summary>
+    ///<param name="layerIndex">(int) Index of layer in layer table</param>
+    ///<param name="objectId">(Guid) The identifier of the object</param>
+    ///<returns>(unit) void, nothing.</returns>
+    static member setLayerIndex (layerIndex:int) (objectId:Guid) : unit = 
+        Scripting.ObjectLayer(objectId, layerIndex)
+
+    ///<summary>Modifies the layer of several objects.</summary>
+    ///<param name="layerIndex">(int) Index of layer in layer table</param>
+    ///<param name="objectIds">(Guid seq) The identifiers of several objects</param>
+    ///<returns>(unit) void, nothing.</returns>
+    static member setLayersIndex (layerIndex:int) (objectIds:seq<Guid>) : unit = 
+        Scripting.ObjectLayer(objectIds, layerIndex)
 
     ///<summary>Returns the full layer-name of an object.
     /// parent layers are separated by <c>::</c>.</summary>
