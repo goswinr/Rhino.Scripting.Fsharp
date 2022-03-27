@@ -20,43 +20,43 @@ module AutooenCurve =
 
     
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
-    ///<param name="point">(Point3d) Sampling point</param>
     ///<param name="curveId">(Guid) Identifier of a Curve object</param>
+    ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(float) The parameter of the closest point on the Curve.</returns>
-    static member curveClosestParameter (point:Point3d) (curveId:Guid): float = 
+    static member curveClosestParameter(curveId:Guid) (point:Point3d) : float = 
         let curve = Scripting.CoerceCurve(curveId)
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
         !t
 
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
-    ///<param name="point">(Point3d) Sampling point</param>
     ///<param name="curve">(Geometry.Curve) A Curve geometry object</param>
+    ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(float) The parameter of the closest point on the Curve.</returns>
-    static member curveClosestParameter (point:Point3d) (curve:Curve): float =
+    static member curveGeoClosestParameter (curve:Curve) (point:Point3d): float =
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestParameter failedon Curve Geometry"
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.curveGeoClosestParameter failed on Curve Geometry"
         !t
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
-    ///<param name="point">(Point3d) Sampling point</param>
     ///<param name="curveId">(Guid) Identifier of a Curve object</param>
+    ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(Point3d) The closest point on the Curve.</returns>
-    static member curveClosestPoint(point:Point3d) (curveId:Guid) : Point3d = 
+    static member curveClosestPoint (curveId:Guid) (point:Point3d) : Point3d = 
         let curve = Scripting.CoerceCurve(curveId)
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
         curve.PointAt(t)
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
-    ///<param name="point">(Point3d) Sampling point</param>
     ///<param name="curve">(Geometry.Curve) A Curve geometry object</param>
+    ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(Point3d) The closest point on the Curve.</returns>
-    static member curveClosestPoint(point:Point3d) (curve:Curve) : Point3d =         
+    static member curveGeoClosestPoint (curve:Curve) (point:Point3d) : Point3d =         
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestPoint failed on Curve Geometry" 
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.curveGeoClosestPoint failed on Curve Geometry" 
         curve.PointAt(t)
 
 
