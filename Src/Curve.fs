@@ -1,20 +1,64 @@
-﻿namespace Rhino
+﻿namespace Rhino.Scripting.Extension
 
 open System
 open System.Collections.Generic
+open Rhino
+open Rhino.Scripting
 open Rhino.Geometry
 open FsEx
 open FsEx.SaveIgnore
 
 /// This module provides functions to create or manipulate Rhino Curves
-/// This module is automatically opened when Rhino.Scripting.Extra namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
-module ExtrasCurve = 
+module AutooenCurve = 
 
   open FsEx.ExtensionsIList
 
-  type Scripting with
+  type Scripting with   
+
+    
+    ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
+    ///<param name="point">(Point3d) Sampling point</param>
+    ///<param name="curveId">(Guid) Identifier of a Curve object</param>
+    ///<returns>(float) The parameter of the closest point on the Curve.</returns>
+    static member curveClosestParameter (point:Point3d) (curveId:Guid): float = 
+        let curve = Scripting.CoerceCurve(curveId)
+        let t = ref 0.
+        let rc = curve.ClosestPoint(point, t)
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        !t
+
+    ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
+    ///<param name="point">(Point3d) Sampling point</param>
+    ///<param name="curve">(Geometry.Curve) A Curve geometry object</param>
+    ///<returns>(float) The parameter of the closest point on the Curve.</returns>
+    static member curveClosestParameter (point:Point3d) (curve:Curve): float =
+        let t = ref 0.
+        let rc = curve.ClosestPoint(point, t)
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestParameter failedon Curve Geometry"
+        !t
+
+    ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
+    ///<param name="point">(Point3d) Sampling point</param>
+    ///<param name="curveId">(Guid) Identifier of a Curve object</param>
+    ///<returns>(Point3d) The closest point on the Curve.</returns>
+    static member curveClosestPoint(point:Point3d) (curveId:Guid) : Point3d = 
+        let curve = Scripting.CoerceCurve(curveId)
+        let rc, t = curve.ClosestPoint(point)
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        curve.PointAt(t)
+
+    ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
+    ///<param name="point">(Point3d) Sampling point</param>
+    ///<param name="curve">(Geometry.Curve) A Curve geometry object</param>
+    ///<returns>(Point3d) The closest point on the Curve.</returns>
+    static member curveClosestPoint(point:Point3d) (curve:Curve) : Point3d =         
+        let rc, t = curve.ClosestPoint(point)
+        if not <| rc then RhinoScriptingException.Raise "Rhino.Scripting.CurveClosestPoint failed on Curve Geometry" 
+        curve.PointAt(t)
+
 
     ///<summary>Returns the fillet arc if it fits within three points describing two connected lines (= a polyline). Fails otherwise.</summary>
     ///<param name="prevPt">(Point3d)The first point of polyline</param>
@@ -30,13 +74,13 @@ module ExtrasCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
+            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
         let trim = tan(beta) * radius // the setback distance from intersection
-        if trim > A.Length then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.ToNiceString midPt.ToNiceString
-        if trim > B.Length then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.ToNiceString midPt.ToNiceString
+        if trim > A.Length then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.ToNiceString midPt.ToNiceString
+        if trim > B.Length then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.ToNiceString midPt.ToNiceString
         let arcStart =  midPt + uA * trim // still on arc plane
         let arcEnd =    midPt + uB * trim
         Arc(arcStart, - uA , arcEnd)
@@ -47,7 +91,7 @@ module ExtrasCurve =
     ///<returns>a PolyCurve object.</returns>
     static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve = 
         for i in fillets.Keys do
-            if i >= polyline.LastIndex then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
+            if i >= polyline.LastIndex then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
 
         let closed = Scripting.Distance(polyline.[0], polyline.Last) < Scripting.Doc.ModelAbsoluteTolerance
         let mutable prevPt = polyline.[0]
@@ -59,9 +103,9 @@ module ExtrasCurve =
                 plc.Append arc  |> ignore
                 prevPt <- arc.EndPoint
                 endPt <- arc.StartPoint
-                if fillets.ContainsKey polyline.LastIndex then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
+                if fillets.ContainsKey polyline.LastIndex then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
             else
-                RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletPolyline: Cannot set radius at index 0 on open polyline"
+                RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletPolyline: Cannot set radius at index 0 on open polyline"
 
         for i = 1 to polyline.Count - 2 do
             let pt = polyline.[i]
@@ -94,7 +138,7 @@ module ExtrasCurve =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  parallel?"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)
@@ -104,7 +148,7 @@ module ExtrasCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLinesTrims: Can't fillet, lineA and lineB and direction vector are in same plane."
+            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletSkewLinesTrims: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
@@ -126,7 +170,7 @@ module ExtrasCurve =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLines: Can't intersect Planes , are lineA and lineB  parallel?"
+        if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletSkewLines: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)
@@ -136,7 +180,7 @@ module ExtrasCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extra.FilletSkewLines: Can't fillet, lineA and lineB and direction vector are in same plane."
+            if abs(dot) > 0.999  then RhinoScriptingException.Raise "Rhino.Scripting.Extension.FilletSkewLines: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha

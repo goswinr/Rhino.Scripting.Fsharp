@@ -13,16 +13,16 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>    <!--to only have the english resources-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <RootNamespace>Rhino.Scripting</RootNamespace>
-    <AssemblyName>Rhino.Scripting.Extra</AssemblyName>
-    <AssemblyTitle>Rhino.Scripting.Extra</AssemblyTitle>
-    <Product>Rhino.Scripting.Extra</Product> <!--visible in explorer-->
-    <Title>Rhino.Scripting.Extra</Title>
-    <PackageId>Rhino.Scripting.Extra</PackageId>
+    <RootNamespace>Rhino.Scripting.Extension</RootNamespace>
+    <AssemblyName>Rhino.Scripting.Extension</AssemblyName>
+    <AssemblyTitle>Rhino.Scripting.Extension</AssemblyTitle>
+    <Product>Rhino.Scripting.Extension</Product> <!--visible in explorer-->
+    <Title>Rhino.Scripting.Extension</Title>
+    <PackageId>Rhino.Scripting.Extension</PackageId>
 
-    <Version>0.1.0</Version>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
-    <FileVersion>0.1.0</FileVersion>
+    <Version>0.2.0</Version>
+    <AssemblyVersion>0.2.0</AssemblyVersion>
+    <FileVersion>0.2.0</FileVersion>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
 
     <Authors>GoswinR</Authors>
@@ -42,12 +42,12 @@
     <!--<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.Extra</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Extra</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.Extension</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Extension</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
     <PackageReadmeFile>READMEnuget.md</PackageReadmeFile> <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
-    <PackageDescription>Additional functionality for scripting Rhino3D with F#</PackageDescription>
+    <PackageDescription>Extensions to the Rhino.Scripting type and additional functionality for scripting Rhino3D with F#</PackageDescription>
     <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp</PackageTags>
   </PropertyGroup>
 
@@ -80,8 +80,8 @@
     <Compile Include="Src/RhLine.fs" />
     <Compile Include="Src/AutoOpenVector.fs" />
     <Compile Include="Src/Topology.fs" />
-    <Compile Include="Src/ExtraCurve.fs" />
-    <Compile Include="Src/ExtrasBrep.fs" />
-    <Compile Include="Src/ExtrasMesh.fs" />
+    <Compile Include="Src\Curve.fs" />
+    <Compile Include="Src\Brep.fs" />
+    <Compile Include="Src\Mesh.fs" />
   </ItemGroup>
 </Project>

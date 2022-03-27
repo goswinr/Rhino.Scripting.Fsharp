@@ -1,14 +1,17 @@
-﻿namespace Rhino
+﻿namespace Rhino.Scripting.Extension
 
+open Rhino
+open Rhino.Scripting
 open Rhino.Geometry
 open FsEx
 open FsEx.SaveIgnore
 
 
 /// This module provides functions to create or manipulate Rhino Meshes
-/// This module is automatically opened when Rhino.Scripting.Extra namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
 /// These type extensions are only visible in F#.
-module ExtrasMesh = 
+[<AutoOpen>]
+module AutoOpenMesh = 
 
     type Scripting with
 
@@ -49,7 +52,7 @@ module ExtrasMesh =
         /// Appends a welded Quad to last 2 vertices, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFaceToLastTwo (m:Mesh, a:Point3d, b:Point3d) = 
             let c = m.Vertices.Count
-            if c<2 then RhinoScriptingException.Raise "Rhino.Scripting.Extra.Cannot append Quad to mesh %A" m
+            if c<2 then RhinoScriptingException.Raise "Rhino.Scripting.Extension.Cannot append Quad to mesh %A" m
             else m.Faces.AddFace(c-1, c-2,  m.Vertices.Add (b.X,b.Y,b.Z), m.Vertices.Add (a.X,a.Y,a.Z)) |>ignore
 
         /// Appends a welded Quad to last 2 vertices,  Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
