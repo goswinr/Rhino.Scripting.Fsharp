@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-->
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
@@ -64,7 +64,7 @@
     <!--    
     <PackageReference Include="Rhino.Scripting" Version="0.1.0" />    
     -->
-    <PackageReference Include="FsEx" Version="0.9.0" />
+    <PackageReference Include="FsEx" Version="0.10.1" />
     <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />
 	  
   </ItemGroup>
