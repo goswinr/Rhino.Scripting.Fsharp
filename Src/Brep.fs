@@ -144,49 +144,51 @@ module AutoOpenBrep =
     ///  It ensures that the count of breps from  Brep.CreateBooleanIntersection is equal to subtractionLocations </param>
     ///<returns>(Brep) Brep Geometry.</returns>
     static member SubstractBrep (keep:Brep,trimmer:Brep,[<OPT;DEF(0)>]subtractionLocations:int)  :Brep = 
+        let draw s b = Scripting.Ot.AddBrep(b)|> Scripting.setLayer s
+        
         if not trimmer.IsSolid then
-            Scripting.draw "debug trimmer" trimmer
+            draw "debug trimmer" trimmer
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference trimmer is NOT a closed polysurface"
         if not keep.IsSolid then
-            Scripting.draw "debug keep" keep
+            draw "debug keep" keep
             Scripting.ZoomBoundingBox(keep.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference keep Volume is NOT a closed polysurface"
 
         if subtractionLocations <> 0 then
             let xs = Brep.CreateBooleanIntersection (keep,trimmer,Scripting.Doc.ModelAbsoluteTolerance) // TODO expensive extra check
             if isNull xs then
-                Scripting.draw "debug trimmer no Intersection" trimmer
-                Scripting.draw "debug keep no Intersection" keep
+                draw "debug trimmer no Intersection" trimmer
+                draw "debug keep no Intersection" keep
                 Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
                 RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanIntersection check isnull, no intersection found, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
             if xs.Length <> subtractionLocations then
-                Scripting.draw "debug trimer empty Intersection" trimmer
-                Scripting.draw "debug keep empty Intersection" keep
+                draw "debug trimer empty Intersection" trimmer
+                draw "debug keep empty Intersection" keep
                 Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
                 RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanIntersection check returned %d breps instead of one , tolerance = %g" xs.Length Scripting.Doc.ModelAbsoluteTolerance
             for x in xs do x.Dispose()
 
         let bs =  Brep.CreateBooleanDifference(keep,trimmer,Scripting.Doc.ModelAbsoluteTolerance)
         if isNull bs then
-            Scripting.draw "debug trimmer" trimmer
-            Scripting.draw "debug keep" keep
+            draw "debug trimmer" trimmer
+            draw "debug keep" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference is null, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if bs.Length = 0 then
-            Scripting.draw "debug trimer for empty result" trimmer
-            Scripting.draw "debug keep for empty result" keep
+            draw "debug trimer for empty result" trimmer
+            draw "debug keep for empty result" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference returned 0 breps instead of one , tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if bs.Length <> 1 then
-            bs |> Seq.iter (Scripting.draw "debug more than one")
-            Scripting.draw "debug trimer for more than one" trimmer
+            bs |> Seq.iter (draw "debug more than one")
+            draw "debug trimer for more than one" trimmer
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference returned %d breps instead of one , tolerance = %g" bs.Length Scripting.Doc.ModelAbsoluteTolerance
         let brep = bs.[0]
         if subtractionLocations = 0 && brep.Vertices.Count = keep.Vertices.Count then // extra test if
-            Scripting.draw "debug trimmer same vertex count on  result" trimmer
-            Scripting.draw "debug keep same vertex count on  result" keep
+            draw "debug trimmer same vertex count on  result" trimmer
+            draw "debug keep same vertex count on  result" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
             RhinoScriptingException.Raise "Rhino.Scripting.Extension.SubstractBrep:CreateBooleanDifference returned same vertex count on input and output brep is this desired ?, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if brep.SolidOrientation = BrepSolidOrientation.Inward then  brep.Flip()

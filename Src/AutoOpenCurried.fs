@@ -245,13 +245,15 @@ module AutoOpenCurried =
             let key = usg.GetKey(i)
             if not <|de.Geometry.SetUserString(key,sc.Geometry.GetUserString(key)) then
                 RhinoScriptingException.Raise "Rhino.Scripting.Extension.matchAllProperties: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
-
-    ///<summary>Draws any Geometry object to a given or current layer.</summary>
-    ///<param name="layer">(string) Name of an layer or empty string for current layer</param>
-    ///<param name="geo">(GeometryBase) Geometry</param>
-    ///<returns>(unit) void, nothing.</returns>
+    (*
+    TODO delete , "draw" should only refer to display pipline
+    //<summary>Draws any Geometry object to a given or current layer.</summary>
+    //<param name="layer">(string) Name of an layer or empty string for current layer</param>
+    //<param name="geo">(GeometryBase) Geometry</param>
+    //<returns>(unit) void, nothing.</returns>
     static member draw (layer:string) (geo:'AnyRhinoGeometry) : unit = 
         Scripting.Add(geo,layer)  |> ignore 
+    *)
 
 
     ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix. The matrix acts on the left. 
