@@ -254,14 +254,13 @@ module AutoOpenCurried =
         Scripting.Add(geo,layer)  |> ignore 
 
 
-    ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix.
-    ///    The matrix acts on the left. To transform Geometry objects instead of DocObjects or Guids use their .Transform(xForm) member.</summary>
+    ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix. The matrix acts on the left. 
+    ///   To transform Geometry objects instead of DocObjects or Guids use their x.Transform(xForm) member.</summary>
     ///<param name="matrix">(Transform) The transformation matrix (4x4 array of numbers)</param>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
-    static member transform (matrix:Transform) (objectId:Guid) : Guid = 
-        Scripting.TransformObject(objectId, matrix, copy=false)
-        // TODO test to ensure GUID is the same ?
+    static member transform (matrix:Transform) (objectId:Guid) : unit = 
+        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore        
 
     ///<summary>Scales a single object. Uniform scale transformation. Scaling is based on the WorldXY Plane.</summary>
     ///<param name="origin">(Point3d) The origin of the scale transformation</param>
