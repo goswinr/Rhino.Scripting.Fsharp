@@ -145,17 +145,18 @@ module AutoOpenVector =
                 else None
             else None
 
-        /// Offsets a Polyline in 3D space by finding th local offset in each corner.
-        /// Offset distances can vary per segment, Positive distance is offset inwards, negative outwards.
-        /// Normal distances define a perpendicular offset at each corner.
-        /// Auto detects if given points are from a closed Polyline (first point = last point) and loops them
-        /// Distances Sequence  must have exact count , be a singleton ( for repeating) or empty seq ( for ignoring)
-        /// Auto detects points from closed polylines and loops them
+        /// <summary>Offsets a Polyline in 3D space by finding the local offset in each corner.</summary>
+        /// <param name="points"> List of points to offset. Auto detects if given points are from a closed Polyline (first point = last point) and loops them.</param>
+        /// <param name="offsetDistances">Offset distances can vary per segment, Positive distance is offset inwards, negative outwards.
+        ///     Distances Sequence  must have exact count , be a singleton ( for repeating) or empty seq ( for ignoring)</param>
+        /// <param name="normalDistances">Normal distances define a perpendicular offset at each corner.
+        ///     Distances Sequence  must have exact count , be a singleton ( for repeating) or empty seq ( for ignoring)</param>
+        /// <param name="loop">Consider last point and first point to be from a closed loop, even if they are not at the same location.</param>
+        /// <returns>A list of points that has the same length as the input list.</returns>
         static member OffsetPoints(     points: IList<Point3d>,  // IList so it can take a Point3dList class too
                                         offsetDistances: float seq,
                                         [<OPT;DEF(null:seq<float>)>] normalDistances: float seq,
                                         [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  = 
-
             let offDists0  = Array.ofSeq offsetDistances
             let normDists0 = Array.ofSeq (normalDistances |? Seq.empty<float> )
             let pointk = points.Count

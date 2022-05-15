@@ -264,10 +264,10 @@ module RhPnt =
                     res.Add pt
             res
 
-    /// similar to Join Polylines this tries to find continuous sequences of points
-    /// tolGap is the maximum allowable gap between the start and the endpoint of to segments
-    /// search starts from the segment with the most points
-    /// both start and end point of each point list is checked for adjacency
+    /// Similar to Join Polylines this tries to find continuous sequences of points.
+    /// 'tolGap' is the maximum allowable gap between the start and the endpoint of to segments.
+    /// Search starts from the segment with the most points.
+    /// Both start and end point of each point list is checked for adjacency
     let findContinousPoints (tolGap:float)  (ptss: Rarr<Rarr<Point3d>>)  = 
         let i =  ptss |> Rarr.maxIndBy Rarr.length
         let res = ptss.Pop(i)
