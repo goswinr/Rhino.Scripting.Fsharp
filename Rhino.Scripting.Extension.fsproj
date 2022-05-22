@@ -76,7 +76,8 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
-    <None Include="Doc/logo128.png" Pack="true" PackagePath="" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
+    <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
+    <Compile Include="Src\Scripting_Selection.fs" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
 
     <Compile Include="Src/AutoOpenCurried.fs" />
     <Compile Include="Src/RhVec.fs" />

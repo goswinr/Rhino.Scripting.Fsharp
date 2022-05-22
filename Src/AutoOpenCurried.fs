@@ -5,20 +5,17 @@ open FsEx
 open System
 open Rhino
 open Rhino.Geometry
-open Rhino.NiceString
-open FsEx.UtilMath
+//open Rhino.NiceString
+//open FsEx.UtilMath
+//open Rhino.Scripting
+//open System.Xml.Schema
 
 
-///OptionalAttribute for member parameters
-type internal OPT = Runtime.InteropServices.OptionalAttribute
-
-/// DefaultParameterValueAttribute for member parameters
-type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
 
 
 [<AutoOpen>] 
 /// This module provides curried F# functions for easy use with pipeline operator |>
-/// This module is automatically opened when Rhino.Scripting namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
 module AutoOpenCurried = 
 
   type Scripting with
@@ -256,13 +253,28 @@ module AutoOpenCurried =
     *)
 
 
-    ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix. The matrix acts on the left. 
-    ///   To transform Geometry objects instead of DocObjects or Guids use their x.Transform(xForm) member.</summary>
+    ///<summary>Moves, scales, or rotates an object given a 4x4 transformation matrix. The matrix acts on the left.</summary>
     ///<param name="matrix">(Transform) The transformation matrix (4x4 array of numbers)</param>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member transform (matrix:Transform) (objectId:Guid) : unit = 
-        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore        
+        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore     
+    
+    
+    ///<summary>Moves, scales, or rotates a geometry given a 4x4 transformation matrix. The matrix acts on the left. </summary>
+    ///<param name="matrix">(Transform) The transformation matrix (4x4 array of numbers)</param>
+    ///<param name="geo">(GeometryBase) Any Geometry derived from GeometryBase</param>
+    ///<returns>(unit) void, nothing.</returns>
+    static member transformGeo (matrix:Transform) (geo:GeometryBase) : unit = 
+        if not <| geo.Transform(matrix) then 
+            RhinoScriptingException.Raise "Rhino.Scripting.Extension.scale failed. geo:'%s' matrix:'%s' " (toNiceString geo) matrix.ToNiceString 
+        if matrix.SimilarityType = TransformSimilarityType.OrientationReversing then 
+            match geo with 
+            | :? Brep as g -> if g.IsSolid then g.Flip()
+            | :? Mesh as g -> if g.IsClosed then g.Flip(true,true,true)
+            // TODO any missing?
+            | _ -> ()
+
 
     ///<summary>Scales a single object. Uniform scale transformation. Scaling is based on the WorldXY Plane.</summary>
     ///<param name="origin">(Point3d) The origin of the scale transformation</param>

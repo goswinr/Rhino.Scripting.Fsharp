@@ -13,7 +13,7 @@ open FsEx.SaveIgnore
 open FsEx.ExtensionsIList
 
 /// This module provides functions to manipulate Rhino Vector3d
-/// This module is automatically opened when Rhino.Scripting namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenVector = 
