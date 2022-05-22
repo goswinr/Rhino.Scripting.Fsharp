@@ -27,8 +27,11 @@ module AutoOpenSelection =
   
   // these functions are similar to the ones found in Rhino.Scripting: Scripting_Selection.fs
 
+  
+  let internal rememberedObjects = Dict<string,Rarr<Guid>>()
 
-  type Scripting with
+  type Scripting with   
+    
 
     ///<summary>Returns identifiers of all objects in the current model or paper space that are not hidden, not locked nor on turned off layers.</summary>
     ///<param name="filter">(int) Optional, Default Value: <c>0</c>
@@ -76,7 +79,8 @@ module AutoOpenSelection =
 
     
     ///<summary>Returns the same objects as in the last user interaction with the same prompt message
-    /// If none found, Prompts user to pick or select one or more objects and remembers them.</summary>
+    /// If none found, Prompts user to pick or select one or more objects and remembers them.
+    /// Call rs.ClearRememberedObjects() to clear the memory.</summary>
     ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remeber objects</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
@@ -110,21 +114,22 @@ module AutoOpenSelection =
                                         [<OPT;DEF(true)>]printCount:bool,
                                         [<OPT;DEF(null:Input.Custom.GetObjectGeometryFilter)>]customFilter:Input.Custom.GetObjectGeometryFilter)  : Guid Rarr = 
         try
-            let objectIds = Scripting.Sticky.[message] :?> Rarr<Guid>
+            let objectIds = rememberedObjects.[message] 
             if printCount then  // this print statement also raises an exception if object does not exist to trigger reselection
                 Scripting.PrintfnBlue "GetObjectsAndRemember for '%s': %s" message (Scripting.ObjectDescription(objectIds))
             elif objectIds |> Rarr.exists ( fun g -> let o =  Scripting.Doc.Objects.FindId(g) in isNull o || o.IsDeleted ) then 
                 fail() // to trigger reselection if object does not exist anymore          
             objectIds
-        with | _ ->
+        with e ->
+            //Printf.lightGray "%A" e
             let ids = Scripting.GetObjects(message, filter, group, preselect, select, objects, minimumCount, maximumCount, printCount, customFilter)
-            Scripting.Sticky.[message] <- ids
+            rememberedObjects.[message] <- ids
             ids
 
 
-
     ///<summary>Returns the same object as in the last user interaction with the same prompt message
-    /// If none found, Prompts user to pick one object and remembers it.</summary>
+    /// If none found, Prompts user to pick one object and remembers it.
+    /// Call rs.ClearRememberedObjects() to clear the memory.</summary>
     ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remeber object</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
@@ -144,13 +149,18 @@ module AutoOpenSelection =
                                         [<OPT;DEF(false)>]printDescr:bool,
                                         [<OPT;DEF(null:Input.Custom.GetObjectGeometryFilter)>]customFilter:Input.Custom.GetObjectGeometryFilter)  : Guid = 
         try
-            let objectId:Guid = Scripting.Sticky.[message] |> unbox // this may raises an exception if the key does  not exist, to trigger reselection
+            let objectId = rememberedObjects.[message].First // this may raises an exception if the key does  not exist, to trigger reselection
             if printDescr then 
                 Scripting.PrintfnBlue "GetObjectAndRemember for '%s': one %s" message (Scripting.ObjectDescription(objectId)) // this print statement also raises an exception if guid object does not exist, to trigger reselection
             elif (let o = Scripting.Doc.Objects.FindId(objectId) in isNull o || o.IsDeleted)  then 
                 fail() // to trigger reselection if object does not exist anymore  
             objectId
-        with | _ ->
+        with e ->
+            Printf.lightGray "%A" e
             let id = Scripting.GetObject(message, filter,  preselect, select,  customFilter, subObjects=false)
-            Scripting.Sticky.[message] <- box id
+            rememberedObjects.[message] <- Rarr.singelton id
             id
+
+    ///<summary>Clears all remembered objects form internal Dictionary that where added via  rs.GetObjectAndRemember() or rs.GetObjectsAndRemember()</summary>
+    static member ClearRememberedObjects()  : unit = 
+        rememberedObjects.Clear()
