@@ -91,7 +91,7 @@ module RhLine =
     /// Returns:
     ///    an empty array if they are parallel,
     ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
-    ///    an array with two points where they are the closest to each other. (in same order as input)
+    ///    an array with two points where they are the closest to each other. In same order as input. They might be skew or they might intersect only when infinite.
     /// Fails if lines are parallel.
     /// Considers Lines finite
     let intersectFinite (lnA:Line) (lnB:Line) : Point3d[]= 
@@ -113,14 +113,13 @@ module RhLine =
     /// works even if lines are parallel.
     let distanceToLine (lnA:Line) (lnB:Line) :float= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then // parallel
-            //RhinoScriptingException.Raise "Rhino.Scripting.Extension.Line.intersect failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
-            let pt = lnA.ClosestPoint(lnB.From, limitToFiniteSegment=false)
-            (pt-lnB.From).Length
-        else
+        if ok then 
             let a = lnA.PointAt(ta)
             let b = lnB.PointAt(tb)
             (a-b).Length
+        else// parallel
+            let pt = lnA.ClosestPoint(lnB.From, limitToFiniteSegment=false)
+            (pt-lnB.From).Length
 
     /// Returns the distance between a point and an Infinite Line.
     let distanceToPoint (pt:Point3d) (ln:Line) :float= 
