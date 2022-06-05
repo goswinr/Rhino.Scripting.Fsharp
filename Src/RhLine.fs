@@ -90,7 +90,7 @@ module RhLine =
     /// Finds intersection of two Finite Lines.
     /// Returns:
     ///    an empty array if they are parallel,
-    ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (point will be the average of the two points within the tolerance)
+    ///    an array with one point if they intersect by Scripting.Doc.ModelAbsoluteTolerance (Point will be the average of the two points within the tolerance)
     ///    an array with two points where they are the closest to each other. In same order as input. They might be skew or they might intersect only when infinite.
     /// Fails if lines are parallel.
     /// Considers Lines finite

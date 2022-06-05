@@ -163,4 +163,5 @@ module AutoOpenSelection =
 
     ///<summary>Clears all remembered objects form internal Dictionary that where added via  rs.GetObjectAndRemember() or rs.GetObjectsAndRemember()</summary>
     static member ClearRememberedObjects()  : unit = 
+        Scripting.PrintfGray "Cleared %d remembered Selection Sets" rememberedObjects.Count
         rememberedObjects.Clear()

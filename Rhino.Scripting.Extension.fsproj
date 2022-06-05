@@ -83,6 +83,7 @@
     <Compile Include="Src/RhVec.fs" />
     <Compile Include="Src/RhPnt.fs" />
     <Compile Include="Src/RhLine.fs" />
+    <Compile Include="Src\RhPlane.fs" />
     <Compile Include="Src/AutoOpenVector.fs" />
     <Compile Include="Src/Topology.fs" />
     <Compile Include="Src/Curve.fs" />
