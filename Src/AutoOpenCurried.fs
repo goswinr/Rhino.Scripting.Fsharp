@@ -258,7 +258,7 @@ module AutoOpenCurried =
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member transform (matrix:Transform) (objectId:Guid) : unit = 
-        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore     
+        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore<Guid>     
     
     
     ///<summary>Moves, scales, or rotates a geometry given a 4x4 transformation matrix. The matrix acts on the left. </summary>
