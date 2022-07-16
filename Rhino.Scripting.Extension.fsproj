@@ -77,13 +77,13 @@
     <None Include="README.md" />
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
-    <Compile Include="Src\Scripting_Selection.fs" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
+    <Compile Include="Src/Scripting_Selection.fs" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
 
     <Compile Include="Src/AutoOpenCurried.fs" />
     <Compile Include="Src/RhVec.fs" />
     <Compile Include="Src/RhPnt.fs" />
     <Compile Include="Src/RhLine.fs" />
-    <Compile Include="Src\RhPlane.fs" />
+    <Compile Include="Src/RhPlane.fs" />
     <Compile Include="Src/AutoOpenVector.fs" />
     <Compile Include="Src/Topology.fs" />
     <Compile Include="Src/Curve.fs" />
