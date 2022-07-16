@@ -158,7 +158,7 @@ module AutoOpenSelection =
         with e ->
             Printf.lightGray "%A" e
             let id = Scripting.GetObject(message, filter,  preselect, select,  customFilter, subObjects=false)
-            rememberedObjects.[message] <- Rarr.singelton id
+            rememberedObjects.[message] <- Rarr.singleton id
             id
 
     ///<summary>Clears all remembered objects form internal Dictionary that where added via  rs.GetObjectAndRemember() or rs.GetObjectsAndRemember()</summary>
