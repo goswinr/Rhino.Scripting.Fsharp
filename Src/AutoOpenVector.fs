@@ -37,20 +37,20 @@ module AutoOpenVector =
 
         ///<summary>Draws the axes of a Plane and adds TextDots to label them.</summary>
         ///<param name="pl">(Plane)</param>
-        ///<param name="scale">(float) Optional, Default Value: <c>1.0</c>, the size of the drawn lines</param>
+        ///<param name="axLength">(float) Optional, Default Value: <c>1.0</c>, the size of the drawn lines</param>
         ///<param name="suffixInDot">(string) Optional, Default Value: no suffix, text to add to x textdot label do of x axis. And y and z too.</param>
         ///<param name="layer">(string) Optional, Default Value: the current layer, String for layer to draw plane on. The Layer will be created if it does not exist.</param>
         ///<returns>List of Guids of added Objects</returns>
         static member DrawPlane(    pl:Plane,
-                                    [<OPT;DEF(1.0)>]scale:float,
+                                    [<OPT;DEF(1.0)>]axLength:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
                                     [<OPT;DEF("")>]layer:string ) : Rarr<Guid>  = 
-            let a=Scripting.AddLine(pl.Origin, pl.Origin + pl.XAxis*scale)
-            let b=Scripting.AddLine(pl.Origin, pl.Origin + pl.YAxis*scale)
-            let c=Scripting.AddLine(pl.Origin, pl.Origin + pl.ZAxis*scale*0.5)
-            let e=Scripting.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*scale)
-            let f=Scripting.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*scale)
-            let g=Scripting.AddTextDot("z"+suffixInDot, pl.Origin+ pl.ZAxis*scale*0.5)
+            let a=Scripting.AddLine(pl.Origin, pl.Origin + pl.XAxis*axLength)
+            let b=Scripting.AddLine(pl.Origin, pl.Origin + pl.YAxis*axLength)
+            let c=Scripting.AddLine(pl.Origin, pl.Origin + pl.ZAxis*axLength*0.5)
+            let e=Scripting.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*axLength)
+            let f=Scripting.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*axLength)
+            let g=Scripting.AddTextDot("z"+suffixInDot, pl.Origin + pl.ZAxis*axLength*0.5)
             let es = rarr { a;b;c;e;f;g }
             if layer <>"" then Scripting.setLayers layer es
             let gg=Scripting.AddGroup()
