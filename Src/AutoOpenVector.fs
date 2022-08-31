@@ -18,28 +18,9 @@ open FsEx.ExtensionsIList
 [<AutoOpen>]
 module AutoOpenVector = 
 
-    type Scripting with
-        (* TODO delete
-        [<Obsolete>]
-        /// Use RhVec.angle .. instead
-        ///projects to Plane an returns angle in degrees in Plane between -180 and + 180
-        static member AngleInPlane180( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> RhVec.unitize
-            let dot = v * plane.XAxis
-            let ang = acos dot  |> toDegrees
-            if v*plane.YAxis < 0.0 then -ang else ang
+    type Scripting with        
 
-        [<Obsolete>]
-        /// Use RhVec.angle .. instead
-        ///projects to Plane an returns angle in degrees in Plane between 0 and 360
-        static member AngleInPlane360( plane:Plane, vector:Vector3d) : float  = 
-            let v = projectToPlane plane vector |> RhVec.unitize
-            let dot = v * plane.XAxis
-            let ang = acos dot  |> toDegrees
-            if v*plane.YAxis < 0.0 then 360.0-ang else ang
-        *)
-
-        /// Draws a line with a Curve Arrows from a Point.
+        /// Draws a line with a Curve Arrows from a given point.
         static member DrawVector(   vector:Vector3d,
                                     fromPoint:Point3d,
                                     [<OPT;DEF("")>]layer:string ) : Guid  = 
@@ -48,16 +29,20 @@ module AutoOpenVector =
             if layer<>"" then Scripting.ObjectLayer(l, layer, createLayerIfMissing=true)
             l
 
-        /// Draws a line with a Curve Arrows.
+        /// Draws a line with a Curve Arrows from World Origin.
         static member DrawVector( vector:Vector3d) : Guid  = 
             let l = Scripting.AddLine(Point3d.Origin, Point3d.Origin + vector )
             Scripting.CurveArrows(l, 2)
             l
 
-
-        /// Draws the axes of a Plane and adds TextDots to label them.
+        ///<summary>Draws the axes of a Plane and adds TextDots to label them.</summary>
+        ///<param name="pl">(Plane)</param>
+        ///<param name="scale">(float) Optional, Default Value: <c>1.0</c>, the size of the drawn lines</param>
+        ///<param name="suffixInDot">(string) Optional, Default Value: no suffix, text to add to x textdot label do of x axis. And y and z too.</param>
+        ///<param name="layer">(string) Optional, Default Value: the current layer, String for layer to draw plane on. The Layer will be created if it does not exist.</param>
+        ///<returns>List of Guids of added Objects</returns>
         static member DrawPlane(    pl:Plane,
-                                    [<OPT;DEF(1000.0)>]scale:float,
+                                    [<OPT;DEF(1.0)>]scale:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
                                     [<OPT;DEF("")>]layer:string ) : Rarr<Guid>  = 
             let a=Scripting.AddLine(pl.Origin, pl.Origin + pl.XAxis*scale)
@@ -67,8 +52,8 @@ module AutoOpenVector =
             let f=Scripting.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*scale)
             let g=Scripting.AddTextDot("z"+suffixInDot, pl.Origin+ pl.ZAxis*scale*0.5)
             let es = rarr { a;b;c;e;f;g }
+            if layer <>"" then Scripting.setLayers layer es
             let gg=Scripting.AddGroup()
-            if layer <>"" then  Scripting.ObjectLayer(es, layer)
             Scripting.AddObjectToGroup(es, gg)
             es
 
@@ -86,7 +71,7 @@ module AutoOpenVector =
             fromPt + v*rel
 
 
-        /// returns the average of many points
+        /// Returns the average of many points
         static member MeanPoint(pts:Point3d seq) : Point3d  = 
             let mutable p = Point3d.Origin
             let mutable k = 0.0
