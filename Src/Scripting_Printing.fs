@@ -1,5 +1,4 @@
-﻿
-namespace Rhino
+﻿namespace Rhino.ScriptingFSharp
 
 open System
 open System.Collections.Generic
@@ -8,15 +7,65 @@ open Microsoft.FSharp.Core.LanguagePrimitives
 
 open Rhino.Geometry
 open Rhino.ApplicationSettings
+open Rhino
 
 open FsEx
 open FsEx.UtilMath
 open FsEx.SaveIgnore
 open FsEx.CompareOperators
 
+
+
+/// This module shadows the NiceString module from FsEx to include the special formatting for Rhino types.
+/// It also shadows the print and printFull from FsEx to include external formatter for Rhino
 [<AutoOpen>]
 module AutoOpenPrinting =
-  type Scripting with  
+
+  /// Nice formatting for Rhino and .Net types, e.g. numbers including thousand Separator and (nested) sequences, first five items are printed out.
+  /// Settings are exposed in FsEx.NiceString.NiceStringSettings:
+  /// - thousandSeparator       = '     ; set this to change the printing of floats and integers larger than 10'000
+  /// - maxNestingDepth         = 3     ; set this to change how deep the content of nested seq is printed (printFull ignores this)
+  /// - maxNestingDepth         = 6     ; set this to change how how many items per seq are printed (printFull ignores this)
+  /// - maxCharsInString        = 2000  ; set this to change how many characters of a string might be printed at once.
+  let toNiceString (x:'T) :string = 
+      InternalToNiceStringSetup.init() // the shadowing is only done to ensure init() is called once
+      NiceString.toNiceString x
+
+  /// Nice formatting for Rhino and .Net types, e.g. numbers including thousand Separator,
+  /// all items of sequences, including nested items, are printed out.
+  /// Settings are exposed in FsEx.NiceString.NiceStringSettings:
+  /// - thousandSeparator       = '      ; set this to change the printing of floats and integers larger than 10'000
+  /// - maxCharsInString        = 2000   ; set this to change how many characters of a string might be printed at once.
+  let toNiceStringFull (x:'T) :string = 
+      InternalToNiceStringSetup.init() // the shadowing is only done to ensure init() is called once
+      NiceString.toNiceStringFull x
+
+
+  /// Print to standard out including nice formatting for Rhino Objects, numbers including thousand Separator and (nested) sequences, first five items are printed out.
+  /// Only prints to Console.Out, NOT to Rhino Commandline
+  /// Shows numbers smaller than State.Doc.ModelAbsoluteTolerance * 0.1 as ~0.0
+  /// Settings are exposed in FsEx.NiceString.NiceStringSettings:
+  /// - thousandSeparator       = '     ; set this to change the printing of floats and integers larger than 10'000
+  /// - maxNestingDepth         = 3     ; set this to change how deep the content of nested seq is printed (printFull ignores this)
+  /// - maxNestingDepth         = 6     ; set this to change how how many items per seq are printed (printFull ignores this)
+  /// - maxCharsInString        = 2000  ; set this to change how many characters of a string might be printed at once.
+  let print x = 
+      InternalToNiceStringSetup.init()
+      print x
+
+  /// Print to standard out including nice formatting for Rhino Objects, numbers including thousand Separator, all items of sequences, including nested items, are printed out.
+  /// Only prints to Console.Out, NOT to Rhino Commandline
+  /// Shows numbers smaller than State.Doc.ModelAbsoluteTolerance * 0.1 as ~0.0
+  /// Settings are exposed in FsEx.NiceString.NiceStringSettings:
+  /// - thousandSeparator       = '      ; set this to change the printing of floats and integers larger than 10'000
+  /// - maxCharsInString        = 2000   ; set this to change how many characters of a string might be printed at once.
+  let printFull x = 
+      InternalToNiceStringSetup.init()
+      printFull x
+
+
+
+  type Rhino.Scripting with  
     //---The members below are in this file only for development. This brings acceptable tooling performance (e.g. autocomplete) 
     //---Before compiling the script combineIntoOneFile.fsx is run to combine them all into one file. 
     //---So that all members are visible in C# and Ironpython too.
@@ -38,7 +87,7 @@ module AutoOpenPrinting =
     ///<param name="x">('T) the value or object to print</param>
     ///<returns>(unit) void, nothing.</returns>
     static member Print (x:'T) : unit = 
-        if PrintSetup.initIsPending then PrintSetup.init()
+        InternalToNiceStringSetup.init()
         toNiceString(x)
         |>! RhinoApp.WriteLine
         |>  Console.WriteLine
@@ -51,7 +100,7 @@ module AutoOpenPrinting =
     ///<param name="x">('T) the value or object to print</param>
     ///<returns>(unit) void, nothing.</returns>
     static member PrintFull (x:'T) : unit = 
-        if PrintSetup.initIsPending then PrintSetup.init()
+        InternalToNiceStringSetup.init()
         toNiceStringFull(x)
         |>! RhinoApp.WriteLine
         |>  Console.WriteLine

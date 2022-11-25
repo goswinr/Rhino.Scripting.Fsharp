@@ -1,7 +1,6 @@
-﻿namespace Rhino.Scripting.Extension
+﻿namespace Rhino.ScriptingFSharp
 
 open Rhino
-open Rhino.Scripting
 open Rhino.Geometry
 open FsEx
 open FsEx.UtilMath

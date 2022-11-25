@@ -13,12 +13,12 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>    <!--to only have the english resources-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <RootNamespace>Rhino.Scripting.Extension</RootNamespace>
-    <AssemblyName>Rhino.Scripting.Extension</AssemblyName>
-    <AssemblyTitle>Rhino.Scripting.Extension</AssemblyTitle>
-    <Product>Rhino.Scripting.Extension</Product> <!--visible in explorer-->
-    <Title>Rhino.Scripting.Extension</Title>
-    <PackageId>Rhino.Scripting.Extension</PackageId>
+    <RootNamespace>Rhino.ScriptingFSharp</RootNamespace>
+    <AssemblyName>Rhino.ScriptingFSharp</AssemblyName>
+    <AssemblyTitle>Rhino.ScriptingFSharp</AssemblyTitle>
+    <Product>Rhino.ScriptingFSharp</Product> <!--visible in explorer-->
+    <Title>Rhino.ScriptingFSharp</Title>
+    <PackageId>Rhino.ScriptingFSharp</PackageId>
 
     <Version>0.2.0</Version>
     <AssemblyVersion>0.2.0</AssemblyVersion>
@@ -28,7 +28,7 @@
     <Authors>GoswinR</Authors>
     <Copyright>Goswin Rothenthal 2021</Copyright>
 
-    <Description>Utlities for scripting Rhino in F#</Description>
+    <Description>Rhino.Scripting, with extensions designed for F#</Description>
 
     <Configuration>Release</Configuration>
     <PlatformTarget>x64</PlatformTarget><!--  x64 is required e.g by Rhino, dont us just 'Platform' tag-->
@@ -42,32 +42,34 @@
     <!--<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.Extension</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Extension</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/goswinr/Rhino.ScriptingFSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/goswinr/Rhino.ScriptingFSharp</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
     <PackageReadmeFile>READMEnuget.md</PackageReadmeFile> <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
-    <PackageDescription>Extensions to the Rhino.Scripting type and additional functionality for scripting Rhino3D with F#</PackageDescription>
-    <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp</PackageTags>
+    <PackageDescription>The full Rhino.Scripting libray and additional functionality for scripting Rhino3D with F#</PackageDescription>
+    <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp nurbs geometry</PackageTags>
   </PropertyGroup>
 
 
   <ItemGroup>
 
-    <PackageReference Update="FSharp.Core" Version="4.5.2" /> <!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
+	<!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
+    <PackageReference Update="FSharp.Core" Version="4.5.2" /> 
 
-    <!-- Match RhinoCommon version of Rhino.Scripting: 6.7.18199 , it supports Font.FromQuartetProperties and AreaMassProperties.Compute(Surface surface, bool , bool, bool) -->
+    <!-- Match RhinoCommon version of Rhino.Scripting: 6.7.18199 
+	, it supports Font.FromQuartetProperties and AreaMassProperties.Compute(Surface surface, bool , bool, bool) -->
     <PackageReference Include="RhinoCommon" Version="6.7.18199.22081" PrivateAssets="all" ExcludeAssets="runtime" /> 
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
 	
-	  <!--
+	<!--
     <PackageReference Include="FsEx" Version="0.10.1" />
 	-->
 	<Reference Include="FsEx" HintPath="../FsEx/bin/Release/netstandard2.0/FsEx.dll" />	  
 	  
     <!--    
-    <PackageReference Include="Rhino.Scripting" Version="0.1.0" />    
+    <PackageReference Include="Rhino.ScriptingFSharp" Version="0.1.0" />    
     -->    
     <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />
 	  
@@ -75,10 +77,12 @@
 
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
+    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" /><!--PackagePath = "" makes the file availabe to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
-    <Compile Include="Src\Scripting_Printing.fs" />
-    <Compile Include="Src/Scripting_Selection.fs" /> <!--PackagePath = "" makes the file availabe to nuget pack tool-->
+
+	<Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />
+	<Compile Include="Src/Scripting_Printing.fs" />
+    <Compile Include="Src/Scripting_Selection.fs" /> 
 
     <Compile Include="Src/AutoOpenCurried.fs" />
     <Compile Include="Src/RhVec.fs" />

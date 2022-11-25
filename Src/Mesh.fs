@@ -1,14 +1,13 @@
-﻿namespace Rhino.Scripting.Extension
+﻿namespace Rhino.ScriptingFSharp
 
 open Rhino
-open Rhino.Scripting
 open Rhino.Geometry
 open FsEx
 open FsEx.SaveIgnore
 
 
 /// This module provides functions to create or manipulate Rhino Meshes
-/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
+/// This module is automatically opened when Rhino.ScriptingFSharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenMesh = 
@@ -19,30 +18,30 @@ module AutoOpenMesh =
         static member MeshAddTriaFace (m:Mesh, a:Point3f, b:Point3f, c:Point3f)  = 
             m.Faces.AddFace(
                 m.Vertices.Add a ,
-                m.Vertices.Add b,
-                m.Vertices.Add c) |>ignore
+                m.Vertices.Add b ,
+                m.Vertices.Add c ) |>ignore
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ?? sort points counterclockwise
         static member MeshAddTriaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d)  = 
             m.Faces.AddFace(
-                m.Vertices.Add(a.X,a.Y,a.Z) ,
-                m.Vertices.Add (b.X,b.Y,b.Z),
-                m.Vertices.Add (c.X,c.Y,c.Z)) |>ignore
+                m.Vertices.Add (a.X,a.Y,a.Z) ,
+                m.Vertices.Add (b.X,b.Y,b.Z) ,
+                m.Vertices.Add (c.X,c.Y,c.Z) ) |>ignore
 
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ?? sort points counterclockwise
         static member MeshAddQuadFace (m:Mesh, a:Point3f, b:Point3f, c:Point3f, d:Point3f) = 
             m.Faces.AddFace(    m.Vertices.Add a ,
-                                m.Vertices.Add b,
-                                m.Vertices.Add c,
-                                m.Vertices.Add d) |>ignore
+                                m.Vertices.Add b ,
+                                m.Vertices.Add c ,
+                                m.Vertices.Add d ) |>ignore
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d) = 
-            m.Faces.AddFace(    m.Vertices.Add (a.X,a.Y,a.Z),
-                                m.Vertices.Add (b.X,b.Y,b.Z),
-                                m.Vertices.Add (c.X,c.Y,c.Z),
-                                m.Vertices.Add (d.X,d.Y,d.Z)) |>ignore
+            m.Faces.AddFace(    m.Vertices.Add (a.X,a.Y,a.Z) ,
+                                m.Vertices.Add (b.X,b.Y,b.Z) ,
+                                m.Vertices.Add (c.X,c.Y,c.Z) ,
+                                m.Vertices.Add (d.X,d.Y,d.Z) ) |>ignore
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFace ((m:Mesh), l:Line, ll:Line) = 
@@ -52,7 +51,7 @@ module AutoOpenMesh =
         /// Appends a welded Quad to last 2 vertices, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFaceToLastTwo (m:Mesh, a:Point3d, b:Point3d) = 
             let c = m.Vertices.Count
-            if c<2 then RhinoScriptingException.Raise "Rhino.Scripting.Extension.Cannot append Quad to mesh %A" m
+            if c<2 then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Cannot append Quad to mesh %A" m
             else m.Faces.AddFace(c-1, c-2,  m.Vertices.Add (b.X,b.Y,b.Z), m.Vertices.Add (a.X,a.Y,a.Z)) |>ignore
 
         /// Appends a welded Quad to last 2 vertices,  Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??

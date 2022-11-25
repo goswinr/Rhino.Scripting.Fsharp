@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting.Extension
+﻿namespace Rhino.ScriptingFSharp
 
 open System
 open System.Collections.Generic
@@ -19,13 +19,13 @@ type internal OPT = Runtime.InteropServices.OptionalAttribute
 type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
 
 
-/// This module provides functions simlar to Rhino.Scripting.GetObject(..)
-/// This module is automatically opened when Rhino.Scripting.Extension namespace is opened.
+/// This module provides functions simlar to Rhino.ScriptingFSharp.GetObject(..)
+/// This module is automatically opened when Rhino.ScriptingFSharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenSelection = 
   
-  // these functions are similar to the ones found in Rhino.Scripting: Scripting_Selection.fs
+  // these functions are similar to the ones found in Rhino.ScriptingFSharp: Scripting_Selection.fs
 
   
   let internal rememberedObjects = Dict<string,Rarr<Guid>>()

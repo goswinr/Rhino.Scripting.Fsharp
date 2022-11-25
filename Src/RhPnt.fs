@@ -1,8 +1,7 @@
-﻿namespace Rhino.Scripting.Extension
+﻿namespace Rhino.ScriptingFSharp
 
 open System
 open Rhino
-open Rhino.Scripting
 open Rhino.Geometry
 open FsEx.SaveIgnore
 open FsEx
@@ -41,10 +40,10 @@ module RhPnt =
     /// going from a point in the direction of another point.
     let extendToZLevel (fromPt:Point3d)( toPt:Point3d) (z:float) = 
         let v = toPt - fromPt
-        if fromPt.Z < toPt.Z && z < fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
-        if fromPt.Z > toPt.Z && z > fromPt.Z  then RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
+        if fromPt.Z < toPt.Z && z < fromPt.Z  then RhinoScriptingFSharpException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
+        if fromPt.Z > toPt.Z && z > fromPt.Z  then RhinoScriptingFSharpException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A z:%f" fromPt toPt z
         let dot = abs ( v * Vector3d.ZAxis)
-        if dot < 0.0001 then  RhinoScriptingException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. target Z %f" fromPt toPt z
+        if dot < 0.0001 then  RhinoScriptingFSharpException.Raise "RhPnt.extendToZLevel  cannot be reached for fromPt:%A toPt:%A  almost at same Z level. target Z %f" fromPt toPt z
         let diffZ = abs (fromPt.Z - z)
         let fac = diffZ / dot
         fromPt + v * fac
@@ -160,7 +159,7 @@ module RhPnt =
             let lp = Line(thisPt + sp , vp)  //|>! (Scripting.Doc.Objects.AddLine>>ignore)
             let ln = Line(thisPt + sn , vn)  //|>! (Scripting.Doc.Objects.AddLine>> ignore)
             let ok, tp , tn = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
-            if not ok then RhinoScriptingException.Raise "Rhino.Scripting.Extension.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+            if not ok then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
     /// returns angle in degree at mid point
@@ -172,7 +171,7 @@ module RhPnt =
 
     /// returns the closest point index form a Point list  to a given Point
     let closestPointIdx (pt:Point3d) (pts:Rarr<Point3d>) : int = 
-        if pts.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPoint empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPoint empty List of Points: pts"
         let mutable mi = -1
         let mutable mid = Double.MaxValue
         for i=0 to pts.LastIndex do
@@ -189,8 +188,8 @@ module RhPnt =
 
     /// returns the indices of the points that are closest to each other
     let closestPointsIdx (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) = 
-        if xs.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPointsIdx empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingException.Raise "RhPnt.closestPointsIdx empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPointsIdx empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPointsIdx empty List of Points: ys"
         let mutable xi = -1
         let mutable yj = -1
         let mutable mid = Double.MaxValue
@@ -206,8 +205,8 @@ module RhPnt =
 
     /// returns the smallest Distance between Point Sets
     let minDistBetweenPointSets (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) = 
-        if xs.Count = 0 then RhinoScriptingException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: ys"
         let (i,j) = closestPointsIdx xs ys
         distance xs.[i]  ys.[j]
 
@@ -215,8 +214,8 @@ module RhPnt =
     /// basically the mos lonely point in 'findPointFrom' list with respect to 'checkAgainst' list
     /// returns findPointFromIdx * checkAgainstIdx
     let mostDistantPointIdx (findPointFrom:Rarr<Point3d>) (checkAgainst:Rarr<Point3d>) : int*int= 
-        if findPointFrom.Count = 0 then RhinoScriptingException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
-        if checkAgainst.Count = 0 then RhinoScriptingException.Raise "RhPnt.mostDistantPoint empty List of Points: checkAgainst"
+        if findPointFrom.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
+        if checkAgainst.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.mostDistantPoint empty List of Points: checkAgainst"
         let mutable maxd = Double.MinValue
         let mutable findPointFromIdx = -1
         let mutable checkAgainstTempIdx = -1
@@ -245,7 +244,7 @@ module RhPnt =
     /// Culls points if they are to close to previous or next item
     /// Last and first points stay the same
     let cullDuplicatePointsInSeq (tolerance) (pts:Rarr<Point3d>)  = 
-        if pts.Count = 0 then RhinoScriptingException.Raise "RhPnt.cullDuplicatePointsInSeq empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.cullDuplicatePointsInSeq empty List of Points: pts"
         if pts.Count = 1 then
             pts
         else

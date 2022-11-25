@@ -1,6 +1,6 @@
 <!-- in VS Code press Ctrl + Shift + V to see a preview-->
-# Rhino.Scripting
-Rhino.Scripting is an implementation of the **RhinoScript** syntax in and for F# (and C#).  
+# Rhino.ScriptingFSharp
+Rhino.ScriptingFSharp is an implementation of the **RhinoScript** syntax in and for F# (and C#).  
 It enables the use of RhinoScript in F# and all the great coding experience that come with F#, like: 
 - automatic code completion while typing
 - automatic error checking and highlighting in the background 
@@ -33,13 +33,13 @@ First reference the assemblies.
 In an F# scripting editor do
 ```fsharp
 #r @"C:\Program Files\Rhino 7\System\RhinoCommon.dll"  // adapt path if needed
-#r @"D:\Git\Rhino.Scripting\src\bin\Debug\net472\Rhino.Scripting.dll"
+#r @"D:\Git\Rhino.ScriptingFSharp\src\bin\Debug\net472\Rhino.ScriptingFSharp.dll"
 ```   
 open modules 
 ```fsharp
 
 
-type rs = Rhino.Scripting  // type abbreviation  (alias) for RhinoScriptSyntax
+type rs = Rhino.ScriptingFSharp  // type abbreviation  (alias) for RhinoScriptSyntax
 ```
 then use any of the RhinoScript functions like you would in Python or VBScript.  
 The `CoerceXXXX` functions will help you create types if you are too lazy to fully specify them.
@@ -47,7 +47,7 @@ The `CoerceXXXX` functions will help you create types if you are too lazy to ful
 let pl = rhsy.CoercePlane(0 , 80 , 0) // makes World XY plane at point
 rhsy.AddText("Hello, Seff", pl, height = 50.)
 ```
-Screenshot from [Seff](https://github.com/goswinr/Seff.Rhino) Editor hosted in Rhino using Rhino.Scripting:
+Screenshot from [Seff](https://github.com/goswinr/Seff.Rhino) Editor hosted in Rhino using Rhino.ScriptingFSharp:
 ![Seff Editor Screenshot](Doc/HelloSeff.png)
 
 
@@ -131,7 +131,7 @@ rhsy.ObjectName (myLine, "myName")
 rhsy.SetUserText(myLine, "myKey", "myValue")
 ```
 
-All additional functionality is  directly in the `src` folder  files in [https://github.com/goswinr/Rhino.Scripting/tree/master/src](https://github.com/goswinr/Rhino.Scripting/tree/master/src).
+All additional functionality is  directly in the `src` folder  files in [https://github.com/goswinr/Rhino.ScriptingFSharp/tree/master/src](https://github.com/goswinr/Rhino.ScriptingFSharp/tree/master/src).
 
 ## Contributing
 Contributions are welcome even for small things like typos. If you have problems with this library please submit an issue.
