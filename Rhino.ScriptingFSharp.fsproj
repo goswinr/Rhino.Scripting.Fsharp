@@ -4,8 +4,8 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net48</TargetFramework> <!-- so it can be used in latest Rhino 7 too,  net48 needed since RhinoCommon.dll 7.5 -->
-    <UseWPF>true</UseWPF><!--for DispatcherSynchronizationContext in SyncRhino, and Seff editor Window (if available)-->
-    <UseWindowsForms>true</UseWindowsForms>   <!--to get screen resolution-->
+    <UseWPF>false</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>  <!--to get screen resolution, and file dialogs-->
     <LangVersion>preview</LangVersion>
     <OtherFlags>$(OtherFlags)--warnon:3390</OtherFlags>  <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
 
@@ -20,13 +20,13 @@
     <Title>Rhino.ScriptingFSharp</Title>
     <PackageId>Rhino.ScriptingFSharp</PackageId>
 
-    <Version>0.2.0</Version>
-    <AssemblyVersion>0.2.0</AssemblyVersion>
-    <FileVersion>0.2.0</FileVersion>
+    <Version>0.3.0</Version>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <FileVersion>0.3.0</FileVersion>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
 
     <Authors>GoswinR</Authors>
-    <Copyright>Goswin Rothenthal 2021</Copyright>
+    <Copyright>Goswin Rothenthal 2019</Copyright>
 
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
 
@@ -63,16 +63,12 @@
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
 	
-	<!--
-    <PackageReference Include="FsEx" Version="0.10.1" />
-	-->
-	<Reference Include="FsEx" HintPath="../FsEx/bin/Release/netstandard2.0/FsEx.dll" />	  
-	  
-    <!--    
-    <PackageReference Include="Rhino.ScriptingFSharp" Version="0.1.0" />    
-    -->    
-    <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />
-	  
+	  <!--
+	  <Reference Include="FsEx" HintPath="../FsEx/bin/Release/net472/FsEx.dll" />	  
+    <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />    
+	  -->  
+    <PackageReference Include="Rhino.Scripting" Version="0.3.0" />
+
   </ItemGroup>
 
   <ItemGroup>
