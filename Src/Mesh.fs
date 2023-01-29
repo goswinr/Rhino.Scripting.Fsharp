@@ -78,7 +78,7 @@ module AutoOpenMesh =
 
 
         /// Makes a closed loop of welded Quads, last Line is ignored, it is considered the same as the first one, (e.g. coming from closed Polyline)
-        static member MeshAddLoophWelded (m:Mesh, lns:Rarr<Line>) = 
+        static member MeshAddLoopWelded (m:Mesh, lns:Rarr<Line>) = 
             // add first face
             let ln0 = lns.[0]
             let s0 = ln0.From

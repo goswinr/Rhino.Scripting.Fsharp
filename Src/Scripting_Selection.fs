@@ -10,8 +10,6 @@ open FsEx
 open FsEx.SaveIgnore
 
 
-
-
 ///OptionalAttribute for member parameters
 type internal OPT = Runtime.InteropServices.OptionalAttribute
 
@@ -19,7 +17,7 @@ type internal OPT = Runtime.InteropServices.OptionalAttribute
 type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
 
 
-/// This module provides functions simlar to Rhino.ScriptingFSharp.GetObject(..)
+/// This module provides functions similar to Rhino.ScriptingFSharp.GetObject(..)
 /// This module is automatically opened when Rhino.ScriptingFSharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
@@ -37,9 +35,9 @@ module AutoOpenSelection =
     ///<param name="filter">(int) Optional, Default Value: <c>0</c>
     ///    The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joinded with '+'</param>
+    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="printCount">(bool) Optional, Default Value: <c>true</c> Print object count to command window</param>
-    ///<param name="includeReferences">(bool) Optional, Default Value: <c>false</c> Include refrence objects such as work session objects</param>
+    ///<param name="includeReferences">(bool) Optional, Default Value: <c>false</c> Include reference objects such as work session objects</param>
     ///<param name="includeLockedObjects">(bool) Optional, Default Value: <c>false</c> Include locked objects</param>
     ///<param name="includeLights">(bool) Optional, Default Value: <c>false</c> Include light objects</param>
     ///<param name="includeGrips">(bool) Optional, Default Value: <c>false</c> Include grips objects</param>
@@ -81,10 +79,10 @@ module AutoOpenSelection =
     ///<summary>Returns the same objects as in the last user interaction with the same prompt message
     /// If none found, Prompts user to pick or select one or more objects and remembers them.
     /// Call rs.ClearRememberedObjects() to clear the memory.</summary>
-    ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remeber objects</param>
+    ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remember objects</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joinded with '+'</param>
+    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="group">(bool) Optional, Default Value: <c>true</c>
     ///    Honor object grouping. If omitted and the user picks a group,
     ///    the entire group will be picked (True). Note, if filter is set to a
@@ -130,10 +128,10 @@ module AutoOpenSelection =
     ///<summary>Returns the same object as in the last user interaction with the same prompt message
     /// If none found, Prompts user to pick one object and remembers it.
     /// Call rs.ClearRememberedObjects() to clear the memory.</summary>
-    ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remeber object</param>
+    ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remember object</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joinded with '+'</param>
+    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="preselect">(bool) Optional, Default Value: <c>true</c>
     ///    Allow for the selection of pre-selected objects</param>
     ///<param name="select">(bool) Optional, Default Value: <c>false</c>

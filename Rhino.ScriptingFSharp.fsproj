@@ -31,7 +31,7 @@
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
 
     <Configuration>Release</Configuration>
-    <PlatformTarget>x64</PlatformTarget><!--  x64 is required e.g by Rhino, dont us just 'Platform' tag-->
+    <PlatformTarget>x64</PlatformTarget><!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
 
   </PropertyGroup>
 
@@ -47,7 +47,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
     <PackageReadmeFile>READMEnuget.md</PackageReadmeFile> <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
-    <PackageDescription>The full Rhino.Scripting libray and additional functionality for scripting Rhino3D with F#</PackageDescription>
+    <PackageDescription>The full Rhino.Scripting library and additional functionality for scripting Rhino3D with F#</PackageDescription>
     <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp nurbs geometry</PackageTags>
   </PropertyGroup>
 
@@ -64,16 +64,16 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
 	
 	  <!--
+    <PackageReference Include="Rhino.Scripting" Version="0.4.0" />
+	  -->  
 	  <Reference Include="FsEx" HintPath="../FsEx/bin/Release/net472/FsEx.dll" />	  
     <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />    
-	  -->  
-    <PackageReference Include="Rhino.Scripting" Version="0.3.0" />
 
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" /><!--PackagePath = "" makes the file availabe to nuget pack tool-->
+    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" /><!--PackagePath = "" makes the file available to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
 
 	<Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />

@@ -22,8 +22,8 @@ module AutoOpenBrep =
     ///<param name="width">(float) width = radius of slotted hole</param>
     ///<param name="height">(float) height of slotted hole volume</param>
     ///<returns>(Brep) Closed Brep Geometry.</returns>
-    static member CreateSlotedHoleVolume( plane:Plane, length, width, height) : Brep  = 
-        if length<width then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SlotedHole: length= %g must be more than width= %g" length width
+    static member CreateSlottedHoleVolume( plane:Plane, length, width, height) : Brep  = 
+        if length<width then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SlottedHole: length= %g must be more than width= %g" length width
         let root05  = sqrt 0.5
         let y05 = 0.5 * width
         let x1 =  0.5 * length
@@ -70,7 +70,7 @@ module AutoOpenBrep =
         Transform.PlaneToPlane (Plane.WorldXY, plane) |> c2.Transform |> ignore
         let rb = Brep.CreateFromLoft( [|c1;c2|], Point3d.Unset, Point3d.Unset, LoftType.Straight, false )
         if isNull rb || rb.Length <> 1  then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.*** Failed to Create loft part of  SlotedHole , at tolerance %f" Scripting.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.*** Failed to Create loft part of  SlottedHole , at tolerance %f" Scripting.Doc.ModelAbsoluteTolerance
         rb.[0].CapPlanarHoles(Scripting.Doc.ModelAbsoluteTolerance)
 
 
@@ -86,7 +86,7 @@ module AutoOpenBrep =
         Brep.CreateFromCylinder(cy, capBottom=true, capTop=true)
 
     ///<summary>Creates a Brep in the Shape of a Countersunk Screw Hole , 45 degrees slope
-    ///    a caped cone and a cylinder. one closed polysurface </summary>
+    ///    a caped cone and a cylinder. one closed Polysurface </summary>
     ///<param name="plane">(Plane) Origin is center of cone-base or head</param>
     ///<param name="outerDiameter">(float) diameter of cone base</param>
     ///<param name="innerDiameter">(float) Diameter of cylinder</param>
@@ -118,13 +118,13 @@ module AutoOpenBrep =
     ///<param name="height">(float) the hight to extrude along the Z axis of plane</param>
     ///<param name="extraHeightPerSide">(float) Optional, Default Value: <c>0.0</c> , extra extension of the extrusion on both sides </param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member CreateExrusionAtPlane(curveToExtrudeInWorldXY:Curve, plane:Plane, height, [<OPT;DEF(0.0)>]extraHeightPerSide:float) : Brep = 
+    static member CreateExtrusionAtPlane(curveToExtrudeInWorldXY:Curve, plane:Plane, height, [<OPT;DEF(0.0)>]extraHeightPerSide:float) : Brep = 
         let mutable pl = Plane(plane)
         if extraHeightPerSide <> 0.0 then
             pl.Origin <- pl.Origin - pl.ZAxis*extraHeightPerSide
         let xForm = Scripting.XformRotation1(Plane.WorldXY,pl)
         let c = curveToExtrudeInWorldXY.DuplicateCurve()
-        c.Transform(xForm) |> RhinoScriptingFSharpException.FailIfFalse "xForm in CreateExrusionAtPlane"
+        c.Transform(xForm) |> RhinoScriptingFSharpException.FailIfFalse "xForm in CreateExtrusionAtPlane"
         let h = extraHeightPerSide + height
         let brep = Surface.CreateExtrusion(c, pl.ZAxis * h )
                         .ToBrep()
@@ -142,17 +142,17 @@ module AutoOpenBrep =
     ///  This is an optional safety check that makes it twice as slow.
     ///  It ensures that the count of breps from  Brep.CreateBooleanIntersection is equal to subtractionLocations </param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member SubstractBrep (keep:Brep,trimmer:Brep,[<OPT;DEF(0)>]subtractionLocations:int)  :Brep = 
+    static member SubtractBrep (keep:Brep,trimmer:Brep,[<OPT;DEF(0)>]subtractionLocations:int)  :Brep = 
         let draw s b = Scripting.Ot.AddBrep(b)|> Scripting.setLayer s
         
         if not trimmer.IsSolid then
             draw "debug trimmer" trimmer
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference trimmer is NOT a closed polysurface"
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference trimmer is NOT a closed Polysurface"
         if not keep.IsSolid then
             draw "debug keep" keep
             Scripting.ZoomBoundingBox(keep.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference keep Volume is NOT a closed polysurface"
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference keep Volume is NOT a closed Polysurface"
 
         if subtractionLocations <> 0 then
             let xs = Brep.CreateBooleanIntersection (keep,trimmer,Scripting.Doc.ModelAbsoluteTolerance) // TODO expensive extra check
@@ -160,12 +160,12 @@ module AutoOpenBrep =
                 draw "debug trimmer no Intersection" trimmer
                 draw "debug keep no Intersection" keep
                 Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanIntersection check isnull, no intersection found, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
+                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanIntersection check is null, no intersection found, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
             if xs.Length <> subtractionLocations then
                 draw "debug trimer empty Intersection" trimmer
                 draw "debug keep empty Intersection" keep
                 Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanIntersection check returned %d breps instead of one , tolerance = %g" xs.Length Scripting.Doc.ModelAbsoluteTolerance
+                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanIntersection check returned %d breps instead of one , tolerance = %g" xs.Length Scripting.Doc.ModelAbsoluteTolerance
             for x in xs do x.Dispose()
 
         let bs =  Brep.CreateBooleanDifference(keep,trimmer,Scripting.Doc.ModelAbsoluteTolerance)
@@ -173,23 +173,23 @@ module AutoOpenBrep =
             draw "debug trimmer" trimmer
             draw "debug keep" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference is null, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference is null, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if bs.Length = 0 then
             draw "debug trimer for empty result" trimmer
             draw "debug keep for empty result" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference returned 0 breps instead of one , tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference returned 0 breps instead of one , tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if bs.Length <> 1 then
             bs |> Seq.iter (draw "debug more than one")
             draw "debug trimer for more than one" trimmer
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference returned %d breps instead of one , tolerance = %g" bs.Length Scripting.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference returned %d breps instead of one , tolerance = %g" bs.Length Scripting.Doc.ModelAbsoluteTolerance
         let brep = bs.[0]
         if subtractionLocations = 0 && brep.Vertices.Count = keep.Vertices.Count then // extra test if
             draw "debug trimmer same vertex count on  result" trimmer
             draw "debug keep same vertex count on  result" keep
             Scripting.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubstractBrep:CreateBooleanDifference returned same vertex count on input and output brep is this desired ?, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.SubtractBrep:CreateBooleanDifference returned same vertex count on input and output brep is this desired ?, tolerance = %g" Scripting.Doc.ModelAbsoluteTolerance
         if brep.SolidOrientation = BrepSolidOrientation.Inward then  brep.Flip()
         brep
 

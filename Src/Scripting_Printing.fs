@@ -15,7 +15,6 @@ open FsEx.SaveIgnore
 open FsEx.CompareOperators
 
 
-
 /// This module shadows the NiceString module from FsEx to include the special formatting for Rhino types.
 /// It also shadows the print and printFull from FsEx to include external formatter for Rhino
 [<AutoOpen>]
