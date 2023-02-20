@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFSharp
+﻿namespace Rhino.ScriptingFsharp
 
 open FsEx
 open System
@@ -66,5 +66,5 @@ module RhPlane =
     let inline rotateZ (angDegree:float) (pl:Plane) =   
         let mutable p = pl.Clone()
         if not <| p.Rotate(UtilMath.toRadians angDegree, Vector3d.ZAxis) then 
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
         p 

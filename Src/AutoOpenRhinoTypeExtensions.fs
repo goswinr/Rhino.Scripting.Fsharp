@@ -1,22 +1,22 @@
-﻿namespace Rhino.ScriptingFSharp
+﻿namespace Rhino.ScriptingFsharp
 
 open Rhino.Geometry
 
 
-/// Exception for Errors in script execution in Rhino.ScriptingFSharp Extensions
-type RhinoScriptingFSharpException (s:string) = 
+/// Exception for Errors in script execution in Rhino.ScriptingFsharp Extensions
+type RhinoScriptingFsharpException (s:string) = 
     inherit System.Exception(s)
 
     static member inline Raise msg = 
-        Printf.kprintf (fun s -> raise (new RhinoScriptingFSharpException(s))) msg
+        Printf.kprintf (fun s -> raise (new RhinoScriptingFsharpException(s))) msg
 
     static member inline FailIfFalse s b = 
-        if not b then raise (new RhinoScriptingFSharpException(s))
+        if not b then raise (new RhinoScriptingFsharpException(s))
 
 
 /// This module provides type extensions for Points , Vector,  Lines
 /// Mostly for conversion to other types
-/// This module is automatically opened when Rhino.ScriptingFSharp namespace is opened.
+/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenRhinoTypeExtensions = 
@@ -36,7 +36,7 @@ module AutoOpenRhinoTypeExtensions =
             try
                 Point3d(float x, float y, float z) 
             with e ->
-                RhinoScriptingFSharpException.Raise "Point3d.ofXYZmembers: %A could not be converted to a Point3d:\r\n%A" pt e
+                RhinoScriptingFsharpException.Raise "Point3d.ofXYZmembers: %A could not be converted to a Point3d:\r\n%A" pt e
 
     type Point3f with
 
@@ -52,7 +52,7 @@ module AutoOpenRhinoTypeExtensions =
             try
                 Point3f(float32 x, float32 y, float32 z) 
             with e ->
-                RhinoScriptingFSharpException.Raise "Point3f.ofXYZmembers: %A could not be converted to a Point3f:\r\n%A" pt e
+                RhinoScriptingFsharpException.Raise "Point3f.ofXYZmembers: %A could not be converted to a Point3f:\r\n%A" pt e
 
     type Vector3d with
 
@@ -69,14 +69,14 @@ module AutoOpenRhinoTypeExtensions =
             try
                 Vector3d(float x, float y, float z) 
             with e ->
-                RhinoScriptingFSharpException.Raise "Vector3d.ofXYZmembers: %A could not be converted to a Vector3d:\r\n%A" pt e
+                RhinoScriptingFsharpException.Raise "Vector3d.ofXYZmembers: %A could not be converted to a Vector3d:\r\n%A" pt e
 
         /// Unitizes the vector.
         /// Checks input length to be longer than  1e-9 units
         member v.Unitized = 
             let len = sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) // see Vec.unitize too
             if len > 1e-9 then v * (1./len)
-            else RhinoScriptingFSharpException.Raise "Vector3d.Unitized: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
+            else RhinoScriptingFsharpException.Raise "Vector3d.Unitized: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
 
         //[<Extension>]
         //Unitizes the vector , fails if input is of zero length
@@ -98,7 +98,7 @@ module AutoOpenRhinoTypeExtensions =
             try
                 Vector3f(float32 x, float32 y, float32 z) 
             with e ->
-                RhinoScriptingFSharpException.Raise "Vector3f.ofXYZmembers: %A could not be converted to a Vector3f:\r\n%A" pt e
+                RhinoScriptingFsharpException.Raise "Vector3f.ofXYZmembers: %A could not be converted to a Vector3f:\r\n%A" pt e
 
     type Line with
 

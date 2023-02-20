@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFSharp
+﻿namespace Rhino.ScriptingFsharp
 
 
 open FsEx
@@ -15,7 +15,7 @@ open Rhino.Geometry
 
 [<AutoOpen>] 
 /// This module provides curried F# functions for easy use with pipeline operator |>
-/// This module is automatically opened when Rhino.ScriptingFSharp namespace is opened.
+/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
 module AutoOpenCurried = 
 
   type Scripting with
@@ -34,7 +34,7 @@ module AutoOpenCurried =
     static member setLayers (layer:string) (objectIds:seq<Guid>) : unit = 
         Scripting.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
 
-///<summary>Modifies the layer of an object.</summary>
+    ///<summary>Modifies the layer of an object.</summary>
     ///<param name="layerIndex">(int) Index of layer in layer table</param>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
@@ -127,19 +127,19 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member appendtUserText(key:string) (value :string) (objectId:Guid) : unit = 
         if String.IsNullOrWhiteSpace key then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.appendtUserText key is String.IsNullOrWhiteSpace for value  %s on %s" value (toNiceString objectId)
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText key is String.IsNullOrWhiteSpace for value  %s on %s" value (toNiceString objectId)
         if isNull value then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.appendtUserText value is null  for key %s on %s" key (toNiceString objectId)
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText value is null  for key %s on %s" key (toNiceString objectId)
         let obj = Scripting.CoerceRhinoObject(objectId)
         let existing = obj.Attributes.GetUserString(key)
         if isNull existing then // only if a value already exist  appending a white space  or empty string is OK too
             if String.IsNullOrWhiteSpace value  then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.appendtUserText failed on %s for key '%s' but value IsNullOrWhiteSpace" (toNiceString objectId) key
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' but value IsNullOrWhiteSpace" (toNiceString objectId) key
             if not <| obj.Attributes.SetUserString(key, value) then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
         else
             if not <| obj.Attributes.SetUserString(key,  existing + value ) then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
 
     ///<summary>Returns user text stored on an object, fails if non existing.</summary>
     ///<param name="key">(string) The key name</param>
@@ -183,12 +183,12 @@ module AutoOpenCurried =
         for  i = 0 to usg.Count-1 do
             let key = usg.GetKey(i)
             if not <|de.Geometry.SetUserString(key,sc.Geometry.GetUserString(key)) then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchAllUserText: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllUserText: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
         let usa = sc.Attributes.GetUserStrings()
         for  i = 0 to usa.Count-1 do
             let key = usa.GetKey(i)
             if not <|de.Attributes.SetUserString(key,sc.Attributes.GetUserString(key))then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchAllUserText: Attributes failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllUserText: Attributes failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
 
     ///<summary>Copies the value for a given user text key from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take all keys from </param>
@@ -198,7 +198,7 @@ module AutoOpenCurried =
     static member matchUserText (sourceId:Guid) ( key:string) (targetId:Guid) : unit= 
         let de = Scripting.CoerceRhinoObject(targetId)
         let v = Scripting.GetUserText(sourceId,key)
-        if not <| de.Attributes.SetUserString(key,v) then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchUserText: failed to set key '%s' to '%s' on %s" key v (toNiceString targetId)
+        if not <| de.Attributes.SetUserString(key,v) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchUserText: failed to set key '%s' to '%s' on %s" key v (toNiceString targetId)
 
     ///<summary>Copies the object name from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take the name from </param>
@@ -209,10 +209,10 @@ module AutoOpenCurried =
         let de = Scripting.CoerceRhinoObject(targetId)
         let n = sc.Attributes.Name
         if isNull n then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchName: source object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchName: source object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
         de.Attributes.Name <- n
         if not <| de.CommitChanges() then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchName failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchName failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
     ///<summary>Puts target object on the same Layer as a source object .</summary>
     ///<param name="sourceId">(Guid) The object to take the layer from </param>
@@ -223,7 +223,7 @@ module AutoOpenCurried =
         let de = Scripting.CoerceRhinoObject(targetId)
         de.Attributes.LayerIndex <- sc.Attributes.LayerIndex
         if not <| de.CommitChanges() then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchLayer failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchLayer failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
 
     ///<summary>Matches all properties( layer, name, user text, ....) from a source object to a target object by duplicating attributes.
@@ -236,12 +236,12 @@ module AutoOpenCurried =
         let de = Scripting.CoerceRhinoObject(targetId)
         de.Attributes <- sc.Attributes.Duplicate()
         if not <| de.CommitChanges() then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchAllProperties failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllProperties failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
         let usg = sc.Geometry.GetUserStrings()
         for  i = 0 to usg.Count-1 do
             let key = usg.GetKey(i)
             if not <|de.Geometry.SetUserString(key,sc.Geometry.GetUserString(key)) then
-                RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.matchAllProperties: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllProperties: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
     (*
     TODO delete , "draw" should only refer to display pipline
     //<summary>Draws any Geometry object to a given or current layer.</summary>
@@ -267,7 +267,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member transformGeo (matrix:Transform) (geo:GeometryBase) : unit = 
         if not <| geo.Transform(matrix) then 
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.scale failed. geo:'%s' matrix:'%s' " (toNiceString geo) matrix.ToNiceString 
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.scale failed. geo:'%s' matrix:'%s' " (toNiceString geo) matrix.ToNiceString 
         if matrix.SimilarityType = TransformSimilarityType.OrientationReversing then 
             match geo with 
             | :? Brep as g -> if g.IsSolid then g.Flip()
@@ -287,7 +287,7 @@ module AutoOpenCurried =
         let xf = Transform.Scale(plane, scale, scale, scale)
         let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true)
         if res = Guid.Empty then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.scale failed. objectId:'%s' origin:'%s' scale:'%g'" (toNiceString objectId) origin.ToNiceString scale
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.scale failed. objectId:'%s' origin:'%s' scale:'%g'" (toNiceString objectId) origin.ToNiceString scale
 
 
     ///<summary>Moves a single object.</summary>
@@ -298,7 +298,7 @@ module AutoOpenCurried =
         let xf = Transform.Translation(translation)
         let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.move to from objectId:'%s' translation:'%A'" (toNiceString objectId) translation
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.move to from objectId:'%s' translation:'%A'" (toNiceString objectId) translation
 
     ///<summary>Moves a single object in X Direction.</summary>
     ///<param name="translationX">(float) movement in X direction</param>
@@ -308,7 +308,7 @@ module AutoOpenCurried =
         let xf = Transform.Translation(Vector3d(translationX, 0.0, 0.0 ))
         let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveX to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationX
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveX to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationX
 
     ///<summary>Moves a single object in Y Direction.</summary>
     ///<param name="translationY">(float) movement in Y direction</param>
@@ -318,7 +318,7 @@ module AutoOpenCurried =
         let xf = Transform.Translation(Vector3d(0.0, translationY, 0.0))
         let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveY to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationY
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveY to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationY
 
     ///<summary>Moves a single object in Z Direction.</summary>
     ///<param name="translationZ">(float) movement in Z direction</param>
@@ -328,7 +328,7 @@ module AutoOpenCurried =
         let xf = Transform.Translation(Vector3d(0.0, 0.0, translationZ))
         let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveZ to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationZ
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveZ to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationZ
 
 
     ///<summary>Moves a Geometry.</summary>
@@ -337,7 +337,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeo (translation:Vector3d)  (geo:GeometryBase): unit = 
         if not <|  geo.Translate translation then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveGeo to from geo:'%A' translation:'%A'"  geo translation
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeo to from geo:'%A' translation:'%A'"  geo translation
 
     ///<summary>Moves a Geometry in X Direction.</summary>
     ///<param name="translationX">(float) movement in X direction</param>
@@ -345,7 +345,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoX (translationX:float)  (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(translationX, 0.0, 0.0 )) then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveGeoX to from geo:'%A' translation:'%f'"  geo translationX
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoX to from geo:'%A' translation:'%f'"  geo translationX
 
     ///<summary>Moves a Geometry in Y Direction.</summary>
     ///<param name="translationY">(float) movement in Y direction</param>
@@ -353,7 +353,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoY (translationY:float)  (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(0.0, translationY, 0.0)) then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveGeoY to from geo:'%A' translation:'%f'"  geo translationY
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoY to from geo:'%A' translation:'%f'"  geo translationY
 
     ///<summary>Moves a Geometry in Z Direction.</summary>
     ///<param name="translationZ">(float) movement in Z direction</param>
@@ -361,7 +361,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoZ (translationZ:float) (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(0.0, 0.0, translationZ)) then
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.moveGeoZ to from geo:'%A' translation:'%f'"  geo translationZ
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoZ to from geo:'%A' translation:'%f'"  geo translationZ
     
     ///<summary>Enables or disables a Curve object's annotation arrows.
     /// The size of the arrow cannot be changed. For an adjustable arrow size use a dimension leader object.

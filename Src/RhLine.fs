@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFSharp
+﻿namespace Rhino.ScriptingFsharp
 
 open Rhino
 open Rhino.Geometry
@@ -29,7 +29,7 @@ module RhLine =
     let offset amount (ln:Line) = 
         let v = ln.Direction
         let lenXY = sqrt(v.X*v.X + v.Y*v.Y)
-        if lenXY  < 1e-9 then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString
+        if lenXY  < 1e-9 then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString
         let ov = Vector3d(-v.Y / lenXY  , v.X / lenXY , 0.0) // unitized, horizontal , perpendicular  vector
         let shift = ov * amount
         Line(ln.From + shift, ln.To + shift)
@@ -38,7 +38,7 @@ module RhLine =
     /// includes start and endpoint of line
     let divide (segments:int) (ln:Line) = 
         match segments with
-        | x when x < 1 -> RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
+        | x when x < 1 -> RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
         | 1 -> [|ln.From;  ln.To|]
         | k ->
             let r = Array.zeroCreate (k+1)
@@ -57,11 +57,11 @@ module RhLine =
     /// Returns point on lnB (the last parameter)
     let intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d = 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
-            RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
         b
 
     /// Finds intersection of two Infinite Lines.
@@ -71,7 +71,7 @@ module RhLine =
     /// Considers Lines infinite
     let intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         a,b
@@ -96,7 +96,7 @@ module RhLine =
     /// Considers Lines finite
     let intersectFinite (lnA:Line) (lnB:Line) : Point3d[]= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingFSharpException.Raise "Rhino.ScriptingFSharp.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         else
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb
@@ -132,5 +132,5 @@ module RhLine =
         if ln.Transform(xForm) then
             ln
         else
-            RhinoScriptingFSharpException.Raise "Line.transform failed on line %A with  %A" line xForm
+            RhinoScriptingFsharpException.Raise "Line.transform failed on line %A with  %A" line xForm
 
