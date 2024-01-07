@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open System
 open System.Collections.Generic
@@ -64,7 +64,7 @@ module AutoOpenPrinting =
 
 
 
-  type Rhino.Scripting with  
+  type RhinoScriptSyntax with  
     //---The members below are in this file only for development. This brings acceptable tooling performance (e.g. autocomplete) 
     //---Before compiling the script combineIntoOneFile.fsx is run to combine them all into one file. 
     //---So that all members are visible in C# and Ironpython too.

@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open System
 open Rhino
@@ -89,9 +89,9 @@ module RhPnt =
     let inline translateZ (zShift:float) (pt:Point3d ) = 
         Point3d(pt.X, pt.Y, pt.Z+zShift)
 
-    /// Snap to point if within Scripting.Doc.ModelAbsoluteTolerance
+    /// Snap to point if within RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
     let snapIfClose (snapTo:Point3d) (pt:Point3d) = 
-        if (snapTo-pt).Length < Scripting.Doc.ModelAbsoluteTolerance then snapTo else pt
+        if (snapTo-pt).Length < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance then snapTo else pt
 
     /// Every line has a normal vector in XY Plane.
     /// If line is vertical then XAxis is returned
@@ -108,7 +108,7 @@ module RhPnt =
     /// Offsets two points by two given distances.
     /// The fist distance (distHor) is applied in XY Plane
     /// The second distance (distNormal) is applied perpendicular to the line (made by the two points) and perpendicular to the horizontal offset direction.
-    /// this is in Wolrd.Z direction if both points are at the same Z level.
+    /// this is in World.Z direction if both points are at the same Z level.
     /// If points are closer than 1e-6 units the World.XAxis is used as first direction and World.ZAxis as second direction.
     let offsetTwoPt(    fromPt:Point3d,
                         toPt:Point3d,
@@ -156,10 +156,10 @@ module RhPnt =
 
             let sp = Vector3d.CrossProduct(vp, n) |> RhVec.setLength prevDist
             let sn = Vector3d.CrossProduct(n, vn) |> RhVec.setLength nextDist
-            let lp = Line(thisPt + sp , vp)  //|>! (Scripting.Doc.Objects.AddLine>>ignore)
-            let ln = Line(thisPt + sn , vn)  //|>! (Scripting.Doc.Objects.AddLine>> ignore)
+            let lp = Line(thisPt + sp , vp)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>>ignore)
+            let ln = Line(thisPt + sn , vn)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>> ignore)
             let ok, tp , tn = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
-            if not ok then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+            if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
     /// returns angle in degree at mid point
@@ -267,7 +267,7 @@ module RhPnt =
     /// 'tolGap' is the maximum allowable gap between the start and the endpoint of to segments.
     /// Search starts from the segment with the most points.
     /// Both start and end point of each point list is checked for adjacency
-    let findContinousPoints (tolGap:float)  (ptss: Rarr<Rarr<Point3d>>)  = 
+    let findContinuousPoints (tolGap:float)  (ptss: Rarr<Rarr<Point3d>>)  = 
         let i =  ptss |> Rarr.maxIndBy Rarr.length
         let res = ptss.Pop(i)
         let mutable loop = true

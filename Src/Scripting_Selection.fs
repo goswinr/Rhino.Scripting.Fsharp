@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open System
 open System.Collections.Generic
@@ -28,14 +28,14 @@ module AutoOpenSelection =
   
   let internal rememberedObjects = Dict<string,Rarr<Guid>>()
 
-  type Scripting with   
+  type RhinoScriptSyntax with   
     
 
     ///<summary>Returns identifiers of all objects in the current model or paper space that are not hidden, not locked nor on turned off layers.</summary>
     ///<param name="filter">(int) Optional, Default Value: <c>0</c>
     ///    The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
+    ///    several different kinds of geometry. use the RhinoScriptSyntax.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="printCount">(bool) Optional, Default Value: <c>true</c> Print object count to command window</param>
     ///<param name="includeReferences">(bool) Optional, Default Value: <c>false</c> Include reference objects such as work session objects</param>
     ///<param name="includeLockedObjects">(bool) Optional, Default Value: <c>false</c> Include locked objects</param>
@@ -49,10 +49,10 @@ module AutoOpenSelection =
                                     [<OPT;DEF(false)>]includeLights:bool,
                                     [<OPT;DEF(false)>]includeGrips:bool) : Guid Rarr = 
         let viewId = // only get object from model space if current or current page
-            if Scripting.Doc.Views.ActiveView :? Display.RhinoPageView then Scripting.Doc.Views.ActiveView.MainViewport.Id
+            if RhinoScriptSyntax.Doc.Views.ActiveView :? Display.RhinoPageView then RhinoScriptSyntax.Doc.Views.ActiveView.MainViewport.Id
             else Guid.Empty
         let Vis = new Collections.Generic.HashSet<int>()
-        for layer in Scripting.Doc.Layers do
+        for layer in RhinoScriptSyntax.Doc.Layers do
             if not layer.IsDeleted && layer.IsVisible then
                 Vis.Add(layer.Index) |> ignore
         let it = DocObjects.ObjectEnumeratorSettings()
@@ -65,14 +65,14 @@ module AutoOpenSelection =
         it.ObjectTypeFilter <- ObjectFilterEnum.GetFilterEnum (filter)
         it.DeletedObjects <- false            
         //it.VisibleFilter <- true
-        let objects = Scripting.Doc.Objects.GetObjectList(it)
+        let objects = RhinoScriptSyntax.Doc.Objects.GetObjectList(it)
         let objectIds = Rarr()
         for ob in objects do
             if ob.Attributes.ViewportId = viewId then // only get object from model space if current or current page
                 if Vis.Contains(ob.Attributes.LayerIndex) then
                         objectIds.Add(ob.Id)
         if printCount then
-            Scripting.PrintfnBlue "ShownObjects found %s"  (Scripting.ObjectDescription(objectIds))
+            RhinoScriptSyntax.PrintfnBlue "ShownObjects found %s"  ( RhinoScriptSyntax.ObjectDescription(objectIds))
         objectIds
 
     
@@ -82,7 +82,7 @@ module AutoOpenSelection =
     ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remember objects</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
+    ///    several different kinds of geometry. use the RhinoScriptSyntax.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="group">(bool) Optional, Default Value: <c>true</c>
     ///    Honor object grouping. If omitted and the user picks a group,
     ///    the entire group will be picked (True). Note, if filter is set to a
@@ -114,13 +114,13 @@ module AutoOpenSelection =
         try
             let objectIds = rememberedObjects.[message] 
             if printCount then  // this print statement also raises an exception if object does not exist to trigger reselection
-                Scripting.PrintfnBlue "GetObjectsAndRemember for '%s': %s" message (Scripting.ObjectDescription(objectIds))
-            elif objectIds |> Rarr.exists ( fun g -> let o =  Scripting.Doc.Objects.FindId(g) in isNull o || o.IsDeleted ) then 
+                RhinoScriptSyntax.PrintfnBlue "GetObjectsAndRemember for '%s': %s" message ( RhinoScriptSyntax.ObjectDescription(objectIds))
+            elif objectIds |> Rarr.exists ( fun g -> let o =  RhinoScriptSyntax.Doc.Objects.FindId(g) in isNull o || o.IsDeleted ) then 
                 fail() // to trigger reselection if object does not exist anymore          
             objectIds
         with e ->
             //Printf.lightGray "%A" e
-            let ids = Scripting.GetObjects(message, filter, group, preselect, select, objects, minimumCount, maximumCount, printCount, customFilter)
+            let ids = RhinoScriptSyntax.GetObjects(message, filter, group, preselect, select, objects, minimumCount, maximumCount, printCount, customFilter)
             rememberedObjects.[message] <- ids
             ids
 
@@ -131,7 +131,7 @@ module AutoOpenSelection =
     ///<param name="message">(string) A prompt or message, should be unique, this will be the key in dictionary to remember object</param>
     ///<param name="filter">(int) Optional, The type(s) of geometry (points, Curves, Surfaces, Meshes,...)
     ///    that can be selected. Object types can be added together to filter
-    ///    several different kinds of geometry. use the Scripting.Filter enum to get values, they can be joined with '+'</param>
+    ///    several different kinds of geometry. use the RhinoScriptSyntax.Filter enum to get values, they can be joined with '+'</param>
     ///<param name="preselect">(bool) Optional, Default Value: <c>true</c>
     ///    Allow for the selection of pre-selected objects</param>
     ///<param name="select">(bool) Optional, Default Value: <c>false</c>
@@ -149,17 +149,17 @@ module AutoOpenSelection =
         try
             let objectId = rememberedObjects.[message].First // this may raises an exception if the key does  not exist, to trigger reselection
             if printDescr then 
-                Scripting.PrintfnBlue "GetObjectAndRemember for '%s': one %s" message (Scripting.ObjectDescription(objectId)) // this print statement also raises an exception if guid object does not exist, to trigger reselection
-            elif (let o = Scripting.Doc.Objects.FindId(objectId) in isNull o || o.IsDeleted)  then 
+                RhinoScriptSyntax.PrintfnBlue "GetObjectAndRemember for '%s': one %s" message ( RhinoScriptSyntax.ObjectDescription(objectId)) // this print statement also raises an exception if guid object does not exist, to trigger reselection
+            elif (let o = RhinoScriptSyntax.Doc.Objects.FindId(objectId) in isNull o || o.IsDeleted)  then 
                 fail() // to trigger reselection if object does not exist anymore  
             objectId
         with e ->
             Printf.lightGray "%A" e
-            let id = Scripting.GetObject(message, filter,  preselect, select,  customFilter, subObjects=false)
+            let id = RhinoScriptSyntax.GetObject(message, filter,  preselect, select,  customFilter, subObjects=false)
             rememberedObjects.[message] <- Rarr.singleton id
             id
 
     ///<summary>Clears all remembered objects form internal Dictionary that where added via  rs.GetObjectAndRemember() or rs.GetObjectsAndRemember()</summary>
     static member ClearRememberedObjects()  : unit = 
-        Scripting.PrintfGray "Cleared %d remembered Selection Sets" rememberedObjects.Count
+        RhinoScriptSyntax.PrintfGray "Cleared %d remembered Selection Sets" rememberedObjects.Count
         rememberedObjects.Clear()

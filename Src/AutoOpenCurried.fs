@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 
 open FsEx
@@ -11,77 +11,75 @@ open Rhino.Geometry
 //open System.Xml.Schema
 
 
-
-
-[<AutoOpen>] 
 /// This module provides curried F# functions for easy use with pipeline operator |>
 /// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+[<AutoOpen>] 
 module AutoOpenCurried = 
 
-  type Scripting with
+  type RhinoScriptSyntax with
 
     ///<summary>Modifies the layer of an object, creates layer if not yet existing.</summary>
     ///<param name="layer">(string) Name of layer or empty string for current layer</param>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setLayer (layer:string) (objectId:Guid) : unit = 
-        Scripting.ObjectLayer(objectId, layer, createLayerIfMissing=true)
+        RhinoScriptSyntax.ObjectLayer(objectId, layer, createLayerIfMissing=true)
 
     ///<summary>Modifies the layer of several objects, creates layer if not yet existing.</summary>
     ///<param name="layer">(string) Name of layer or empty string for current layer</param>
     ///<param name="objectIds">(Guid seq) The identifiers of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setLayers (layer:string) (objectIds:seq<Guid>) : unit = 
-        Scripting.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
+        RhinoScriptSyntax.ObjectLayer(objectIds, layer, createLayerIfMissing=true)
 
     ///<summary>Modifies the layer of an object.</summary>
     ///<param name="layerIndex">(int) Index of layer in layer table</param>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setLayerIndex (layerIndex:int) (objectId:Guid) : unit = 
-        Scripting.ObjectLayer(objectId, layerIndex)
+        RhinoScriptSyntax.ObjectLayer(objectId, layerIndex)
 
     ///<summary>Modifies the layer of several objects.</summary>
     ///<param name="layerIndex">(int) Index of layer in layer table</param>
     ///<param name="objectIds">(Guid seq) The identifiers of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setLayersIndex (layerIndex:int) (objectIds:seq<Guid>) : unit = 
-        Scripting.ObjectLayer(objectIds, layerIndex)
+        RhinoScriptSyntax.ObjectLayer(objectIds, layerIndex)
 
     ///<summary>Returns the full layer-name of an object.
     /// parent layers are separated by <c>::</c>.</summary>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(string) The object's current layer.</returns>
     static member getLayer (objectId:Guid) : string = 
-        Scripting.ObjectLayer(objectId)
+        RhinoScriptSyntax.ObjectLayer(objectId)
 
     ///<summary>Returns the short layer of an object.
     ///    Without Parent Layers.</summary>
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(string) The object's current layer.</returns>
     static member getLayerShort (objectId:Guid) : string = 
-        Scripting.ObjectLayerShort(objectId)
+        RhinoScriptSyntax.ObjectLayerShort(objectId)
 
     ///<summary>Sets the name of an object.</summary>
     ///<param name="name">(string) The new object name.</param>
     ///<param name="objectId">(Guid)Id of object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setName (name:string) (objectId:Guid) : unit = 
-        Scripting.ObjectName(objectId, name)
+        RhinoScriptSyntax.ObjectName(objectId, name)
 
     ///<summary>Sets the name of several objects.</summary>
     ///<param name="name">(string) The new object name.</param>
     ///<param name="objectIds">(Guid seq)Ids of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setNames (name:string) (objectIds:seq<Guid>) : unit = 
-        Scripting.ObjectName(objectIds, name)
+        RhinoScriptSyntax.ObjectName(objectIds, name)
 
 
     ///<summary>Returns the name of an object or "" if none given.</summary>
     ///<param name="objectId">(Guid)Id of object</param>
     ///<returns>(string) The current object name, empty string if no name given .</returns>
     static member getName (objectId:Guid) : string = 
-        Scripting.ObjectName(objectId)
+        RhinoScriptSyntax.ObjectName(objectId)
 
 
     ///<summary>Sets the Color of an object.</summary>
@@ -89,64 +87,64 @@ module AutoOpenCurried =
     ///<param name="objectId">(Guid)Id of object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setColor(color:Drawing.Color) (objectId:Guid) : unit = 
-        Scripting.ObjectColor(objectId, color)
+        RhinoScriptSyntax.ObjectColor(objectId, color)
 
     ///<summary>Sets the Color of several objects.</summary>
     ///<param name="color">(Drawing.Color) The new object color.</param>
     ///<param name="objectIds">(Guid seq)Id of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setColors(color:Drawing.Color) (objectIds:seq<Guid>) : unit = 
-        Scripting.ObjectColor(objectIds, color)
+        RhinoScriptSyntax.ObjectColor(objectIds, color)
 
     ///<summary>Returns the color of an object .</summary>
     ///<param name="objectId">(Guid)Id of object</param>
     ///<returns>(string) The current object color.</returns>
     static member getColor (objectId:Guid) : Drawing.Color = 
-        Scripting.ObjectColor(objectId)
+        RhinoScriptSyntax.ObjectColor(objectId)
 
     ///<summary>Sets a user text stored on an object.</summary>
     ///<param name="key">(string) The key name to set</param>
-    ///<param name="value">(string) The string value to set. Cannot be empty string. use Scripting.DeleteUserText to delete keys</param>
+    ///<param name="value">(string) The string value to set. Cannot be empty string. use RhinoScriptSyntax.DeleteUserText to delete keys</param>
     ///<param name="objectId">(Guid) The object's identifier</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setUserText( key:string) ( value :string) (objectId:Guid) : unit = 
-        Scripting.SetUserText(objectId, key, value)
+        RhinoScriptSyntax.SetUserText(objectId, key, value)
 
     ///<summary>Sets a user text stored on several objects.</summary>
     ///<param name="key">(string) The key name to set</param>
-    ///<param name="value">(string) The string value to set. Cannot be empty string. use Scripting.DeleteUserText to delete keys</param>
+    ///<param name="value">(string) The string value to set. Cannot be empty string. use RhinoScriptSyntax.DeleteUserText to delete keys</param>
     ///<param name="objectIds">(Guid seq) The identifiers of several objects</param>
     ///<returns>(unit) void, nothing.</returns>
     static member setUserTexts( key:string) ( value :string) (objectIds:seq<Guid>) : unit = 
-        Scripting.SetUserText(objectIds, key, value)
+        RhinoScriptSyntax.SetUserText(objectIds, key, value)
 
     ///<summary>Append a string to a possibly already existing user-text value.</summary>
     ///<param name="key">(string) The key name to set</param>
-    ///<param name="value">(string) The string value to append. Cannot be empty string. use Scripting.DeleteUserText to delete keys</param>
+    ///<param name="value">(string) The string value to append. Cannot be empty string. use RhinoScriptSyntax.DeleteUserText to delete keys</param>
     ///<param name="objectId">(Guid) The identifier of the objects</param>
     ///<returns>(unit) void, nothing.</returns>
-    static member appendtUserText(key:string) (value :string) (objectId:Guid) : unit = 
+    static member appendUserText(key:string) (value :string) (objectId:Guid) : unit = 
         if String.IsNullOrWhiteSpace key then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText key is String.IsNullOrWhiteSpace for value  %s on %s" value (toNiceString objectId)
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.appendUserText key is String.IsNullOrWhiteSpace for value  %s on %s" value (toNiceString objectId)
         if isNull value then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText value is null  for key %s on %s" key (toNiceString objectId)
-        let obj = Scripting.CoerceRhinoObject(objectId)
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.appendUserText value is null  for key %s on %s" key (toNiceString objectId)
+        let obj = RhinoScriptSyntax.CoerceRhinoObject(objectId)
         let existing = obj.Attributes.GetUserString(key)
         if isNull existing then // only if a value already exist  appending a white space  or empty string is OK too
             if String.IsNullOrWhiteSpace value  then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' but value IsNullOrWhiteSpace" (toNiceString objectId) key
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.appendUserText failed on %s for key '%s' but value IsNullOrWhiteSpace" (toNiceString objectId) key
             if not <| obj.Attributes.SetUserString(key, value) then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.appendUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
         else
             if not <| obj.Attributes.SetUserString(key,  existing + value ) then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.appendtUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.appendUserText failed on %s for key '%s' and value '%s'" (toNiceString objectId) key value
 
     ///<summary>Returns user text stored on an object, fails if non existing.</summary>
     ///<param name="key">(string) The key name</param>
     ///<param name="objectId">(Guid) The object's identifies</param>
     ///<returns>(string) if key is specified, the associated value,fails if non existing.</returns>
     static member getUserText( key:string) (objectId:Guid) : string = 
-        Scripting.GetUserText(objectId, key)
+        RhinoScriptSyntax.GetUserText(objectId, key)
 
     ///<summary>Checks if the user text stored on an object matches a given string, fails if non existing.</summary>
     ///<param name="key">(string) The key name</param>
@@ -154,7 +152,7 @@ module AutoOpenCurried =
     ///<param name="objectId">(Guid) The object's identifies</param>
     ///<returns>(string) if key is specified, the associated value,fails if non existing.</returns>
     static member isUserTextValue( key:string) (valueToMatch:string) (objectId:Guid) : bool = 
-        valueToMatch = Scripting.GetUserText(objectId, key)
+        valueToMatch = RhinoScriptSyntax.GetUserText(objectId, key)
 
 
     ///<summary>Checks if a User Text key is stored on an object.</summary>
@@ -162,14 +160,14 @@ module AutoOpenCurried =
     ///<param name="objectId">(Guid) The object's identifies</param>
     ///<returns>(bool) if key exist true.</returns>
     static member hasUserText( key:string) (objectId:Guid) : bool = 
-        Scripting.HasUserText(objectId, key)
+        RhinoScriptSyntax.HasUserText(objectId, key)
 
     ///<summary>Returns user text stored on an object, returns Option.None if non existing.</summary>
     ///<param name="key">(string) The key name</param>
     ///<param name="objectId">(Guid) The object's identifies</param>
     ///<returns>(string Option) if key is specified, Some(value) else None .</returns>
     static member tryGetUserText( key:string) (objectId:Guid) : string option= 
-        Scripting.TryGetUserText(objectId, key)
+        RhinoScriptSyntax.TryGetUserText(objectId, key)
 
     ///<summary>Copies all user text keys and values from  one object to another
     ///from both Geometry and Object.Attributes. Existing values are overwritten.</summary>
@@ -177,18 +175,18 @@ module AutoOpenCurried =
     ///<param name="targetId">(Guid) The object to write  all keys to </param>
     ///<returns>(unit) void, nothing.</returns>
     static member matchAllUserText (sourceId:Guid) (targetId:Guid) : unit= 
-        let sc = Scripting.CoerceRhinoObject(sourceId)
-        let de = Scripting.CoerceRhinoObject(targetId)
+        let sc = RhinoScriptSyntax.CoerceRhinoObject(sourceId)
+        let de = RhinoScriptSyntax.CoerceRhinoObject(targetId)
         let usg = sc.Geometry.GetUserStrings()
         for  i = 0 to usg.Count-1 do
             let key = usg.GetKey(i)
             if not <|de.Geometry.SetUserString(key,sc.Geometry.GetUserString(key)) then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllUserText: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchAllUserText: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
         let usa = sc.Attributes.GetUserStrings()
         for  i = 0 to usa.Count-1 do
             let key = usa.GetKey(i)
             if not <|de.Attributes.SetUserString(key,sc.Attributes.GetUserString(key))then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllUserText: Attributes failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchAllUserText: Attributes failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
 
     ///<summary>Copies the value for a given user text key from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take all keys from </param>
@@ -196,34 +194,34 @@ module AutoOpenCurried =
     ///<param name="targetId">(Guid) The object to write  all keys to </param>
     ///<returns>(unit) void, nothing.</returns>
     static member matchUserText (sourceId:Guid) ( key:string) (targetId:Guid) : unit= 
-        let de = Scripting.CoerceRhinoObject(targetId)
-        let v = Scripting.GetUserText(sourceId,key)
-        if not <| de.Attributes.SetUserString(key,v) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchUserText: failed to set key '%s' to '%s' on %s" key v (toNiceString targetId)
+        let de = RhinoScriptSyntax.CoerceRhinoObject(targetId)
+        let v = RhinoScriptSyntax.GetUserText(sourceId,key)
+        if not <| de.Attributes.SetUserString(key,v) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchUserText: failed to set key '%s' to '%s' on %s" key v (toNiceString targetId)
 
     ///<summary>Copies the object name from a source object to a target object.</summary>
     ///<param name="sourceId">(Guid) The object to take the name from </param>
     ///<param name="targetId">(Guid) The object to write the name to </param>
     ///<returns>(unit) void, nothing.</returns>
     static member matchName (sourceId:Guid) (targetId:Guid) : unit = 
-        let sc = Scripting.CoerceRhinoObject(sourceId)
-        let de = Scripting.CoerceRhinoObject(targetId)
+        let sc = RhinoScriptSyntax.CoerceRhinoObject(sourceId)
+        let de = RhinoScriptSyntax.CoerceRhinoObject(targetId)
         let n = sc.Attributes.Name
         if isNull n then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchName: source object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchName: source object %s has no name. Targets name: '%s'" (toNiceString sourceId) de.Attributes.Name
         de.Attributes.Name <- n
         if not <| de.CommitChanges() then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchName failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchName failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
     ///<summary>Puts target object on the same Layer as a source object .</summary>
     ///<param name="sourceId">(Guid) The object to take the layer from </param>
     ///<param name="targetId">(Guid) The object to change the layer</param>
     ///<returns>(unit) void, nothing.</returns>
     static member matchLayer (sourceId:Guid) (targetId:Guid) : unit = 
-        let sc = Scripting.CoerceRhinoObject(sourceId)
-        let de = Scripting.CoerceRhinoObject(targetId)
+        let sc = RhinoScriptSyntax.CoerceRhinoObject(sourceId)
+        let de = RhinoScriptSyntax.CoerceRhinoObject(targetId)
         de.Attributes.LayerIndex <- sc.Attributes.LayerIndex
         if not <| de.CommitChanges() then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchLayer failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchLayer failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
 
 
     ///<summary>Matches all properties( layer, name, user text, ....) from a source object to a target object by duplicating attributes.
@@ -232,24 +230,24 @@ module AutoOpenCurried =
     ///<param name="targetId">(Guid) The object to write  all keys to </param>
     ///<returns>(unit) void, nothing.</returns>
     static member matchAllProperties (sourceId:Guid) (targetId:Guid) : unit = 
-        let sc = Scripting.CoerceRhinoObject(sourceId)
-        let de = Scripting.CoerceRhinoObject(targetId)
+        let sc = RhinoScriptSyntax.CoerceRhinoObject(sourceId)
+        let de = RhinoScriptSyntax.CoerceRhinoObject(targetId)
         de.Attributes <- sc.Attributes.Duplicate()
         if not <| de.CommitChanges() then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllProperties failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchAllProperties failed from %s on %s" (toNiceString sourceId) (toNiceString targetId)
         let usg = sc.Geometry.GetUserStrings()
         for  i = 0 to usg.Count-1 do
             let key = usg.GetKey(i)
             if not <|de.Geometry.SetUserString(key,sc.Geometry.GetUserString(key)) then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.matchAllProperties: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.matchAllProperties: Geometry failed to set key '%s' from %s on %s" key (toNiceString sourceId) (toNiceString targetId)
     (*
-    TODO delete , "draw" should only refer to display pipline
+    TODO delete , "draw" should only refer to display pipeline
     //<summary>Draws any Geometry object to a given or current layer.</summary>
     //<param name="layer">(string) Name of an layer or empty string for current layer</param>
     //<param name="geo">(GeometryBase) Geometry</param>
     //<returns>(unit) void, nothing.</returns>
     static member draw (layer:string) (geo:'AnyRhinoGeometry) : unit = 
-        Scripting.Add(geo,layer)  |> ignore 
+        RhinoScriptSyntax.Add(geo,layer)  |> ignore 
     *)
 
 
@@ -258,7 +256,7 @@ module AutoOpenCurried =
     ///<param name="objectId">(Guid) The identifier of the object</param>
     ///<returns>(unit) void, nothing.</returns>
     static member transform (matrix:Transform) (objectId:Guid) : unit = 
-        Scripting.TransformObject(objectId, matrix, copy=false) |> ignore<Guid>     
+        RhinoScriptSyntax.TransformObject(objectId, matrix, copy=false) |> ignore<Guid>     
     
     
     ///<summary>Moves, scales, or rotates a geometry given a 4x4 transformation matrix. The matrix acts on the left. </summary>
@@ -267,7 +265,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member transformGeo (matrix:Transform) (geo:GeometryBase) : unit = 
         if not <| geo.Transform(matrix) then 
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.scale failed. geo:'%s' matrix:'%s' " (toNiceString geo) matrix.ToNiceString 
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.scale failed. geo:'%s' matrix:'%s' " (toNiceString geo) matrix.ToNiceString 
         if matrix.SimilarityType = TransformSimilarityType.OrientationReversing then 
             match geo with 
             | :? Brep as g -> if g.IsSolid then g.Flip()
@@ -285,9 +283,9 @@ module AutoOpenCurried =
         let mutable plane = Plane.WorldXY
         plane.Origin <- origin
         let xf = Transform.Scale(plane, scale, scale, scale)
-        let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true)
+        let res = RhinoScriptSyntax.Doc.Objects.Transform(objectId, xf, deleteOriginal=true)
         if res = Guid.Empty then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.scale failed. objectId:'%s' origin:'%s' scale:'%g'" (toNiceString objectId) origin.ToNiceString scale
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.scale failed. objectId:'%s' origin:'%s' scale:'%g'" (toNiceString objectId) origin.ToNiceString scale
 
 
     ///<summary>Moves a single object.</summary>
@@ -296,9 +294,9 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member move (translation:Vector3d)  (objectId:Guid): unit = 
         let xf = Transform.Translation(translation)
-        let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
+        let res = RhinoScriptSyntax.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.move to from objectId:'%s' translation:'%A'" (toNiceString objectId) translation
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.move to from objectId:'%s' translation:'%A'" (toNiceString objectId) translation
 
     ///<summary>Moves a single object in X Direction.</summary>
     ///<param name="translationX">(float) movement in X direction</param>
@@ -306,9 +304,9 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveX (translationX:float)  (objectId:Guid): unit = 
         let xf = Transform.Translation(Vector3d(translationX, 0.0, 0.0 ))
-        let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
+        let res = RhinoScriptSyntax.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveX to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationX
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveX to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationX
 
     ///<summary>Moves a single object in Y Direction.</summary>
     ///<param name="translationY">(float) movement in Y direction</param>
@@ -316,9 +314,9 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveY (translationY:float)  (objectId:Guid): unit = 
         let xf = Transform.Translation(Vector3d(0.0, translationY, 0.0))
-        let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
+        let res = RhinoScriptSyntax.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveY to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationY
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveY to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationY
 
     ///<summary>Moves a single object in Z Direction.</summary>
     ///<param name="translationZ">(float) movement in Z direction</param>
@@ -326,10 +324,9 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveZ (translationZ:float)  (objectId:Guid): unit = 
         let xf = Transform.Translation(Vector3d(0.0, 0.0, translationZ))
-        let res = Scripting.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
+        let res = RhinoScriptSyntax.Doc.Objects.Transform(objectId, xf, deleteOriginal=true) // TODO test to ensure GUID is the same ?
         if res = Guid.Empty then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveZ to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationZ
-
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveZ to from objectId:'%s' translation:'%A'" (toNiceString objectId) translationZ
 
     ///<summary>Moves a Geometry.</summary>
     ///<param name="translation">(Vector3d) Vector3d</param>
@@ -337,7 +334,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeo (translation:Vector3d)  (geo:GeometryBase): unit = 
         if not <|  geo.Translate translation then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeo to from geo:'%A' translation:'%A'"  geo translation
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveGeo to from geo:'%A' translation:'%A'"  geo translation
 
     ///<summary>Moves a Geometry in X Direction.</summary>
     ///<param name="translationX">(float) movement in X direction</param>
@@ -345,7 +342,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoX (translationX:float)  (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(translationX, 0.0, 0.0 )) then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoX to from geo:'%A' translation:'%f'"  geo translationX
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveGeoX to from geo:'%A' translation:'%f'"  geo translationX
 
     ///<summary>Moves a Geometry in Y Direction.</summary>
     ///<param name="translationY">(float) movement in Y direction</param>
@@ -353,7 +350,7 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoY (translationY:float)  (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(0.0, translationY, 0.0)) then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoY to from geo:'%A' translation:'%f'"  geo translationY
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveGeoY to from geo:'%A' translation:'%f'"  geo translationY
 
     ///<summary>Moves a Geometry in Z Direction.</summary>
     ///<param name="translationZ">(float) movement in Z direction</param>
@@ -361,11 +358,11 @@ module AutoOpenCurried =
     ///<returns>(unit) void, nothing.</returns>
     static member moveGeoZ (translationZ:float) (geo:GeometryBase): unit = 
         if not <| geo.Translate (Vector3d(0.0, 0.0, translationZ)) then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.moveGeoZ to from geo:'%A' translation:'%f'"  geo translationZ
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.moveGeoZ to from geo:'%A' translation:'%f'"  geo translationZ
     
     ///<summary>Enables or disables a Curve object's annotation arrows.
     /// The size of the arrow cannot be changed. For an adjustable arrow size use a dimension leader object.
-    /// Same as Scripting.CurveArrows(curveId,arrowStyle)</summary>
+    /// Same as RhinoScriptSyntax.CurveArrows(curveId,arrowStyle)</summary>
     ///<param name="arrowStyle">(int) The style of annotation arrow to be displayed.
     ///    0 = no arrows
     ///    1 = display arrow at start of Curve
@@ -374,5 +371,5 @@ module AutoOpenCurried =
     ///<param name="curveId">(Guid) Identifier of a Curve</param>
     ///<returns>(unit) void, nothing.</returns>
     static member addArrows (arrowStyle:int) (curveId:Guid) : unit = 
-        Scripting.CurveArrows(curveId,arrowStyle)
+        RhinoScriptSyntax.CurveArrows(curveId,arrowStyle)
         

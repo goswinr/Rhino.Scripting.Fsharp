@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open Rhino
 open Rhino.Geometry
@@ -36,7 +36,7 @@ module Topology =
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
             //  TODO could be optimized using a R-Tree for very large lists instead of minBy function
-            let nextIdx = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
+            let nextIdx = xs |> minIndexByFrom (fun c -> RhinoScriptSyntax.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
             xs |> swap (i+1) nextIdx
 
     /// Sorts elements in place  to be in a circular structure.
@@ -47,11 +47,11 @@ module Topology =
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
             // TODO could be optimized using a R-Tree for very large lists instead of minBy function
-            let nextIdxSt = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
-            let nextIdxEn = xs |> minIndexByFrom (fun c -> Scripting.DistanceSquare ((getLine c).To   ,  thisLine.To) ) (i+1)
+            let nextIdxSt = xs |> minIndexByFrom (fun c -> RhinoScriptSyntax.DistanceSquare ((getLine c).From ,  thisLine.To) ) (i+1)
+            let nextIdxEn = xs |> minIndexByFrom (fun c -> RhinoScriptSyntax.DistanceSquare ((getLine c).To   ,  thisLine.To) ) (i+1)
             // check if closest endpoint is closer than closest start-point
-            if  Scripting.DistanceSquare ((getLine xs.[nextIdxSt]).From ,  thisLine.To) <= 
-                Scripting.DistanceSquare ((getLine xs.[nextIdxEn]).To   ,  thisLine.To) then
+            if  RhinoScriptSyntax.DistanceSquare ((getLine xs.[nextIdxSt]).From ,  thisLine.To) <= 
+                RhinoScriptSyntax.DistanceSquare ((getLine xs.[nextIdxEn]).To   ,  thisLine.To) then
                     xs |> swap (i+1) nextIdxSt
             else
                     reverseInPlace nextIdxEn xs.[nextIdxEn]

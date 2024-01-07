@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open Rhino
 open Rhino.Geometry
@@ -12,7 +12,7 @@ open FsEx.SaveIgnore
 [<AutoOpen>]
 module AutoOpenMesh = 
 
-    type Scripting with
+    type RhinoScriptSyntax with
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ?? sort points counterclockwise
         static member MeshAddTriaFace (m:Mesh, a:Point3f, b:Point3f, c:Point3f)  = 
@@ -45,18 +45,18 @@ module AutoOpenMesh =
 
         /// Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFace ((m:Mesh), l:Line, ll:Line) = 
-            Scripting.MeshAddQuadFace(m, l.From ,l.To ,ll.From , ll.To)
+            RhinoScriptSyntax.MeshAddQuadFace(m, l.From ,l.To ,ll.From , ll.To)
 
 
         /// Appends a welded Quad to last 2 vertices, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFaceToLastTwo (m:Mesh, a:Point3d, b:Point3d) = 
             let c = m.Vertices.Count
-            if c<2 then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.Cannot append Quad to mesh %A" m
+            if c<2 then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Cannot append Quad to mesh %A" m
             else m.Faces.AddFace(c-1, c-2,  m.Vertices.Add (b.X,b.Y,b.Z), m.Vertices.Add (a.X,a.Y,a.Z)) |>ignore
 
         /// Appends a welded Quad to last 2 vertices,  Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         static member MeshAddQuadFaceToLastTwo (m:Mesh, l:Line) = 
-            Scripting.MeshAddQuadFaceToLastTwo (m, l.From ,l.To)
+            RhinoScriptSyntax.MeshAddQuadFaceToLastTwo (m, l.From ,l.To)
 
 
         /// Adds a welded quad and triangle face to simulate Pentagon, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??

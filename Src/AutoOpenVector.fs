@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open System
 open System.Collections.Generic
@@ -17,43 +17,43 @@ open FsEx.ExtensionsIList
 [<AutoOpen>]
 module AutoOpenVector = 
 
-    type Scripting with        
+    type RhinoScriptSyntax with        
 
         /// Draws a line with a Curve Arrows from a given point.
         static member DrawVector(   vector:Vector3d,
                                     fromPoint:Point3d,
                                     [<OPT;DEF("")>]layer:string ) : Guid  = 
-            let l =Scripting.AddLine(fromPoint, fromPoint + vector )
-            Scripting.CurveArrows(l, 2)
-            if layer<>"" then Scripting.ObjectLayer(l, layer, createLayerIfMissing=true)
+            let l = RhinoScriptSyntax.AddLine(fromPoint, fromPoint + vector )
+            RhinoScriptSyntax.CurveArrows(l, 2)
+            if layer<>"" then RhinoScriptSyntax.ObjectLayer(l, layer, createLayerIfMissing=true)
             l
 
         /// Draws a line with a Curve Arrows from World Origin.
         static member DrawVector( vector:Vector3d) : Guid  = 
-            let l = Scripting.AddLine(Point3d.Origin, Point3d.Origin + vector )
-            Scripting.CurveArrows(l, 2)
+            let l = RhinoScriptSyntax.AddLine(Point3d.Origin, Point3d.Origin + vector )
+            RhinoScriptSyntax.CurveArrows(l, 2)
             l
 
         ///<summary>Draws the axes of a Plane and adds TextDots to label them.</summary>
         ///<param name="pl">(Plane)</param>
         ///<param name="axLength">(float) Optional, Default Value: <c>1.0</c>, the size of the drawn lines</param>
-        ///<param name="suffixInDot">(string) Optional, Default Value: no suffix, text to add to x textdot label do of x axis. And y and z too.</param>
+        ///<param name="suffixInDot">(string) Optional, Default Value: no suffix, text to add to x TextDot label do of x axis. And y and z too.</param>
         ///<param name="layer">(string) Optional, Default Value: the current layer, String for layer to draw plane on. The Layer will be created if it does not exist.</param>
         ///<returns>List of Guids of added Objects</returns>
         static member DrawPlane(    pl:Plane,
                                     [<OPT;DEF(1.0)>]axLength:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
                                     [<OPT;DEF("")>]layer:string ) : Rarr<Guid>  = 
-            let a=Scripting.AddLine(pl.Origin, pl.Origin + pl.XAxis*axLength)
-            let b=Scripting.AddLine(pl.Origin, pl.Origin + pl.YAxis*axLength)
-            let c=Scripting.AddLine(pl.Origin, pl.Origin + pl.ZAxis*axLength*0.5)
-            let e=Scripting.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*axLength)
-            let f=Scripting.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*axLength)
-            let g=Scripting.AddTextDot("z"+suffixInDot, pl.Origin + pl.ZAxis*axLength*0.5)
+            let a= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.XAxis*axLength)
+            let b= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.YAxis*axLength)
+            let c= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.ZAxis*axLength*0.5)
+            let e= RhinoScriptSyntax.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*axLength)
+            let f= RhinoScriptSyntax.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*axLength)
+            let g= RhinoScriptSyntax.AddTextDot("z"+suffixInDot, pl.Origin + pl.ZAxis*axLength*0.5)
             let es = rarr { a;b;c;e;f;g }
-            if layer <>"" then Scripting.setLayers layer es
-            let gg=Scripting.AddGroup()
-            Scripting.AddObjectsToGroup(es, gg)
+            if layer <>"" then RhinoScriptSyntax.setLayers layer es
+            let gg= RhinoScriptSyntax.AddGroup()
+            RhinoScriptSyntax.AddObjectsToGroup(es, gg)
             es
 
         /// returns a point that is at a given distance from a point in the direction of another point.
@@ -85,23 +85,23 @@ module AutoOpenVector =
         /// Considers current order of points too, counterclockwise in xy Plane is z
         static member NormalOfPoints(pts:Point3d IList) : Vector3d  = 
             if Seq.hasMaximumItems 2 pts then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.NormalOfPoints can't find normal of two or less points %s" (toNiceString pts)
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.NormalOfPoints can't find normal of two or less points %s" (toNiceString pts)
             elif Seq.hasItems 3 pts   then
                 let a = pts.[0] - pts.[1]
                 let b = pts.[2] - pts.[1]
                 let v= Vector3d.CrossProduct(b, a)
-                if v.IsTiny() then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.NormalOfPoints: three points are in a line  %s" (toNiceString pts)
+                if v.IsTiny() then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.NormalOfPoints: three points are in a line  %s" (toNiceString pts)
                 else
                     v.Unitized
             else
-                let cen = Scripting.MeanPoint(pts)
+                let cen = RhinoScriptSyntax.MeanPoint(pts)
                 let mutable v = Vector3d.Zero
                 for t, n in Seq.thisNext pts do
                     let a = t-cen
                     let b = n-cen
                     let x = Vector3d.CrossProduct(a, b)  |> RhVec.matchOrientation v // TODO do this matching?
                     v <- v + x
-                if v.IsTiny() then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.NormalOfPoints: points are in a line  %s" (toNiceString pts)
+                if v.IsTiny() then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.NormalOfPoints: points are in a line  %s" (toNiceString pts)
                 else
                     v.Unitized
 
@@ -148,20 +148,20 @@ module AutoOpenVector =
             let lenDist = offDists0.Length
             let lenDistNorm = normDists0.Length
             if pointk < 2 then
-                RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.OffsetPoints needs at least two points but %s given" (toNiceString points)
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.OffsetPoints needs at least two points but %s given" (toNiceString points)
             elif pointk = 2 then
                 let offDist = 
                     if   lenDist = 0 then 0.0
                     elif lenDist = 1 then offDists0.[0]
-                    else RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.OffsetPoints: offsetDistances has %d items but should have 1 or 0 for 2 given points %s" lenDist (toNiceString points)
+                    else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.OffsetPoints: offsetDistances has %d items but should have 1 or 0 for 2 given points %s" lenDist (toNiceString points)
                 let normDist = 
                     if   lenDistNorm = 0 then 0.0
                     elif lenDistNorm = 1 then normDists0.[0]
-                    else RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (toNiceString points)
+                    else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (toNiceString points)
                 let a, b = RhPnt.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
                 rarr { a; b}
             else // regular case more than 2 points
-                let lastIsFirst = (points.[0] - points.Last).Length < Scripting.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
+                let lastIsFirst = (points.[0] - points.Last).Length < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
                 let distsNeeded = 
                     if lastIsFirst then pointk - 1
                     elif loop      then pointk
@@ -179,8 +179,8 @@ module AutoOpenVector =
                     if   lenDistNorm = 0 then                 Array.create distsNeededNorm 0.0
                     elif lenDistNorm = 1 then                 Array.create distsNeededNorm normDists0.[0]
                     elif lenDistNorm = distsNeededNorm then   normDists0
-                    else RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.OffsetPoints: normalDistances has %d items but should have %d (lastIsFirst=%b) (loop=%b)" lenDist distsNeededNorm lastIsFirst loop
-                let refNormal = Scripting.NormalOfPoints(points) //to have good starting direction, first kink might be in bad direction
+                    else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have %d (lastIsFirst=%b) (loop=%b)" lenDist distsNeededNorm lastIsFirst loop
+                let refNormal = RhinoScriptSyntax.NormalOfPoints(points) //to have good starting direction, first kink might be in bad direction
                 let Pts = Rarr<Point3d>(pointk)
                 let Ns = Rarr<Vector3d>(pointk)
                 for i, p, t, n in Seq.iPrevThisNext(points) do
@@ -250,7 +250,7 @@ module AutoOpenVector =
                         //print (i,"is collinear")
                         //print (ni,"next i")
                         if offDists.[pi] <> offDists.[saveIdx (ni-1) distsNeeded] then
-                            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.OffsetPoints: can't fix collinear at index %d with index %d and %d because offset distances are mismatching: %f, %f" i pi ni offDists.[pi] offDists.[saveIdx (ni-1) pointk]
+                            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.OffsetPoints: can't fix collinear at index %d with index %d and %d because offset distances are mismatching: %f, %f" i pi ni offDists.[pi] offDists.[saveIdx (ni-1) pointk]
                         Pts.[i] <- points.[i] + (nv + pv)*0.5
                 if lastIsFirst then Pts.[lastIndex] <- Pts.[0]
                 Pts
@@ -266,8 +266,8 @@ module AutoOpenVector =
                                         [<OPT;DEF(0.0)>]normalDistance: float ,
                                         [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  = 
 
-            if normalDistance = 0.0 then Scripting.OffsetPoints(points,[offsetDistance],[]              , loop)
-            else                         Scripting.OffsetPoints(points,[offsetDistance],[normalDistance], loop)
+            if normalDistance = 0.0 then RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[]              , loop)
+            else                         RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[normalDistance], loop)
 
 
 

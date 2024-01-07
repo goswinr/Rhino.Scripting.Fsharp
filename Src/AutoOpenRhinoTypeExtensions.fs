@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open Rhino.Geometry
 
@@ -21,7 +21,7 @@ type RhinoScriptingFsharpException (s:string) =
 [<AutoOpen>]
 module AutoOpenRhinoTypeExtensions = 
 
-    // NOTE: Extensions for .ToNiceString are in ToNiceString module !!
+    // NOTE: Extensions for .ToNiceString method are in ToNiceString module !!
 
     type Point3d with
 

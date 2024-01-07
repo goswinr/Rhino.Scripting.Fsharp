@@ -1,4 +1,4 @@
-﻿namespace Rhino.ScriptingFsharp
+﻿namespace Rhino.Scripting
 
 open Rhino
 open Rhino.Geometry
@@ -59,14 +59,14 @@ module RhVec =
     /// abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isVertical (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Cannot not check very tiny vector for being vertical %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Cannot not check very tiny vector for being vertical %A" v
         abs(v.X) + abs(v.Y) < RhinoMath.SqrtEpsilon
 
     /// Checks if a vector is horizontal  by doing:
     /// abs(v.Z) < RhinoMath.SqrtEpsilon
     /// fails on tiny (shorter than RhinoMath.SqrtEpsilon) vectors
     let inline isHorizontal (v:Vector3d) = 
-        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Cannot not check very tiny vector for being horizontal %A" v
+        if v.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Cannot not check very tiny vector for being horizontal %A" v
         abs(v.Z) < RhinoMath.SqrtEpsilon
 
     /// Cross product
@@ -81,7 +81,7 @@ module RhVec =
     let inline unitize (v:Vector3d) = 
         let len = sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) // see v.Unitized() type extension too
         if len > 1e-9 then v * (1./len)
-        else RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec RhVec.unitize: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
+        else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec RhVec.unitize: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
 
     /// Unitize vector, if input vector is shorter than 1e-6 alternative vector is returned (without being unitized).
     let inline unitizeWithAlternative (unitVectorAlt:Vector3d) (v:Vector3d) = 
@@ -104,7 +104,7 @@ module RhVec =
     /// Returns Vector3d(v.X, v.Y, 0.0)
     let inline projectToXYPlane (v:Vector3d) = 
         let r = Vector3d(v.X, v.Y, 0.0)
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.projectToXYPlane: Cannot projectToXYPlane for vertical vector %A" v
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.projectToXYPlane: Cannot projectToXYPlane for vertical vector %A" v
         r
 
     /// Project vector to Plane
@@ -113,7 +113,7 @@ module RhVec =
         let pt = pl.Origin + v
         let clpt = pl.ClosestPoint(pt)
         let r = clpt-pl.Origin
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
         r
 
     /// Project point onto a finite line in direction of v
@@ -122,14 +122,14 @@ module RhVec =
     let projectToLine (ln:Line) (v:Vector3d) (pt:Point3d) = 
         let h = Line(pt,v)
         let ok,tln,th = Intersect.Intersection.LineLine(ln,h)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.projectToLine: project in direction failed. (are they parallel?)"
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.projectToLine: project in direction failed. (are they parallel?)"
         let a = ln.PointAt(tln)
         let b = h.PointAt(th)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then
-            //Scripting.Doc.Objects.AddLine ln   |> Scripting.setLayer "Error-projectToLine"
-            //Scripting.Doc.Objects.AddLine h    |> Scripting.setLayer "Error-projectToLineDirection"
-            //Scripting.Doc.Objects.AddPoint pt  |> Scripting.setLayer "Error-projectToLineFrom"
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.projectToLine: missed Line by: %g " (a-b).Length
+            //Scripting.Doc.Objects.AddLine ln   |> RhinoScriptSyntax.setLayer "Error-projectToLine"
+            //Scripting.Doc.Objects.AddLine h    |> RhinoScriptSyntax.setLayer "Error-projectToLineDirection"
+            //Scripting.Doc.Objects.AddPoint pt  |> RhinoScriptSyntax.setLayer "Error-projectToLineFrom"
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.projectToLine: missed Line by: %g " (a-b).Length
         a
 
 
@@ -309,7 +309,7 @@ module RhVec =
     /// in relation to XY Plane
     /// 100% = 45 degrees
     let slopePercent (v:Vector3d) = 
-        if abs(v.Z) < RhinoMath.SqrtEpsilon then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.slopePercent: Can't get Slope from vertical vector %A" v
+        if abs(v.Z) < RhinoMath.SqrtEpsilon then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.slopePercent: Can't get Slope from vertical vector %A" v
         let f = Vector3d(v.X, v.Y, 0.0)
         100.0 * (v.Z/f.Length)
 
@@ -318,7 +318,7 @@ module RhVec =
     /// Fails on tiny vectors (v.SquareLength < RhinoMath.SqrtEpsilon)
     let inline setLength (len:float) (v:Vector3d) = 
         let l  = v.SquareLength
-        if l < RhinoMath.SqrtEpsilon then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.setLength: Cant set length of tiny vector %A" v
+        if l < RhinoMath.SqrtEpsilon then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.setLength: Cant set length of tiny vector %A" v
         let f = len / sqrt(l) in Vector3d(v.X*f, v.Y*f, v.Z*f)
 
     /// Reverse vector if Z part is smaller than 0.0
@@ -336,8 +336,8 @@ module RhVec =
         if orientationToMatch * v < 0.0 then -v else v
 
     /// Check if vector has a positive dot product with given orientation vector
-    let inline isSameOrientation (orientationToCkeck:Vector3d) (v:Vector3d) = 
-        orientationToCkeck * v > 0.0
+    let inline isSameOrientation (orientationToCheck:Vector3d) (v:Vector3d) = 
+        orientationToCheck * v > 0.0
 
     /// Returns a horizontal vector that is perpendicular to the given vector.
     /// just: Vector3d(v.Y, -v.X, 0.0)
@@ -352,18 +352,18 @@ module RhVec =
         //    let v  =  Vector3d(next()   , next()  , next()  ) |> RhVec.unitize
         //    let o  =  Point3d.Origin
         //    let e  =  o + v
-        //    Scripting.AddLine(o, e)  |> ignore
+        //    RhinoScriptSyntax.AddLine(o, e)  |> ignore
         //    let p  =  RhVec.perpendicularVecInXY(e-o) |> RhVec.scale 0.1
         //    let b  =  RhPnt.normalOfTwoPointsInXY(o, e) |> RhVec.scale 0.2
         //    let g  =  RhVec.cross (e-o) Vector3d.ZAxis|> RhVec.scale 0.2
         //    //Scripting.AddLine(e, e + p)  |> ignore
         //    //Scripting.AddLine(e, e + b)  |> ignore
-        //    Scripting.AddLine(e, e + g)  |> ignore
+        //    RhinoScriptSyntax.AddLine(e, e + g)  |> ignore
         let x = v.Y
         let y = -v.X  // this is the same as: RhVec.cross v Vector3d.ZAxis
         let len = sqrt(x*x + y*y)
         if len < RhinoMath.SqrtEpsilon then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.perpendicularVecInXY: Cannot find perpendicularVecInXY for vertical vector %A" v
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.perpendicularVecInXY: Cannot find perpendicularVecInXY for vertical vector %A" v
         else
             Vector3d(x, y, 0.0)
 
@@ -375,7 +375,7 @@ module RhVec =
     let inline perpendicularVecInVerticalPlane (v:Vector3d) = 
         let hor = Vector3d(v.Y, -v.X, 0.0)
         let r = cross v hor
-        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec.perpendicularVecInVerticalPlane: Cannot find perpendicularVecInVerticalPlane for vertical vector %A" v
+        if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec.perpendicularVecInVerticalPlane: Cannot find perpendicularVecInVerticalPlane for vertical vector %A" v
         if v.Z < 0.0 then -r else r
 
 
@@ -388,16 +388,16 @@ module RhVec =
         //let b = nextPt - thisPt
         let sa = a.SquareLength
         if sa < RhinoMath.SqrtEpsilon then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
         let sb = b.SquareLength
         if sb < RhinoMath.SqrtEpsilon then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
         let lena = sqrt sa
         let lenb = sqrt sb
-        if lena < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
-        if lenb < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
+        if lena < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance then
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelow1Degree: prevPt - thisPt: %s < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString RhinoScriptSyntax.Doc.ModelAbsoluteTolerance b.ToNiceString
+        if lenb < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance then
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelow1Degree: nextPt - thisPt: %s < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString RhinoScriptSyntax.Doc.ModelAbsoluteTolerance a.ToNiceString
         let au = a * (1.0 / lena)
         let bu = b * (1.0 / lenb)
         abs(bu*au) > 0.999847695156391 // = cosine of 1 degree (2 degrees would be =  0.999390827019096)
@@ -412,16 +412,16 @@ module RhVec =
         //let b = nextPt - thisPt
         let sa = a.SquareLength
         if sa < RhinoMath.SqrtEpsilon then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; nextPt - thisPt:%s " a.ToNiceString b.ToNiceString
         let sb = b.SquareLength
         if sb < RhinoMath.SqrtEpsilon then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s.SquareLength < RhinoMath.SqrtEpsilon; prevPt - thisPt:%s " b.ToNiceString a.ToNiceString
         let lena = sqrt sa
         let lenb = sqrt sb
-        if lena < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString Scripting.Doc.ModelAbsoluteTolerance b.ToNiceString
-        if lenb < Scripting.Doc.ModelAbsoluteTolerance then
-            RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s < Scripting.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString Scripting.Doc.ModelAbsoluteTolerance a.ToNiceString
+        if lena < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance then
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelowQuaterDegree: prevPt - thisPt: %s < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance: %f; nextPt - thisPt:%s " a.ToNiceString RhinoScriptSyntax.Doc.ModelAbsoluteTolerance b.ToNiceString
+        if lenb < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance then
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhVec Duplicate points: isAngleBelowQuaterDegree: nextPt - thisPt: %s < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance: %f; prevPt - thisPt:%s " b.ToNiceString RhinoScriptSyntax.Doc.ModelAbsoluteTolerance a.ToNiceString
         let au = a * (1.0 / lena)
         let bu = b * (1.0 / lenb)
         abs(bu*au) > 0.999990480720734 // = cosine of 0.25 degree: printfn "%.18f" (cos( 0.25 * (System.Math.PI / 180.)))
