@@ -5,6 +5,7 @@ open Rhino
 open Rhino.Geometry
 open FsEx.SaveIgnore
 open FsEx
+open UtilRHinoScriptingFsharp
 
 /// This module provides curried functions to manipulate Rhino Point3d
 /// It is NOT automatically opened.
@@ -128,6 +129,7 @@ module RhPnt =
 
 
 
+
     /// Finds the inner offset point in a corner ( defined by a Polyline from 3 points ( prevPt, thisPt and nextPt)
     /// The offset from first and second segment are given separately and can vary (prevDist and nextDist).
     /// Use negative distance for outer offset
@@ -151,8 +153,8 @@ module RhPnt =
         else
             let n =
                 Vector3d.CrossProduct(vp, vn)
-                |> RhVec.unitize
-                |> RhVec.matchOrientation orientation
+                |> Vector3d.unitize
+                |> Vector3d.matchOrientation orientation
 
             let sp = Vector3d.CrossProduct(vp, n) |> RhVec.setLength prevDist
             let sn = Vector3d.CrossProduct(n, vn) |> RhVec.setLength nextDist
@@ -161,6 +163,7 @@ module RhPnt =
             let ok, tp , _ = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
             if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
+
 
     /// returns angle in degree at mid point
     let angelInCorner(prevPt:Point3d, thisPt:Point3d, nextPt:Point3d) =

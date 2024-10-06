@@ -80,7 +80,7 @@ module AutoOpenVector =
             p/k
 
         /// Finds the mean normal of many points.
-        /// It finds the center point and then takes crossproducts iterating all points in pairs of two.
+        /// It finds the center point and then takes cross-products iterating all points in pairs of two.
         /// The first two points define the orientation of the normal.
         /// Considers current order of points too, counterclockwise in xy Plane is z
         static member NormalOfPoints(pts:Point3d IList) : Vector3d  =
@@ -99,7 +99,7 @@ module AutoOpenVector =
                 for t, n in Seq.thisNext pts do
                     let a = t-cen
                     let b = n-cen
-                    let x = Vector3d.CrossProduct(a, b)  |> RhVec.matchOrientation v // TODO do this matching?
+                    let x = Vector3d.CrossProduct(a, b)  |> Vector3d.matchOrientation v // TODO do this matching?
                     v <- v + x
                 if v.IsTiny() then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.NormalOfPoints: points are in a line  %s" (toNiceString pts)
                 else
@@ -107,11 +107,11 @@ module AutoOpenVector =
 
         /// Calculates the intersection of a finite line with a triangle (without using Rhinocommon)
         /// Returns Some(Point3d) or None if no intersection found
-        static member LineTriangleIntersect(line:Line, p1 :Point3d ,p2 :Point3d, p3 :Point3d) : Point3d option  = 
+        static member LineTriangleIntersect(line:Line, p1 :Point3d ,p2 :Point3d, p3 :Point3d) : Point3d option  =
 
             // https://stackoverflow.com/questions/42740765/intersection-between-line-and-triangle-in-3d
             /// computes the signed Volume of a Tetrahedron
-            let inline tetrahedronVolumeSigned(a:Point3d, b:Point3d, c:Point3d, d:Point3d) = 
+            let inline tetrahedronVolumeSigned(a:Point3d, b:Point3d, c:Point3d, d:Point3d) =
                 ((Vector3d.CrossProduct( b-a, c-a)) * (d-a)) / 6.0
 
             let q1 = line.From
@@ -140,7 +140,7 @@ module AutoOpenVector =
         static member OffsetPoints(     points: IList<Point3d>,  // IList so it can take a Point3dList class too
                                         offsetDistances: float seq,
                                         [<OPT;DEF(null:seq<float>)>] normalDistances: float seq,
-                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  = 
+                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  =
             let offDists0  = Array.ofSeq offsetDistances
             let normDists0 = Array.ofSeq (normalDistances |? Seq.empty<float> )
             let pointCount = points.Count
@@ -150,32 +150,32 @@ module AutoOpenVector =
             if pointCount < 2 then
                 RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.OffsetPoints needs at least two points but %s given" (toNiceString points)
             elif pointCount = 2 then
-                let offDist = 
+                let offDist =
                     if   lenDist = 0 then 0.0
                     elif lenDist = 1 then offDists0.[0]
                     else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.OffsetPoints: offsetDistances has %d items but should have 1 or 0 for 2 given points %s" lenDist (toNiceString points)
-                let normDist = 
+                let normDist =
                     if   lenDistNorm = 0 then 0.0
                     elif lenDistNorm = 1 then normDists0.[0]
                     else RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (toNiceString points)
-                let a, b = RhPnt.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
+                let a, b = Point3d.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
                 rarr { a; b}
             else // regular case more than 2 points
                 let lastIsFirst = (points.[0] - points.Last).Length < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
-                let distsNeeded = 
+                let distsNeeded =
                     if lastIsFirst then pointCount - 1
                     elif loop      then pointCount
                     else                pointCount - 1
-                let distsNeededNorm = 
+                let distsNeededNorm =
                     if lastIsFirst then pointCount - 1
                     elif loop      then pointCount
                     else                pointCount   // not -1 !!
-                let  offDists = 
+                let  offDists =
                     if   lenDist = 0 then             Array.create distsNeeded 0.0
                     elif lenDist = 1 then             Array.create distsNeeded offDists0.[0]
                     elif lenDist = distsNeeded then   offDists0
                     else RhinoScriptingFsharpException.Raise "OffsetPoints: offsetDistances has %d items but should have %d (lastIsFirst=%b) (loop=%b)" lenDist distsNeeded lastIsFirst loop
-                let normDists = 
+                let normDists =
                     if   lenDistNorm = 0 then                 Array.create distsNeededNorm 0.0
                     elif lenDistNorm = 1 then                 Array.create distsNeededNorm normDists0.[0]
                     elif lenDistNorm = distsNeededNorm then   normDists0
@@ -188,30 +188,30 @@ module AutoOpenVector =
                     if i=0 then
                         if lastIsFirst then
                             let prev = points.GetNeg(-2) // because -1 is same as 0
-                            let struct( _, _, pt, N) = RhPnt.findOffsetCorner(prev, t, n, offDists.Last, offDists.[0], refNormal)
+                            let struct( _, _, pt, N) = Point3d.findOffsetCorner(prev, t, n, offDists.Last, offDists.[0], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         else
-                            let struct( _, sn, pt, N) = RhPnt.findOffsetCorner(p, t, n, offDists.Last, offDists.[0], refNormal)
+                            let struct( _, sn, pt, N) = Point3d.findOffsetCorner(p, t, n, offDists.Last, offDists.[0], refNormal)
                             Ns.Add N
                             if loop then Pts.Add pt
                             else         Pts.Add (t + sn)
                     // last one:
                     elif i = lastIndex  then
                         if lastIsFirst then
-                            let struct(_, _, pt, N) = RhPnt.findOffsetCorner(p, t, points.[1], offDists.[i-1], offDists.[0], refNormal)
+                            let struct(_, _, pt, N) = Point3d.findOffsetCorner(p, t, points.[1], offDists.[i-1], offDists.[0], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         elif loop then
-                            let struct( _, _, pt, N) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
+                            let struct( _, _, pt, N) = Point3d.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
                             Pts.Add pt
                             Ns.Add N
                         else
-                            let struct( sp, _, _, N) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i-1], refNormal) // or any next off dist since only sp is used
+                            let struct( sp, _, _, N) = Point3d.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i-1], refNormal) // or any next off dist since only sp is used
                             Pts.Add (t + sp)
                             Ns.Add N
                     else
-                        let struct( _, _, pt, N ) = RhPnt.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
+                        let struct( _, _, pt, N ) = Point3d.findOffsetCorner(p, t, n, offDists.[i-1], offDists.[i], refNormal)
                         Pts.Add pt
                         Ns.Add N
                 if lenDistNorm > 0 then
@@ -220,13 +220,13 @@ module AutoOpenVector =
                         if n <> Vector3d.Zero then
                             Pts.[i] <- Pts.[i] + n * normDists.[i]
 
-                let rec searchBack i (ns:Rarr<Vector3d>) = 
+                let rec searchBack i (ns:Rarr<Vector3d>) =
                     let ii = saveIdx (i) ns.Count
                     let v = ns.[ii]
                     if v <> Vector3d.Zero || i < -ns.Count then ii
                     else searchBack (i-1) ns
 
-                let rec  searchForward i (ns:Rarr<Vector3d>) = 
+                let rec  searchForward i (ns:Rarr<Vector3d>) =
                     let ii = saveIdx (i) ns.Count
                     let v = ns.[ii]
                     if v <> Vector3d.Zero || i > (2 * ns.Count) then ii
@@ -264,7 +264,7 @@ module AutoOpenVector =
         static member OffsetPoints(     points:Point3d IList,
                                         offsetDistance: float,
                                         [<OPT;DEF(0.0)>]normalDistance: float ,
-                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  = 
+                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  =
 
             if normalDistance = 0.0 then RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[]              , loop)
             else                         RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[normalDistance], loop)

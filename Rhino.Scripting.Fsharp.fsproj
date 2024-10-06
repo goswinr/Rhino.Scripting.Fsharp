@@ -20,20 +20,19 @@
     <!--visible in explorer-->
     <Title>Rhino.Scripting.Fsharp</Title>
     <PackageId>Rhino.Scripting.Fsharp</PackageId>
-    <Version>0.7.0</Version>
-    <AssemblyVersion>0.7.0</AssemblyVersion>
-    <FileVersion>0.7.0</FileVersion>
-    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <Version>0.8.0</Version>
+    <AssemblyVersion>0.8.0</AssemblyVersion>
+    <FileVersion>0.8.0</FileVersion>
+    <PackageReleaseNotes>
+    - align Point3d and Vector3d API with Euclid library
+    </PackageReleaseNotes>
     <Authors>GoswinR</Authors>
     <Copyright>Goswin Rothenthal 2019</Copyright>
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
     <Configuration>Release</Configuration>
-    <OtherFlags>$(OtherFlags)--warnon:3390</OtherFlags>
-    <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
-    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
-    <!-- 1182: warn on unused variables -->
-    <PlatformTarget>x64</PlatformTarget>
-    <!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
+    <OtherFlags>$(OtherFlags) --warnon:3390</OtherFlags> <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
+    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags> <!-- 1182: warn on unused variables -->
+    <PlatformTarget>x64</PlatformTarget> <!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
   </PropertyGroup>
   <PropertyGroup>
     <!--https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target-->
@@ -53,12 +52,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
-    <PackageReference Update="FSharp.Core" Version="4.5.2" />
-    <!-- Match RhinoCommon version of Rhino.Scripting: 6.7.18199
-	  , it supports Font.FromQuartetProperties and AreaMassProperties.Compute(Surface surface, bool , bool, bool) -->
-    <PackageReference Include="RhinoCommon" Version="6.7.18199.22081" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Update="FSharp.Core" Version="6.0.7" />
+    <PackageReference Include="RhinoCommon" Version="7.0.20314.3001" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Rhino.Scripting" Version="0.7.0" />
+    <PackageReference Include="Rhino.Scripting" Version="0.8.0" />
     <!--
       <Reference Include="FsEx" HintPath="../FsEx/bin/Release/net472/FsEx.dll" />
       <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />
@@ -69,18 +66,19 @@
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
     <!--PackagePath = "" makes the file available to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
+    <Compile Include="Src/UtilRHinoScriptingFsharp.fs" />
     <Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />
     <Compile Include="Src/Scripting_Printing.fs" />
     <Compile Include="Src/Scripting_Selection.fs" />
     <Compile Include="Src/AutoOpenCurried.fs" />
-    <Compile Include="Src\RhVec2.fs" />
+    <Compile Include="Src/Vector3d.fs" />
+    <Compile Include="Src/Point3d.fs" />
+    <Compile Include="Src/AutoOpenVector.fs" />
     <Compile Include="Src/RhVec.fs" />
-    <Compile Include="Src\RhPnt2.fs" />
     <Compile Include="Src/RhPnt.fs" />
     <Compile Include="Src/RhLine.fs" />
     <Compile Include="Src/RhPlane.fs" />
-    <Compile Include="Src/AutoOpenVector.fs" />
-    <Compile Include="Src\RhTopology.fs" />
+    <Compile Include="Src/RhTopology.fs" />
     <Compile Include="Src/Curve.fs" />
     <Compile Include="Src/Brep.fs" />
     <Compile Include="Src/Mesh.fs" />
