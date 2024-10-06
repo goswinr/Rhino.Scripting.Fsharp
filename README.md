@@ -46,6 +46,10 @@ It passes it's input on as output. See [definition](https://github.com/goswinr/F
 [MIT](https://raw.githubusercontent.com/goswinr/FsEx/main/LICENSE.txt)
 
 ### Change Log
+
+`0.8.1`
+- align Plane API with Euclid library
+
 `0.8.0`
 - align Line, Point3d and Vector3d API with Euclid library
 - referencing Rhino.Scripting 0.8.0

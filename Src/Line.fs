@@ -6,12 +6,13 @@ open FsEx.UtilMath
 open FsEx
 open UtilRHinoScriptingFsharp
 
+
 /// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
 /// It only contains extension members for type Line.
 [<AutoOpen>]
 module AutoOpenLine =
 
-  type Line with
+  type Line with // copied from Euclid 0.16
 
     /// Returns the length of the line.
     member inline ln.Length =

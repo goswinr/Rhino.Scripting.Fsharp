@@ -1,5 +1,7 @@
 namespace Rhino.Scripting.Fsharp
 
+// copied from Euclid 0.16
+
 open System
 
 /// OptionalAttribute for member parameters.
@@ -46,21 +48,16 @@ module UtilRHinoScriptingFsharp =
         not ( x > 1e-12 )
 
     /// Returns true for values smaller than 1e-12 and for NaN
-    /// uses UtilEuclid.zeroLengthTolerance
+    /// uses UtilRhino.Scripting.Fsharp:zeroLengthTolerance
     let inline isTooTiny x =
         // use 'not' to catch a NaN too ( a cross product of infinit long vectors can give a NaN length)
         not ( x > zeroLengthTolerance )
 
     /// Returns true for values smaller than 1e-24 (square of 1e-12) and for NaN
-    /// uses UtilEuclid.zeroLengthTolSquared
+    /// uses UtilRhino.Scripting.Fsharp:zeroLengthTolSquared
     let inline isTooTinySq x =
         // use 'not' to catch a NaN too ( a cross product of infinit long vectors can give a NaN length)
         not ( x > zeroLengthTolSquared)
-
-    /// Returns true for negative number and for NaN
-    /// 0.0  and -0.0 is not negative.
-    let inline isNegative x =
-        not (x >= 0.0)
 
 
     /// Math.PI * 2.0

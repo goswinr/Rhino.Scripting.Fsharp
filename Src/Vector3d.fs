@@ -71,7 +71,7 @@ module internal VecUnitized =
 [<AutoOpen>]
 module AutoOpenVector3d =
 
-    type Vector3d with
+    type Vector3d with // copied from Euclid 0.16
 
 
         /// To convert Vector3d (as it is used in most other Rhino Geometries)
@@ -172,7 +172,7 @@ module AutoOpenVector3d =
 
         // A separate function to compose the error message that does not get inlined.
         [<Obsolete("Not actually obsolete but just hidden. (Needs to be public for inlining of the functions using it.)")>]
-        member v.FailedUnitized() = RhinoScriptingFsharpException.Raise "Euclid.Vec.Unitized %O is too small for unitizing, Tolerance:%g" v zeroLengthTolerance
+        member v.FailedUnitized() = RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:Vec.Unitized %O is too small for unitizing, Tolerance:%g" v zeroLengthTolerance
         /// Returns a new 3D Vector3d unitized.
         /// Fails with RhinoScriptingFsharpException if the length of the Vector3d is
         /// too small (1e-16) to unitize.
