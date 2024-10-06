@@ -2,15 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net48</TargetFramework>
-    <!-- so it can be used in latest Rhino 7 too,  net48 needed since RhinoCommon.dll 7.5 -->
+    <TargetFramework>net48</TargetFramework>    <!-- so it can be used in latest Rhino 7 too,  net48 needed since RhinoCommon.dll 7.5 -->
     <UseWPF>false</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
-    <!--to get screen resolution, and file dialogs-->
+    <UseWindowsForms>true</UseWindowsForms>    <!--to get screen resolution, and file dialogs-->
     <LangVersion>preview</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <!--to only have the english resources-->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>    <!--to only have the english resources-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Rhino.Scripting</RootNamespace>
     <AssemblyName>Rhino.Scripting.Fsharp</AssemblyName>
@@ -29,12 +26,9 @@
     <Copyright>Goswin Rothenthal 2019</Copyright>
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
     <Configuration>Release</Configuration>
-    <OtherFlags>$(OtherFlags) --warnon:3390</OtherFlags>
-    <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
-    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
-    <!-- 1182: warn on unused variables -->
-    <PlatformTarget>x64</PlatformTarget>
-    <!--  x64 is required e.g by Rhino, do not use just 'Platform' tag-->
+    <OtherFlags>$(OtherFlags) --warnon:3390</OtherFlags>    <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
+    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>    <!-- 1182: warn on unused variables -->
+    <PlatformTarget>x64</PlatformTarget>    <!--  x64 is required e.g by Rhino, do not use just 'Platform' tag-->
     <Configuration>Release</Configuration>
   </PropertyGroup>
   <PropertyGroup>
@@ -52,6 +46,7 @@
     <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
     <PackageDescription>The full Rhino.Scripting library and additional functionality for scripting Rhino3D with F#</PackageDescription>
     <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp nurbs geometry</PackageTags>
+    <Configuration>Release</Configuration>
   </PropertyGroup>
   <ItemGroup>
     <!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
@@ -73,6 +68,7 @@
     <Compile Include="Src/Vector3d.fs" />
     <Compile Include="Src/Point3d.fs" />
     <Compile Include="Src/Line.fs" />
+    <Compile Include="Src/Plane.fs" />
     <Compile Include="Src/Rhino.Scripting/Printing.fs" />
     <Compile Include="Src/Rhino.Scripting/Selection.fs" />
     <Compile Include="Src/Rhino.Scripting/Curried.fs" />
@@ -81,8 +77,7 @@
     <Compile Include="Src/Rhino.Scripting/Brep.fs" />
     <Compile Include="Src/Rhino.Scripting/Mesh.fs" />
     <Compile Include="Src/RhPoints.fs" />
-    <Compile Include="Src/RhPlane.fs" />
     <Compile Include="Src/RhTopology.fs" />
-    <Folder Include="Src\" />
+    <!-- <Folder Include="Src\" /> -->
   </ItemGroup>
 </Project>

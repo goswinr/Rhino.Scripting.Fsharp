@@ -10,14 +10,6 @@ open FsEx
 open FsEx.SaveIgnore
 open Rhino.Scripting
 
-
-///OptionalAttribute for member parameters
-type internal OPT = Runtime.InteropServices.OptionalAttribute
-
-/// DefaultParameterValueAttribute for member parameters
-type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
-
-
 /// This module provides functions similar to Rhino.Scripting.Fsharp.GetObject(..)
 /// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.

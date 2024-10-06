@@ -8,15 +8,16 @@
 
 ### What is Rhino.Scripting.Fsharp?
 
-Rhino.Scripting.Fsharp is a set of useful extensions to the [Rhino.Scripting](https://github.com/goswinr/Rhino.Scripting) library. This includes type extension for pretty printing of Rhino objects as well as implementations of commonly used functions in curried form for use with F#.
+Rhino.Scripting.Fsharp is a set of useful extensions to the [Rhino.Scripting](https://github.com/goswinr/Rhino.Scripting) library.
+This includes type extension for pretty printing of Rhino objects as well as implementations of commonly used functions in curried form for use with F#.
 
 This library allows you to compose RhinoScript functions with pipelines:
 
-Get started by opening the RhinoScriptSyntax module:
+Get started by opening the Rhino.Scripting namespaces:
 
 ```fsharp
 open Rhino.Scripting
-open Rhino.Scripting.Fsharp
+open Rhino.Scripting.Fsharp // opening this will extend RhinoScriptSyntax and some Rhino.Geometry types with additional static and member functions.
 type rs = RhinoScriptSyntax
 ```
 

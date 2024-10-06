@@ -16,7 +16,7 @@ open Rhino.Scripting
 /// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
-module AutoOpenVector =
+module AutoOpenVectors =
 
     type RhinoScriptSyntax with
 

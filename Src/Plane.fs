@@ -12,7 +12,7 @@ open Rhino.Scripting
 /// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
 /// It only contains extension members for type Plane.
 [<AutoOpen>]
-module AutoOpenPlane =
+module AutoOpenPlane=
 
   type Plane  with
 
