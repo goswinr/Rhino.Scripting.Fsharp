@@ -4,13 +4,13 @@ open Rhino.Geometry
 
 
 /// Exception for Errors in script execution in Rhino.ScriptingFsharp Extensions
-type RhinoScriptingFsharpException (s:string) = 
+type RhinoScriptingFsharpException (s:string) =
     inherit System.Exception(s)
 
-    static member inline Raise msg = 
+    static member Raise msg =
         Printf.kprintf (fun s -> raise (new RhinoScriptingFsharpException(s))) msg
 
-    static member inline FailIfFalse s b = 
+    static member FailIfFalse s b =
         if not b then raise (new RhinoScriptingFsharpException(s))
 
 
@@ -19,7 +19,7 @@ type RhinoScriptingFsharpException (s:string) =
 /// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
-module AutoOpenRhinoTypeExtensions = 
+module AutoOpenRhinoTypeExtensions =
 
     // NOTE: Extensions for .ToNiceString method are in ToNiceString module !!
 
@@ -28,31 +28,48 @@ module AutoOpenRhinoTypeExtensions =
         /// To convert a Point3d (as it is used in most other Rhino Geometries) to Point3f (as it is used in Meshes)
         member pt.ToPoint3f = Point3f(float32 pt.X, float32 pt.Y, float32 pt.Z)
 
-        /// Take any object that has an X, Y and Z member and try to convert each to a float 
-        static member inline ofXYZmembers pt  = 
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
             let x = ( ^T : (member X : _) pt)
             let y = ( ^T : (member Y : _) pt)
             let z = ( ^T : (member Z : _) pt)
-            try
-                Point3d(float x, float y, float z) 
-            with e ->
-                RhinoScriptingFsharpException.Raise "Point3d.ofXYZmembers: %A could not be converted to a Point3d:\r\n%A" pt e
+            try Point3d(float x, float y, float z)
+            with e -> RhinoScriptingFsharpException.Raise "Point3d.createFromMembersXYZ: %A could not be converted to a Point3d:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Point3d(float x, float y, float z)
+            with e ->  RhinoScriptingFsharpException.Raise "Point3d.createFromMembersxyz: %A could not be converted to a Point3d:\r\n%A" pt e
 
     type Point3f with
 
         /// To convert a Point3f (as it is used in Meshes) to Point3d (as it is used in most other Rhino Geometries)
         member pt.ToPoint3d = Point3d(pt)
-        
-        /// Duck typing using SRTP.
-        /// Take any object that has an X, Y and Z member and try to convert each to a float32 
-        static member inline ofXYZmembers pt  = 
+
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
             let x = ( ^T : (member X : _) pt)
             let y = ( ^T : (member Y : _) pt)
             let z = ( ^T : (member Z : _) pt)
-            try
-                Point3f(float32 x, float32 y, float32 z) 
-            with e ->
-                RhinoScriptingFsharpException.Raise "Point3f.ofXYZmembers: %A could not be converted to a Point3f:\r\n%A" pt e
+            try Point3f(float32 x, float32 y, float32 z)
+            with e -> RhinoScriptingFsharpException.Raise "Point3f.createFromMembersXYZ: %A could not be converted to a Point3f:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Point3f(float32 x, float32 y, float32 z)
+            with e ->  RhinoScriptingFsharpException.Raise "Point3f.createFromMembersxyz: %A could not be converted to a Point3f:\r\n%A" pt e
 
     type Vector3d with
 
@@ -60,20 +77,28 @@ module AutoOpenRhinoTypeExtensions =
         /// to a Vector3f (as it is used in Mesh normals)
         member v.ToVector3f = Vector3f(float32 v.X, float32 v.Y, float32 v.Z)
 
-        /// Duck typing using SRTP.
-        /// Take any object that has an X, Y and Z member and try to convert each to a float 
-        static member inline ofXYZmembers pt  = 
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
             let x = ( ^T : (member X : _) pt)
             let y = ( ^T : (member Y : _) pt)
             let z = ( ^T : (member Z : _) pt)
-            try
-                Vector3d(float x, float y, float z) 
-            with e ->
-                RhinoScriptingFsharpException.Raise "Vector3d.ofXYZmembers: %A could not be converted to a Vector3d:\r\n%A" pt e
+            try Vector3d(float x, float y, float z)
+            with e -> RhinoScriptingFsharpException.Raise "Vector3d.createFromMembersXYZ: %A could not be converted to a Vector3d:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Vector3d(float x, float y, float z)
+            with e ->  RhinoScriptingFsharpException.Raise "Vector3d.createFromMembersxyz: %A could not be converted to a Vector3d:\r\n%A" pt e
 
         /// Unitizes the vector.
         /// Checks input length to be longer than  1e-9 units
-        member v.Unitized = 
+        member v.Unitized =
             let len = sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) // see Vec.unitize too
             if len > 1e-9 then v * (1./len)
             else RhinoScriptingFsharpException.Raise "Vector3d.Unitized: %s is too small for unitizing, tol: 1e-9" v.ToNiceString
@@ -89,16 +114,25 @@ module AutoOpenRhinoTypeExtensions =
         /// to a Vector3d (as it is used in most other Rhino Geometries)
         member v.ToVector3d = Vector3d(v)
 
-        /// Duck typing using SRTP.
-        /// Take any object that has an X, Y and Z member and try to convert each to a float 
-        static member inline ofXYZmembers pt  = 
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
             let x = ( ^T : (member X : _) pt)
             let y = ( ^T : (member Y : _) pt)
             let z = ( ^T : (member Z : _) pt)
-            try
-                Vector3f(float32 x, float32 y, float32 z) 
-            with e ->
-                RhinoScriptingFsharpException.Raise "Vector3f.ofXYZmembers: %A could not be converted to a Vector3f:\r\n%A" pt e
+            try Vector3f(float32 x, float32 y, float32 z)
+            with e -> RhinoScriptingFsharpException.Raise "Vector3f.createFromMembersXYZ: %A could not be converted to a Vector3f:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Vector3f(float32 x, float32 y, float32 z)
+            with e ->  RhinoScriptingFsharpException.Raise "Vector3f.createFromMembersxyz: %A could not be converted to a Vector3f:\r\n%A" pt e
+
 
     type Line with
 
@@ -111,25 +145,25 @@ module AutoOpenRhinoTypeExtensions =
     type Plane with
 
         /// WorldXY rotated 180 degrees round Z Axis
-        static member WorldMinusXMinusY = 
+        static member WorldMinusXMinusY =
             Plane(Point3d.Origin, -Vector3d.XAxis, -Vector3d.YAxis)
 
         /// WorldXY rotated 90 degrees round Z Axis counter clockwise from top
-        static member WorldYMinusX = 
+        static member WorldYMinusX =
             Plane(Point3d.Origin, Vector3d.YAxis, -Vector3d.XAxis)
 
         /// WorldXY rotated 270 degrees round Z Axis counter clockwise from top
-        static member WorldMinusYX = 
+        static member WorldMinusYX =
             Plane(Point3d.Origin, -Vector3d.YAxis, Vector3d.XAxis)
 
         /// WorldXY rotated 180 degrees round X Axis, Z points down now
-        static member WorldXMinusY = 
+        static member WorldXMinusY =
             Plane(Point3d.Origin, Vector3d.XAxis, -Vector3d.YAxis)
 
     type PolylineCurve with
 
         /// Gets a lazy seq (= IEnumerable) of the Points that make up the Polyline.
-        member pl.Points = 
+        member pl.Points =
             seq { for i = 0 to pl.PointCount - 1 do pl.Point(i) }
 
     (*
