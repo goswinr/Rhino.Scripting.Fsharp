@@ -1,41 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-->
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net48</TargetFramework> <!-- so it can be used in latest Rhino 7 too,  net48 needed since RhinoCommon.dll 7.5 -->
+    <TargetFramework>net48</TargetFramework>
+    <!-- so it can be used in latest Rhino 7 too,  net48 needed since RhinoCommon.dll 7.5 -->
     <UseWPF>false</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>  <!--to get screen resolution, and file dialogs-->
+    <UseWindowsForms>true</UseWindowsForms>
+    <!--to get screen resolution, and file dialogs-->
     <LangVersion>preview</LangVersion>
-
     <NeutralLanguage>en</NeutralLanguage>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>    <!--to only have the english resources-->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!--to only have the english resources-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
     <RootNamespace>Rhino.Scripting</RootNamespace>
     <AssemblyName>Rhino.Scripting.Fsharp</AssemblyName>
     <AssemblyTitle>Rhino.Scripting.Fsharp</AssemblyTitle>
-    <Product>Rhino.Scripting.Fsharp</Product> <!--visible in explorer-->
+    <Product>Rhino.Scripting.Fsharp</Product>
+    <!--visible in explorer-->
     <Title>Rhino.Scripting.Fsharp</Title>
     <PackageId>Rhino.Scripting.Fsharp</PackageId>
-
     <Version>0.7.0</Version>
     <AssemblyVersion>0.7.0</AssemblyVersion>
     <FileVersion>0.7.0</FileVersion>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
-
     <Authors>GoswinR</Authors>
     <Copyright>Goswin Rothenthal 2019</Copyright>
-
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
-
     <Configuration>Release</Configuration>
-    <OtherFlags>$(OtherFlags)--warnon:3390</OtherFlags>  <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
-    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>     <!-- 1182: warn on unused variables -->
-    <PlatformTarget>x64</PlatformTarget><!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
-
+    <OtherFlags>$(OtherFlags)--warnon:3390</OtherFlags>
+    <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
+    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+    <!-- 1182: warn on unused variables -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
   </PropertyGroup>
-
   <PropertyGroup>
     <!--https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target-->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -47,45 +46,41 @@
     <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Fsharp</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
-    <PackageReadmeFile>READMEnuget.md</PackageReadmeFile> <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
+    <PackageReadmeFile>READMEnuget.md</PackageReadmeFile>
+    <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
     <PackageDescription>The full Rhino.Scripting library and additional functionality for scripting Rhino3D with F#</PackageDescription>
     <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp nurbs geometry</PackageTags>
   </PropertyGroup>
-
-
   <ItemGroup>
-	  <!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
+    <!-- otherwise the minimum FSharp.Core version would be forced by the SDK used for building it. this would be needlessly too high-->
     <PackageReference Update="FSharp.Core" Version="4.5.2" />
-
     <!-- Match RhinoCommon version of Rhino.Scripting: 6.7.18199
 	  , it supports Font.FromQuartetProperties and AreaMassProperties.Compute(Surface surface, bool , bool, bool) -->
     <PackageReference Include="RhinoCommon" Version="6.7.18199.22081" PrivateAssets="all" ExcludeAssets="runtime" />
-
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-
     <PackageReference Include="Rhino.Scripting" Version="0.7.0" />
     <!--
       <Reference Include="FsEx" HintPath="../FsEx/bin/Release/net472/FsEx.dll" />
       <Reference Include="Rhino.Scripting" HintPath="../Rhino.Scripting/bin/Release/net48/Rhino.Scripting.dll" />
     -->
   </ItemGroup>
-
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" /><!--PackagePath = "" makes the file available to nuget pack tool-->
+    <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
+    <!--PackagePath = "" makes the file available to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
-
-	<Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />
-	<Compile Include="Src/Scripting_Printing.fs" />
+    <Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />
+    <Compile Include="Src/Scripting_Printing.fs" />
     <Compile Include="Src/Scripting_Selection.fs" />
-
     <Compile Include="Src/AutoOpenCurried.fs" />
+    <Compile Include="Src\RhVec2.fs" />
     <Compile Include="Src/RhVec.fs" />
+    <Compile Include="Src\RhPnt2.fs" />
     <Compile Include="Src/RhPnt.fs" />
     <Compile Include="Src/RhLine.fs" />
     <Compile Include="Src/RhPlane.fs" />
     <Compile Include="Src/AutoOpenVector.fs" />
-    <Compile Include="Src/Topology.fs" />
+    <Compile Include="Src\RhTopology.fs" />
     <Compile Include="Src/Curve.fs" />
     <Compile Include="Src/Brep.fs" />
     <Compile Include="Src/Mesh.fs" />

@@ -159,7 +159,7 @@ module RhPnt =
             let lp = Line(thisPt + sp , vp)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>>ignore)
             let ln = Line(thisPt + sn , vn)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>> ignore)
             let ok, tp , _ = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
-            if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+            if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
             struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
     /// returns angle in degree at mid point

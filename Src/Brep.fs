@@ -12,7 +12,7 @@ open FsEx.SaveIgnore
 /// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
-module AutoOpenBrep = 
+module AutoOpenBrep =
 
   type RhinoScriptSyntax with // TODO change to Brep type extensions ??!!
 
@@ -22,8 +22,8 @@ module AutoOpenBrep =
     ///<param name="width">(float) width = radius of slotted hole</param>
     ///<param name="height">(float) height of slotted hole volume</param>
     ///<returns>(Brep) Closed Brep Geometry.</returns>
-    static member CreateSlottedHoleVolume( plane:Plane, length, width, height) : Brep  = 
-        if length<width then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SlottedHole: length= %g must be more than width= %g" length width
+    static member CreateSlottedHoleVolume( plane:Plane, length, width, height) : Brep  =
+        if length<width then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SlottedHole: length= %g must be more than width= %g" length width
         let root05  = sqrt 0.5
         let y05 = 0.5 * width
         let x1 =  0.5 * length
@@ -70,7 +70,7 @@ module AutoOpenBrep =
         Transform.PlaneToPlane (Plane.WorldXY, plane) |> c2.Transform |> ignore
         let rb = Brep.CreateFromLoft( [|c1;c2|], Point3d.Unset, Point3d.Unset, LoftType.Straight, false )
         if isNull rb || rb.Length <> 1  then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.*** Failed to Create loft part of  SlottedHole , at tolerance %f" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.*** Failed to Create loft part of  SlottedHole , at tolerance %f" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         rb.[0].CapPlanarHoles( RhinoScriptSyntax.Doc.ModelAbsoluteTolerance)
 
 
@@ -102,7 +102,7 @@ module AutoOpenBrep =
         plane.Rotate(Math.PI * 0.5, plane.ZAxis)|> RhinoScriptingFsharpException.FailIfFalse "rotate plane" // so that seam of cone an cylinder align
         let cySrf = RhinoScriptSyntax.CreateCylinder(plane, innerDiameter, length)
         let bs = Brep.CreateBooleanUnion( [coneSrf; cySrf], RhinoScriptSyntax.Doc.ModelAbsoluteTolerance)
-        if bs.Length <> 1 then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.%d items as result from creating countersunk screw" bs.Length
+        if bs.Length <> 1 then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.%d items as result from creating countersunk screw" bs.Length
         let brep = bs.[0]
         if brep.SolidOrientation = BrepSolidOrientation.Inward then brep.Flip()
         brep
@@ -148,11 +148,11 @@ module AutoOpenBrep =
         if not trimmer.IsSolid then
             draw "debug trimmer" trimmer
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference trimmer is NOT a closed Polysurface"
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference trimmer is NOT a closed Polysurface"
         if not keep.IsSolid then
             draw "debug keep" keep
             RhinoScriptSyntax.ZoomBoundingBox(keep.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference keep Volume is NOT a closed Polysurface"
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference keep Volume is NOT a closed Polysurface"
 
         if subtractionLocations <> 0 then
             let xs = Brep.CreateBooleanIntersection (keep,trimmer, RhinoScriptSyntax.Doc.ModelAbsoluteTolerance) // TODO expensive extra check
@@ -160,12 +160,12 @@ module AutoOpenBrep =
                 draw "debug trimmer no Intersection" trimmer
                 draw "debug keep no Intersection" keep
                 RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanIntersection check is null, no intersection found, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanIntersection check is null, no intersection found, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
             if xs.Length <> subtractionLocations then
                 draw "debug trimer empty Intersection" trimmer
                 draw "debug keep empty Intersection" keep
                 RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanIntersection check returned %d breps instead of one , tolerance = %g" xs.Length RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanIntersection check returned %d breps instead of one , tolerance = %g" xs.Length RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
             for x in xs do x.Dispose()
 
         let bs =  Brep.CreateBooleanDifference(keep,trimmer, RhinoScriptSyntax.Doc.ModelAbsoluteTolerance)
@@ -173,23 +173,23 @@ module AutoOpenBrep =
             draw "debug trimmer" trimmer
             draw "debug keep" keep
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference is null, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference is null, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         if bs.Length = 0 then
             draw "debug trimer for empty result" trimmer
             draw "debug keep for empty result" keep
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned 0 breps instead of one , tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned 0 breps instead of one , tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         if bs.Length <> 1 then
             bs |> Seq.iter (draw "debug more than one")
             draw "debug trimer for more than one" trimmer
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned %d breps instead of one , tolerance = %g" bs.Length RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned %d breps instead of one , tolerance = %g" bs.Length RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         let brep = bs.[0]
         if subtractionLocations = 0 && brep.Vertices.Count = keep.Vertices.Count then // extra test if
             draw "debug trimmer same vertex count on  result" trimmer
             draw "debug keep same vertex count on  result" keep
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned same vertex count on input and output brep is this desired ?, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.SubtractBrep:CreateBooleanDifference returned same vertex count on input and output brep is this desired ?, tolerance = %g" RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         if brep.SolidOrientation = BrepSolidOrientation.Inward then  brep.Flip()
         brep
 
@@ -210,7 +210,7 @@ module AutoOpenBrep =
             if notNull p then
                 m.Append p
         if m.Vertices.Count < 3 then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.ExtractRenderMesh: failed to extract a mesh from brep: %A of %d Faces" brep brep.Faces.Count
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.ExtractRenderMesh: failed to extract a mesh from brep: %A of %d Faces" brep brep.Faces.Count
 
         //let g = ref Guid.Empty
         if brep.IsSolid && not m.IsClosed then // https://discourse.mcneel.com/t/failed-to-create-closed-mesh-with-mesh-createfrombrep-brep-meshing-params-while-sucessfull-with-rhino-command--mesh/35481/8
@@ -218,11 +218,11 @@ module AutoOpenBrep =
             if not m.IsClosed then
                 m.HealNakedEdges( RhinoScriptSyntax.Doc.ModelAbsoluteTolerance * 1000.0 + meshing.MinimumEdgeLength * 100.0) |> ignore
         if  not m.IsValid then
-            //Scripting.Doc.Objects.AddBrep brep|> RhinoScriptSyntax.setLayer "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.ExtractRenderMesh mesh from Brep invalid"
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.ExtractRenderMesh: failed to create valid mesh from brep"
+            //Scripting.Doc.Objects.AddBrep brep|> RhinoScriptSyntax.setLayer "Rhino.Scripting.Fsharp: RhinoScriptSyntax.ExtractRenderMesh mesh from Brep invalid"
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.ExtractRenderMesh: failed to create valid mesh from brep"
         elif brep.IsSolid && not m.IsClosed then
             Result.Error m
-            //Scripting.Doc.Objects.AddMesh m |> RhinoScriptSyntax.setLayer "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.ExtractRenderMesh not closed"
+            //Scripting.Doc.Objects.AddMesh m |> RhinoScriptSyntax.setLayer "Rhino.Scripting.Fsharp: RhinoScriptSyntax.ExtractRenderMesh not closed"
             //printf "Mesh from closed Brep is not closed, see debug layer"
             //if  m0.IsValid && m0.IsClosed && ( g := RhinoScriptSyntax.Doc.Objects.AddMesh m0 ; !g <> Guid.Empty) then
             //    Ok !g

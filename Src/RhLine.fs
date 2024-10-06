@@ -8,7 +8,7 @@ open FsEx.SaveIgnore
 /// This module provides curried functions to manipulate Rhino Line structs
 /// It is NOT automatically opened.
 [<RequireQualifiedAccess>]
-module RhLine = 
+module RhLine =
 
     /// Reverse or flip  the Line (same as Line.flip)
     let inline reverse (ln:Line) = Line(ln.To,ln.From)
@@ -26,7 +26,7 @@ module RhLine =
     let inline translate (v:Vector3d) (ln:Line) = Line(ln.From + v, ln.To + v)
 
     /// Offset line in XY Plane to left side in line direction
-    let offset amount (ln:Line) = 
+    let offset amount (ln:Line) =
         let v = ln.Direction
         let lenXY = sqrt(v.X*v.X + v.Y*v.Y)
         if lenXY  < 1e-9 then RhinoScriptingFsharpException.Raise "Rhino.ScriptingFsharp: Line.offset: Cannot offset vertical Line  (by %g) %s" amount ln.ToNiceString
@@ -36,9 +36,9 @@ module RhLine =
 
     /// Returns an array of points of length: segment count plus one
     /// includes start and endpoint of line
-    let divide (segments:int) (ln:Line) = 
+    let divide (segments:int) (ln:Line) =
         match segments with
-        | x when x < 1 -> RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
+        | x when x < 1 -> RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.divide failed for %d segments. Minimum one. for %s"  segments ln.ToNiceString
         | 1 -> [|ln.From;  ln.To|]
         | k ->
             let r = Array.zeroCreate (k+1)
@@ -57,11 +57,11 @@ module RhLine =
     /// Returns point on lnB (the last parameter)
     let intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d = 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
+            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
         b
 
     /// Finds intersection of two Infinite Lines.
@@ -71,7 +71,7 @@ module RhLine =
     /// Considers Lines infinite
     let intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         a,b
@@ -96,7 +96,7 @@ module RhLine =
     /// Considers Lines finite
     let intersectFinite (lnA:Line) (lnB:Line) : Point3d[]= 
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         else
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb

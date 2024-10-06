@@ -11,22 +11,22 @@ open FsEx.SaveIgnore
 /// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
-module AutoOpenCurve = 
+module AutoOpenCurve =
 
   open FsEx.ExtensionsIList
 
-  type RhinoScriptSyntax with   
+  type RhinoScriptSyntax with
 
-    
+
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
     ///<param name="curveId">(Guid) Identifier of a Curve object</param>
     ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(float) The parameter of the closest point on the Curve.</returns>
-    static member curveClosestParameter(curveId:Guid) (point:Point3d) : float = 
+    static member curveClosestParameter(curveId:Guid) (point:Point3d) : float =
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
         !t
 
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
@@ -36,7 +36,7 @@ module AutoOpenCurve =
     static member curveGeoClosestParameter (curve:Curve) (point:Point3d): float =
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.curveGeoClosestParameter failed on Curve Geometry"
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveGeoClosestParameter failed on Curve Geometry"
         !t
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
@@ -46,7 +46,7 @@ module AutoOpenCurve =
     static member curveClosestPoint (curveId:Guid) (point:Point3d) : Point3d = 
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
         curve.PointAt(t)
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
@@ -55,7 +55,7 @@ module AutoOpenCurve =
     ///<returns>(Point3d) The closest point on the Curve.</returns>
     static member curveGeoClosestPoint (curve:Curve) (point:Point3d) : Point3d =         
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.curveGeoClosestPoint failed on Curve Geometry" 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveGeoClosestPoint failed on Curve Geometry" 
         curve.PointAt(t)
 
 
@@ -73,13 +73,13 @@ module AutoOpenCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
+            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
         let trim = tan(beta) * radius // the setback distance from intersection
-        if trim > A.Length then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.ToNiceString midPt.ToNiceString
-        if trim > B.Length then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.ToNiceString midPt.ToNiceString
+        if trim > A.Length then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.ToNiceString midPt.ToNiceString
+        if trim > B.Length then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.ToNiceString midPt.ToNiceString
         let arcStart =  midPt + uA * trim // still on arc plane
         let arcEnd =    midPt + uB * trim
         Arc(arcStart, - uA , arcEnd)
@@ -90,7 +90,7 @@ module AutoOpenCurve =
     ///<returns>a PolyCurve object.</returns>
     static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve = 
         for i in fillets.Keys do
-            if i >= polyline.LastIndex then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
+            if i >= polyline.LastIndex then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
 
         let closed = RhinoScriptSyntax.Distance(polyline.[0], polyline.Last) < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         let mutable prevPt = polyline.[0]
@@ -102,9 +102,9 @@ module AutoOpenCurve =
                 plc.Append arc  |> ignore
                 prevPt <- arc.EndPoint
                 endPt <- arc.StartPoint
-                if fillets.ContainsKey polyline.LastIndex then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
+                if fillets.ContainsKey polyline.LastIndex then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
             else
-                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletPolyline: Cannot set radius at index 0 on open polyline"
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletPolyline: Cannot set radius at index 0 on open polyline"
 
         for i = 1 to polyline.Count - 2 do
             let pt = polyline.[i]
@@ -122,8 +122,6 @@ module AutoOpenCurve =
         plc
 
 
-
-
     ///<summary>Returns the needed trimming of two planar Surfaces in order to fit a fillet of given radius.
     ///    the Lines can be anywhere on Plane ( except parallel to axis).</summary>
     ///<param name="radius">(float) radius of filleting cylinder</param>
@@ -137,7 +135,7 @@ module AutoOpenCurve =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  parallel?"
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLinesTrims: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)
@@ -147,7 +145,7 @@ module AutoOpenCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletSkewLinesTrims: Can't fillet, lineA and lineB and direction vector are in same plane."
+            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLinesTrims: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
@@ -169,7 +167,7 @@ module AutoOpenCurve =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletSkewLines: Can't intersect Planes , are lineA and lineB  parallel?"
+        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLines: Can't intersect Planes , are lineA and lineB  parallel?"
 
 
         let arcPl = Plane(axis.From,axis.Direction)
@@ -179,7 +177,7 @@ module AutoOpenCurve =
         // calculate trim
         let alphaDouble = 
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.dll: RhinoScriptSyntax.FilletSkewLines: Can't fillet, lineA and lineB and direction vector are in same plane."
+            if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLines: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
