@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 open System
 open System.Collections.Generic
@@ -10,9 +10,10 @@ open FsEx
 open FsEx.UtilMath
 open FsEx.SaveIgnore
 open FsEx.ExtensionsIList
+open Rhino.Scripting
 
 /// This module provides functions to manipulate Rhino Vector3d
-/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenVector =

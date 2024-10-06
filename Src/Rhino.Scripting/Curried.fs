@@ -1,18 +1,15 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 
 open FsEx
 open System
-open Rhino
 open Rhino.Geometry
-//open Rhino.NiceString
-//open FsEx.UtilMath
-//open Rhino.Scripting
-//open System.Xml.Schema
+open Rhino.Scripting
+
 
 
 /// This module provides curried F# functions for easy use with pipeline operator |>
-/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 [<AutoOpen>]
 module AutoOpenCurried =
 

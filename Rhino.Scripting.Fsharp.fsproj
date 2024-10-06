@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-->
+﻿<!--https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props-->
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -24,15 +23,19 @@
     <AssemblyVersion>0.8.0</AssemblyVersion>
     <FileVersion>0.8.0</FileVersion>
     <PackageReleaseNotes>
-    - align Point3d and Vector3d API with Euclid library
+      - align Line, Point3d and Vector3d API with Euclid library
     </PackageReleaseNotes>
     <Authors>GoswinR</Authors>
     <Copyright>Goswin Rothenthal 2019</Copyright>
     <Description>Rhino.Scripting, with extensions designed for F#</Description>
     <Configuration>Release</Configuration>
-    <OtherFlags>$(OtherFlags) --warnon:3390</OtherFlags> <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
-    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags> <!-- 1182: warn on unused variables -->
-    <PlatformTarget>x64</PlatformTarget> <!--  x64 is required e.g by Rhino, don't us just 'Platform' tag-->
+    <OtherFlags>$(OtherFlags) --warnon:3390</OtherFlags>
+    <!-- warnon:3390 is to verify xml docstrings https://devblogs.microsoft.com/dotnet/announcing-f-5/#improved-compiler-analysis-for-library-authors -->
+    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+    <!-- 1182: warn on unused variables -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!--  x64 is required e.g by Rhino, do not use just 'Platform' tag-->
+    <Configuration>Release</Configuration>
   </PropertyGroup>
   <PropertyGroup>
     <!--https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target-->
@@ -66,21 +69,20 @@
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
     <!--PackagePath = "" makes the file available to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
-    <Compile Include="Src/UtilRHinoScriptingFsharp.fs" />
-    <Compile Include="Src/AutoOpenRhinoTypeExtensions.fs" />
-    <Compile Include="Src/Scripting_Printing.fs" />
-    <Compile Include="Src/Scripting_Selection.fs" />
-    <Compile Include="Src/AutoOpenCurried.fs" />
+    <Compile Include="Src/UtilRhinoScriptingFsharp.fs" />
     <Compile Include="Src/Vector3d.fs" />
     <Compile Include="Src/Point3d.fs" />
-    <Compile Include="Src/AutoOpenVector.fs" />
-    <Compile Include="Src/RhVec.fs" />
-    <Compile Include="Src/RhPnt.fs" />
-    <Compile Include="Src/RhLine.fs" />
+    <Compile Include="Src/Line.fs" />
+    <Compile Include="Src/Rhino.Scripting/Printing.fs" />
+    <Compile Include="Src/Rhino.Scripting/Selection.fs" />
+    <Compile Include="Src/Rhino.Scripting/Curried.fs" />
+    <Compile Include="Src/Rhino.Scripting/Vectors.fs" />
+    <Compile Include="Src/Rhino.Scripting/Curve.fs" />
+    <Compile Include="Src/Rhino.Scripting/Brep.fs" />
+    <Compile Include="Src/Rhino.Scripting/Mesh.fs" />
+    <Compile Include="Src/RhPoints.fs" />
     <Compile Include="Src/RhPlane.fs" />
     <Compile Include="Src/RhTopology.fs" />
-    <Compile Include="Src/Curve.fs" />
-    <Compile Include="Src/Brep.fs" />
-    <Compile Include="Src/Mesh.fs" />
+    <Folder Include="Src\" />
   </ItemGroup>
 </Project>

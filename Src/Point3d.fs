@@ -1,6 +1,6 @@
+namespace Rhino.Scripting.Fsharp
 
-namespace Rhino.Scripting
-
+open Rhino.Scripting
 open System
 open Rhino
 open Rhino.Geometry
@@ -15,8 +15,11 @@ open System
 [<AutoOpen>]
 module AutoOpenPnt =
 
-
     type Point3d with
+
+        /// To convert a Point3d (as it is used in most other Rhino Geometries) to Point3f (as it is used in Meshes)
+        member pt.ToPoint3f = Point3f(float32 pt.X, float32 pt.Y, float32 pt.Z)
+
 
         /// Format 3D point into string with nice floating point number formatting of X, Y and Z
         /// But without full type name as in pt.ToString()
@@ -532,3 +535,29 @@ module AutoOpenPnt =
                 let ok, tp , _ = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
                 if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
                 struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
+
+
+
+    type Point3f with
+
+        /// To convert a Point3f (as it is used in Meshes) to Point3d (as it is used in most other Rhino Geometries)
+        member pt.ToPoint3d = Point3d(pt)
+
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
+            let x = ( ^T : (member X : _) pt)
+            let y = ( ^T : (member Y : _) pt)
+            let z = ( ^T : (member Z : _) pt)
+            try Point3f(float32 x, float32 y, float32 z)
+            with e -> RhinoScriptingFsharpException.Raise "Point3f.createFromMembersXYZ: %A could not be converted to a Point3f:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Point3f(float32 x, float32 y, float32 z)
+            with e ->  RhinoScriptingFsharpException.Raise "Point3f.createFromMembersxyz: %A could not be converted to a Point3f:\r\n%A" pt e

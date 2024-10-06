@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 open System
 open System.Collections.Generic
@@ -6,14 +6,21 @@ open Rhino
 open Rhino.Geometry
 open FsEx
 open FsEx.SaveIgnore
+open Rhino.Scripting
+open FsEx.ExtensionsIList
 
 /// This module provides functions to create or manipulate Rhino Curves
-/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenCurve =
 
-  open FsEx.ExtensionsIList
+  type PolylineCurve with
+
+        /// Gets a lazy seq (= IEnumerable) of the Points that make up the Polyline.
+        member pl.Points =
+            seq { for i = 0 to pl.PointCount - 1 do pl.Point(i) }
+
 
   type RhinoScriptSyntax with
 
@@ -26,7 +33,7 @@ module AutoOpenCurve =
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId)
         !t
 
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
@@ -43,19 +50,19 @@ module AutoOpenCurve =
     ///<param name="curveId">(Guid) Identifier of a Curve object</param>
     ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(Point3d) The closest point on the Curve.</returns>
-    static member curveClosestPoint (curveId:Guid) (point:Point3d) : Point3d = 
+    static member curveClosestPoint (curveId:Guid) (point:Point3d) : Point3d =
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId) 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId)
         curve.PointAt(t)
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
     ///<param name="curve">(Geometry.Curve) A Curve geometry object</param>
     ///<param name="point">(Point3d) Sampling point</param>
     ///<returns>(Point3d) The closest point on the Curve.</returns>
-    static member curveGeoClosestPoint (curve:Curve) (point:Point3d) : Point3d =         
+    static member curveGeoClosestPoint (curve:Curve) (point:Point3d) : Point3d =
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveGeoClosestPoint failed on Curve Geometry" 
+        if not <| rc then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.curveGeoClosestPoint failed on Curve Geometry"
         curve.PointAt(t)
 
 
@@ -65,13 +72,13 @@ module AutoOpenCurve =
     ///<param name="nextPt">(Point3d)The last (or third) point of polyline</param>
     ///<param name="radius">(float)The radius of the fillet to attempt to create</param>
     ///<returns>An Arc Geometry.</returns>
-    static member FilletArc  (prevPt:Point3d, midPt:Point3d, nextPt:Point3d, radius:float)  : Arc   = 
+    static member FilletArc  (prevPt:Point3d, midPt:Point3d, nextPt:Point3d, radius:float)  : Arc   =
         let A = prevPt-midPt
         let B = nextPt-midPt
-        let uA = A |> RhVec.unitize
-        let uB = B |> RhVec.unitize
+        let uA = A |> Vector3d.unitize
+        let uB = B |> Vector3d.unitize
         // calculate trim
-        let alphaDouble = 
+        let alphaDouble =
             let dot = uA*uB
             if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
             acos dot
@@ -88,7 +95,7 @@ module AutoOpenCurve =
     ///<param name="fillets">(int*float Rarr)The index of the corners to fillet and the fillet radius</param>
     ///<param name="polyline">(Point3d Rarr) The Polyline as point-list </param>
     ///<returns>a PolyCurve object.</returns>
-    static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve = 
+    static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve =
         for i in fillets.Keys do
             if i >= polyline.LastIndex then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
 
@@ -130,8 +137,8 @@ module AutoOpenCurve =
     ///<param name="lineB">(Line) Second line to fillet, must not be perpendicular to direction or first line, the lines might also be skew  </param>
     ///<returns>The needed trimming of two planar Surfaces in order to fit a fillet of given radius.
     ///    the Lines can be anywhere on Plane ( except parallel to axis).</returns>
-    static member filletSkewLinesTrims (radius:float) (direction:Vector3d) (lineA:Line) (lineB:Line) : float  = 
-        let ok,axis = 
+    static member filletSkewLinesTrims (radius:float) (direction:Vector3d) (lineA:Line) (lineB:Line) : float  =
+        let ok,axis =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
@@ -139,11 +146,11 @@ module AutoOpenCurve =
 
 
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line A projected in arc plane
-        let uB = (lineB.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line B projected in arc plane
+        let uA = (lineA.Mid - arcPl.Origin) |> Vector3d.projectToPlane arcPl |> Vector3d.unitize // vector of line A projected in arc plane
+        let uB = (lineB.Mid - arcPl.Origin) |> Vector3d.projectToPlane arcPl |> Vector3d.unitize // vector of line B projected in arc plane
 
         // calculate trim
-        let alphaDouble = 
+        let alphaDouble =
             let dot = uA*uB
             if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLinesTrims: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
@@ -162,8 +169,8 @@ module AutoOpenCurve =
     ///<returns>(NurbsCurve)Fillet Curve Geometry,
     ///    the true fillet arc on cylinder(wrong ends),
     ///    the point where fillet would be at radius 0, (same Plane as arc) .</returns>
-    static member filletSkewLines makeSCurve (radius:float)  (direction:Vector3d) (lineA:Line) (lineB:Line) : NurbsCurve*Arc*Point3d   = 
-        let ok,axis = 
+    static member filletSkewLines makeSCurve (radius:float)  (direction:Vector3d) (lineA:Line) (lineB:Line) : NurbsCurve*Arc*Point3d   =
+        let ok,axis =
             let pla = Plane(lineA.From, lineA.Direction, direction)
             let plb = Plane(lineB.From, lineB.Direction, direction)
             Intersect.Intersection.PlanePlane(pla,plb)
@@ -171,11 +178,11 @@ module AutoOpenCurve =
 
 
         let arcPl = Plane(axis.From,axis.Direction)
-        let uA = (lineA.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line A projected in arc plane
-        let uB = (lineB.Mid - arcPl.Origin) |> RhVec.projectToPlane arcPl |> RhVec.unitize // vector of line B projected in arc plane
+        let uA = (lineA.Mid - arcPl.Origin) |> Vector3d.projectToPlane arcPl |> Vector3d.unitize // vector of line A projected in arc plane
+        let uB = (lineB.Mid - arcPl.Origin) |> Vector3d.projectToPlane arcPl |> Vector3d.unitize // vector of line B projected in arc plane
 
         // calculate trim
-        let alphaDouble = 
+        let alphaDouble =
             let dot = uA*uB
             if abs(dot) > 0.999  then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.FilletSkewLines: Can't fillet, lineA and lineB and direction vector are in same plane."
             acos dot
@@ -185,13 +192,14 @@ module AutoOpenCurve =
 
         let arcStart0 =  arcPl.Origin + uA * trim // still on arc plane
         let arcEnd0 =    arcPl.Origin + uB * trim
-        let arcStart =  arcStart0 |> RhVec.projectToLine lineA direction |> RhPnt.snapIfClose lineA.From |> RhPnt.snapIfClose lineA.To
-        let arcEnd   =  arcEnd0   |> RhVec.projectToLine lineB direction |> RhPnt.snapIfClose lineB.From |> RhPnt.snapIfClose lineB.To
+        let tol = radius * 0.001
+        let arcStart =  arcStart0 |> Vector3d.projectToLine lineA direction |> Point3d.snapIfClose tol lineA.From |> Point3d.snapIfClose tol lineA.To
+        let arcEnd   =  arcEnd0   |> Vector3d.projectToLine lineB direction |> Point3d.snapIfClose tol lineB.From |> Point3d.snapIfClose tol lineB.To
         let arc = Arc(arcStart0, - uA , arcEnd0)
 
         if alphaDouble > Math.PI * 0.49999 && not makeSCurve then // fillet bigger than 89.999 degrees, one arc from 3 points
-            let miA = RhLine.intersectInOnePoint lineA axis
-            let miB = RhLine.intersectInOnePoint lineB axis
+            let miA = Line.intersectInOnePoint lineA axis
+            let miB = Line.intersectInOnePoint lineB axis
             let miPt  = (miA + miB) * 0.5 // if lines are skew
             let midWei = sin alpha
             let knots=    [| 0. ; 0. ; 1. ; 1.|]
@@ -202,16 +210,16 @@ module AutoOpenCurve =
         else // fillet smaller than 89.999 degrees, two arc from 5 points
             let betaH = beta*0.5
             let trim2 = trim - radius * tan(betaH)
-            let ma, mb = 
+            let ma, mb =
                 if makeSCurve then
-                    arcPl.Origin + uA * trim2 |> RhVec.projectToLine lineA direction ,
-                    arcPl.Origin + uB * trim2 |> RhVec.projectToLine lineB direction
+                    arcPl.Origin + uA * trim2 |> Vector3d.projectToLine lineA direction ,
+                    arcPl.Origin + uB * trim2 |> Vector3d.projectToLine lineB direction
                 else
-                    let miA = RhLine.intersectInOnePoint lineA axis
-                    let miB = RhLine.intersectInOnePoint lineB axis
+                    let miA = Line.intersectInOnePoint lineA axis
+                    let miB = Line.intersectInOnePoint lineB axis
                     let miPt  = (miA + miB) * 0.5 // if lines are skew
-                    arcPl.Origin + uA * trim2 |> RhVec.projectToLine (Line(miPt,arcStart)) direction ,
-                    arcPl.Origin + uB * trim2 |> RhVec.projectToLine (Line(miPt,arcEnd  )) direction
+                    arcPl.Origin + uA * trim2 |> Vector3d.projectToLine (Line(miPt,arcStart)) direction ,
+                    arcPl.Origin + uB * trim2 |> Vector3d.projectToLine (Line(miPt,arcEnd  )) direction
 
             let gamma = Math.PI*0.5 - betaH
             let midw= sin(gamma)

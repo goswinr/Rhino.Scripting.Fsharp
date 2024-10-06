@@ -1,4 +1,4 @@
-namespace Rhino.Scripting
+namespace Rhino.Scripting.Fsharp
 
 open Rhino
 open Rhino.Geometry
@@ -66,13 +66,41 @@ module internal VecUnitized =
 
 #nowarn "44" // to skip Obsolete warnings (members just needs to be public for inlining, but should be hidden)
 
-
 /// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
 /// It only contains extension members for type Vector3d.
 [<AutoOpen>]
 module AutoOpenVector3d =
 
     type Vector3d with
+
+
+        /// To convert Vector3d (as it is used in most other Rhino Geometries)
+        /// to a Vector3f (as it is used in Mesh normals)
+        member v.ToVector3f = Vector3f(float32 v.X, float32 v.Y, float32 v.Z)
+
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
+            let x = ( ^T : (member X : _) pt)
+            let y = ( ^T : (member Y : _) pt)
+            let z = ( ^T : (member Z : _) pt)
+            try Vector3d(float x, float y, float z)
+            with e -> RhinoScriptingFsharpException.Raise "Vector3d.createFromMembersXYZ: %A could not be converted to a Vector3d:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Vector3d(float x, float y, float z)
+            with e ->  RhinoScriptingFsharpException.Raise "Vector3d.createFromMembersxyz: %A could not be converted to a Vector3d:\r\n%A" pt e
+
+        //[<Extension>]
+        //Unitizes the vector , fails if input is of zero length
+        //member inline v.UnitizedUnchecked = let f = 1. / sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z) in Vector3d(v.X*f, v.Y*f, v.Z*f)
+
 
 
         member v.AsString =
@@ -869,6 +897,31 @@ module AutoOpenVector3d =
             let bu = b * (1.0 / sqrt sb)
             bu * au < float cosineValue
 
+        /// Project vector to Plane
+        /// Fails if resulting vector is of almost zero length (RhinoMath.SqrtEpsilon)
+        static member projectToPlane (pl:Geometry.Plane) (v:Vector3d) =
+            let pt = pl.Origin + v
+            let clpt = pl.ClosestPoint(pt)
+            let r = clpt-pl.Origin
+            if r.IsTiny(RhinoMath.SqrtEpsilon) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.projectToPlane: Cannot projectToPlane for perpendicular vector %A to given plane %A" v pl
+            r
+
+        /// Project point onto a finite line in direction of v
+        /// Fails if line is missed by tolerance 1e-6
+        //and draws debug objects on layer 'Error-projectToLine'
+        static member projectToLine (ln:Line) (v:Vector3d) (pt:Point3d) =
+            let h = Line(pt,v)
+            let ok,tln,th = Intersect.Intersection.LineLine(ln,h)
+            if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.projectToLine: project in direction failed. (are they parallel?)"
+            let a = ln.PointAt(tln)
+            let b = h.PointAt(th)
+            if (a-b).SquareLength > RhinoMath.ZeroTolerance then
+                //Scripting.Doc.Objects.AddLine ln   |> RhinoScriptSyntax.setLayer "Error-projectToLine"
+                //Scripting.Doc.Objects.AddLine h    |> RhinoScriptSyntax.setLayer "Error-projectToLineDirection"
+                //Scripting.Doc.Objects.AddPoint pt  |> RhinoScriptSyntax.setLayer "Error-projectToLineFrom"
+                RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.projectToLine: missed Line by: %g " (a-b).Length
+            a
+
 
         ///<summary> Intersects two infinite 3D lines.
         /// The lines are defined by a start point and a Vector3d.
@@ -886,13 +939,13 @@ module AutoOpenVector3d =
         ///<returns> For (almost) zero length or (almost) parallel Vector3d: ValueNone
         /// Else ValueSome with a tuple of the parameters at which the two infinite 2D lines intersect to each other.
         /// The tuple's order corresponds to the input order.</returns>
-        static member inline intersection(  ptA:Point3d,
-                                            ptB:Point3d,
-                                            vA:Vector3d,
-                                            vB:Vector3d,
-                                            [<OPT;DEF(1e-6)>] tooShortTolerance:float,
-                                            [<OPT;DEF(RelAngleDiscriminant.``0.25``)>] relAngleDiscriminant:float<RelAngleDiscriminant.relAngDiscr>
-                                            ) : ValueOption<float*float> =
+        static member intersection( ptA:Point3d,
+                                    ptB:Point3d,
+                                    vA:Vector3d,
+                                    vB:Vector3d,
+                                    [<OPT;DEF(1e-6)>] tooShortTolerance:float,
+                                    [<OPT;DEF(RelAngleDiscriminant.``0.25``)>] relAngleDiscriminant:float<RelAngleDiscriminant.relAngDiscr>
+                                    ) : ValueOption<float*float> =
             //https://stackoverflow.com/a/34604574/969070 but DP and DQ are in wrong order !
             let ax = vA.X
             let ay = vA.Y
@@ -927,3 +980,28 @@ module AutoOpenVector3d =
                     let u = (b * d - a * e) / discriminant
                     ValueSome (t, u)
 
+
+    type Vector3f with
+
+        /// To convert a Vector3f (as it is used in Mesh normals)
+        /// to a Vector3d (as it is used in most other Rhino Geometries)
+        member v.ToVector3d = Vector3d(v)
+
+        /// Accepts any type that has a X, Y and Z (UPPERCASE) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersXYZ pt  =
+            let x = ( ^T : (member X : _) pt)
+            let y = ( ^T : (member Y : _) pt)
+            let z = ( ^T : (member Z : _) pt)
+            try Vector3f(float32 x, float32 y, float32 z)
+            with e -> RhinoScriptingFsharpException.Raise "Vector3f.createFromMembersXYZ: %A could not be converted to a Vector3f:\r\n%A" pt e
+
+
+        /// Accepts any type that has a x, y and z (lowercase) member that can be converted to a float32.
+        /// Internally this is not using reflection at runtime but F# Statically Resolved Type Parameters at compile time.
+        static member inline createFromMembersxyz pt  =
+            let x = ( ^T : (member x : _) pt)
+            let y = ( ^T : (member y : _) pt)
+            let z = ( ^T : (member z : _) pt)
+            try Vector3f(float32 x, float32 y, float32 z)
+            with e ->  RhinoScriptingFsharpException.Raise "Vector3f.createFromMembersxyz: %A could not be converted to a Vector3f:\r\n%A" pt e

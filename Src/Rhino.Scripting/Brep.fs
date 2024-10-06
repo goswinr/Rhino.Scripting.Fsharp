@@ -1,15 +1,14 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 open System
-open System.Runtime.CompilerServices // [<Extension>] Attribute not needed for intrinsic (same dll) type augmentations ?
 open Rhino
 open Rhino.Geometry
-
 open FsEx
 open FsEx.SaveIgnore
+open Rhino.Scripting
 
 /// This module provides functions to create or manipulate Rhino Breps/ Polysurface
-/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenBrep =
@@ -80,7 +79,7 @@ module AutoOpenBrep =
     ///<param name="diameter">(float) Diameter of cylinder</param>
     ///<param name="length">(float) total length of the screw brep</param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member CreateCylinder ( plane:Plane, diameter, length) : Brep  = 
+    static member CreateCylinder ( plane:Plane, diameter, length) : Brep  =
         let circ = Circle(plane,diameter*0.5)
         let cy = Cylinder(circ,length)
         Brep.CreateFromCylinder(cy, capBottom=true, capTop=true)
@@ -92,7 +91,7 @@ module AutoOpenBrep =
     ///<param name="innerDiameter">(float) Diameter of cylinder</param>
     ///<param name="length">(float) total length of the screw brep</param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member CreateCounterSunkScrewVolume ( plane:Plane, outerDiameter, innerDiameter, length) : Brep  = 
+    static member CreateCounterSunkScrewVolume ( plane:Plane, outerDiameter, innerDiameter, length) : Brep  =
         let r = outerDiameter*0.5
         let mutable plco = Plane(plane)
         plco.Origin <- plco.Origin + plco.ZAxis * r
@@ -108,7 +107,7 @@ module AutoOpenBrep =
         brep
 
     ///If brep.SolidOrientation is inward then flip brep.
-    static member OrientBrep (brep:Brep) : Brep  = 
+    static member OrientBrep (brep:Brep) : Brep  =
         if brep.SolidOrientation = BrepSolidOrientation.Inward then
             brep.Flip()
         brep
@@ -118,7 +117,7 @@ module AutoOpenBrep =
     ///<param name="height">(float) the hight to extrude along the Z axis of plane</param>
     ///<param name="extraHeightPerSide">(float) Optional, Default Value: <c>0.0</c> , extra extension of the extrusion on both sides </param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member CreateExtrusionAtPlane(curveToExtrudeInWorldXY:Curve, plane:Plane, height, [<OPT;DEF(0.0)>]extraHeightPerSide:float) : Brep = 
+    static member CreateExtrusionAtPlane(curveToExtrudeInWorldXY:Curve, plane:Plane, height, [<OPT;DEF(0.0)>]extraHeightPerSide:float) : Brep =
         let mutable pl = Plane(plane)
         if extraHeightPerSide <> 0.0 then
             pl.Origin <- pl.Origin - pl.ZAxis*extraHeightPerSide
@@ -142,9 +141,9 @@ module AutoOpenBrep =
     ///  This is an optional safety check that makes it twice as slow.
     ///  It ensures that the count of breps from  Brep.CreateBooleanIntersection is equal to subtractionLocations </param>
     ///<returns>(Brep) Brep Geometry.</returns>
-    static member SubtractBrep (keep:Brep,trimmer:Brep,[<OPT;DEF(0)>]subtractionLocations:int)  :Brep = 
+    static member SubtractBrep (keep:Brep,trimmer:Brep,[<OPT;DEF(0)>]subtractionLocations:int)  :Brep =
         let draw s b = RhinoScriptSyntax.Ot.AddBrep(b)|> RhinoScriptSyntax.setLayer s
-        
+
         if not trimmer.IsSolid then
             draw "debug trimmer" trimmer
             RhinoScriptSyntax.ZoomBoundingBox(trimmer.GetBoundingBox(false))
@@ -197,8 +196,8 @@ module AutoOpenBrep =
     ///<param name="brep">(Brep)the Polysurface to extract Mesh from.</param>
     ///<param name="meshingParameters">(MeshingParameters) Optional, The Meshing parameters , if omitted the current Meshing parameters are used. </param>
     ///<returns>((Mesh Result) Ok Mesh or Error Mesh if input brep is closed but output Mesh not. Fails if no Meshes can be extracted.</returns>
-    static member ExtractRenderMesh (brep:Brep,[<OPT;DEF(null:MeshingParameters)>]meshingParameters:MeshingParameters) :Result<Mesh,Mesh> = 
-        let meshing = 
+    static member ExtractRenderMesh (brep:Brep,[<OPT;DEF(null:MeshingParameters)>]meshingParameters:MeshingParameters) :Result<Mesh,Mesh> =
+        let meshing =
             if notNull meshingParameters then
                 meshingParameters
             else

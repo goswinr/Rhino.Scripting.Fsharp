@@ -1,18 +1,9 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 open System
-open System.Collections.Generic
-open System.Globalization
-open Microsoft.FSharp.Core.LanguagePrimitives
-
-open Rhino.Geometry
-open Rhino.ApplicationSettings
 open Rhino
-
 open FsEx
-open FsEx.UtilMath
-open FsEx.SaveIgnore
-open FsEx.CompareOperators
+open Rhino.Scripting
 
 
 /// This module shadows the NiceString module from FsEx to include the special formatting for Rhino types.

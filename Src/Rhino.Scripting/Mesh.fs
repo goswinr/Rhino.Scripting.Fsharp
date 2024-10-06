@@ -1,13 +1,14 @@
-﻿namespace Rhino.Scripting
+﻿namespace Rhino.Scripting.Fsharp
 
 open Rhino
 open Rhino.Geometry
 open FsEx
 open FsEx.SaveIgnore
+open Rhino.Scripting
 
 
 /// This module provides functions to create or manipulate Rhino Meshes
-/// This module is automatically opened when Rhino.ScriptingFsharp namespace is opened.
+/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenMesh =
@@ -55,13 +56,13 @@ module AutoOpenMesh =
             else m.Faces.AddFace(c-1, c-2,  m.Vertices.Add (b.X,b.Y,b.Z), m.Vertices.Add (a.X,a.Y,a.Z)) |>ignore
 
         /// Appends a welded Quad to last 2 vertices,  Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
-        static member MeshAddQuadFaceToLastTwo (m:Mesh, l:Line) = 
+        static member MeshAddQuadFaceToLastTwo (m:Mesh, l:Line) =
             RhinoScriptSyntax.MeshAddQuadFaceToLastTwo (m, l.From ,l.To)
 
 
         /// Adds a welded quad and triangle face to simulate Pentagon, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         /// Obsolete? Use built in Ngons instead ?
-        static member MeshAddPentaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d, e:Point3d) = 
+        static member MeshAddPentaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d, e:Point3d) =
             let a = m.Vertices.Add (a.X,a.Y,a.Z)
             let d = m.Vertices.Add (d.X,d.Y,d.Z)
             m.Faces.AddFace(a, m.Vertices.Add (b.X,b.Y,b.Z),  m.Vertices.Add (c.X,c.Y,c.Z),  d  ) |>ignore
@@ -70,7 +71,7 @@ module AutoOpenMesh =
 
         /// Adds two welded quad faces to simulate hexagon, Call Mesh.Normals.ComputeNormals() and Mesh.Compact() after adding the faces ??
         /// Obsolete? Use built in Ngons instead ?
-        static member MeshAddHexaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d, e:Point3d, f:Point3d) = 
+        static member MeshAddHexaFace (m:Mesh, a:Point3d, b:Point3d, c:Point3d, d:Point3d, e:Point3d, f:Point3d) =
             let a = m.Vertices.Add (a.X,a.Y,a.Z)
             let d = m.Vertices.Add (d.X,d.Y,d.Z)
             m.Faces.AddFace(a, m.Vertices.Add (b.X,b.Y,b.Z),  m.Vertices.Add (c.X,c.Y,c.Z),  d  ) |>ignore
@@ -78,7 +79,7 @@ module AutoOpenMesh =
 
 
         /// Makes a closed loop of welded Quads, last Line is ignored, it is considered the same as the first one, (e.g. coming from closed Polyline)
-        static member MeshAddLoopWelded (m:Mesh, lns:Rarr<Line>) = 
+        static member MeshAddLoopWelded (m:Mesh, lns:Rarr<Line>) =
             // add first face
             let ln0 = lns.[0]
             let s0 = ln0.From
@@ -106,7 +107,7 @@ module AutoOpenMesh =
             m.Faces.AddFace(d,c,b0,a0) |> ignore
 
         /// Makes a closed loop of NOT welded Quads, last Line is ignored, it is considered the same as the first one, (e.g. coming from closed Polyline)
-        static member MeshAddLoopUnWelded (m:Mesh, lns:Rarr<Line>) = 
+        static member MeshAddLoopUnWelded (m:Mesh, lns:Rarr<Line>) =
             for lnP,ln in Seq.thisNext lns do
                 let  sP = lnP.From
                 let  eP = lnP.To

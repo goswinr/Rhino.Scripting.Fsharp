@@ -1,7 +1,24 @@
-
-namespace Rhino
+namespace Rhino.Scripting.Fsharp
 
 open System
+
+/// OptionalAttribute for member parameters.
+type internal OPT = Runtime.InteropServices.OptionalAttribute
+
+/// DefaultParameterValueAttribute for member parameters.
+type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
+
+
+/// Exception for Errors in script execution in Rhino.Scripting.Fsharp Extensions
+type RhinoScriptingFsharpException (s:string) =
+    inherit System.Exception(s)
+
+    static member Raise msg =
+        Printf.kprintf (fun s -> raise (new RhinoScriptingFsharpException(s))) msg
+
+    static member FailIfFalse s b =
+        if not b then raise (new RhinoScriptingFsharpException(s))
+
 
 
 /// Math Utility functions and values.
