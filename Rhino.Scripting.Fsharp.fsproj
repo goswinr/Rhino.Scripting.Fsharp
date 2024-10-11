@@ -45,7 +45,7 @@
     <PackageReadmeFile>READMEnuget.md</PackageReadmeFile>
     <!--using  snupkg the readme does not pack https://github.com/NuGet/Home/issues/10791 -->
     <PackageDescription>The full Rhino.Scripting library and additional functionality for scripting Rhino3D with F#</PackageDescription>
-    <PackageTags>rhino3d Rhinoscript RhinoCommon fsharp nurbs geometry</PackageTags>
+    <PackageTags>RhinoScript fsharp RhinoCommon Rhino3dm Rhino3d Rhino Rhinoceros 3dm</PackageTags>
     <Configuration>Release</Configuration>
   </PropertyGroup>
   <ItemGroup>
