@@ -1,11 +1,11 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 
 open System
 open Rhino
 open Rhino.Geometry
 open FsEx.SaveIgnore
 open FsEx
-open UtilRHinoScriptingFsharp
+open UtilRHinoScriptingFSharp
 open Rhino.Scripting
 
 /// This module provides curried functions to manipulate Rhino Point3d
@@ -16,7 +16,7 @@ module RhPoints =
 
     /// returns the closest point index form a Point list  to a given Point
     let closestPointIdx (pt:Point3d) (pts:Rarr<Point3d>) : int =
-        if pts.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.closestPoint empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPoint empty List of Points: pts"
         let mutable mi = -1
         let mutable mid = Double.MaxValue
         for i=0 to pts.LastIndex do
@@ -33,8 +33,8 @@ module RhPoints =
 
     /// returns the indices of the points that are closest to each other
     let closestPointsIdx (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) =
-        if xs.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.closestPointsIdx empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.closestPointsIdx empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPointsIdx empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.closestPointsIdx empty List of Points: ys"
         let mutable xi = -1
         let mutable yj = -1
         let mutable mid = Double.MaxValue
@@ -50,8 +50,8 @@ module RhPoints =
 
     /// returns the smallest Distance between Point Sets
     let minDistBetweenPointSets (xs:Rarr<Point3d>) (ys:Rarr<Point3d>) =
-        if xs.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: xs"
-        if ys.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: ys"
+        if xs.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: xs"
+        if ys.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.minDistBetweenPointSets empty List of Points: ys"
         let (i,j) = closestPointsIdx xs ys
         Point3d.distance xs.[i]  ys.[j]
 
@@ -59,8 +59,8 @@ module RhPoints =
     /// basically the mos lonely point in 'findPointFrom' list with respect to 'checkAgainst' list
     /// returns findPointFromIdx * checkAgainstIdx
     let mostDistantPointIdx (findPointFrom:Rarr<Point3d>) (checkAgainst:Rarr<Point3d>) : int*int=
-        if findPointFrom.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
-        if checkAgainst.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.mostDistantPoint empty List of Points: checkAgainst"
+        if findPointFrom.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.mostDistantPoint empty List of Points: findPointFrom"
+        if checkAgainst.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.mostDistantPoint empty List of Points: checkAgainst"
         let mutable maxd = Double.MinValue
         let mutable findPointFromIdx = -1
         let mutable checkAgainstTempIdx = -1
@@ -89,7 +89,7 @@ module RhPoints =
     /// Culls points if they are to close to previous or next item
     /// Last and first points stay the same
     let cullDuplicatePointsInSeq (tolerance) (pts:Rarr<Point3d>)  =
-        if pts.Count = 0 then RhinoScriptingFsharpException.Raise "RhPnt.cullDuplicatePointsInSeq empty List of Points: pts"
+        if pts.Count = 0 then RhinoScriptingFSharpException.Raise "RhPnt.cullDuplicatePointsInSeq empty List of Points: pts"
         if pts.Count = 1 then
             pts
         else

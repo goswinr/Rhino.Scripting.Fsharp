@@ -1,13 +1,13 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 open Rhino.Scripting
 open Rhino
 open Rhino.Geometry
 open FsEx.UtilMath
 open FsEx
-open UtilRHinoScriptingFsharp
+open UtilRHinoScriptingFSharp
 
 
-/// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
+/// When Rhino.Scripting.FSharp is opened this module will be auto-opened.
 /// It only contains extension members for type Line.
 [<AutoOpen>]
 module AutoOpenLine =
@@ -62,7 +62,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x * x  + y * y + z * z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.UnitTangent: x:%g, y:%g and z:%g are too small for creating a unit-vector. Tolerance:%g" x y z zeroLengthTolerance
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.UnitTangent: x:%g, y:%g and z:%g are too small for creating a unit-vector. Tolerance:%g" x y z zeroLengthTolerance
         let s = 1.0 / l
         Vector3d(x*s, y*s, z*s)
 
@@ -73,7 +73,7 @@ module AutoOpenLine =
         let x = abs (ln.ToX-ln.FromX)
         let y = abs (ln.ToY-ln.FromY)
         let z = abs (ln.ToZ-ln.FromZ)
-        if isTooSmall (x+y+z) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsXAligned cannot not check very short line. (tolerance 1e-6) %O" ln
+        if isTooSmall (x+y+z) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsXAligned cannot not check very short line. (tolerance 1e-6) %O" ln
         else y < 1e-9 && z < 1e-9
 
     /// Checks if 3D line is parallel to the world Y axis. Ignoring orientation.
@@ -83,7 +83,7 @@ module AutoOpenLine =
         let x = abs (ln.ToX-ln.FromX)
         let y = abs (ln.ToY-ln.FromY)
         let z = abs (ln.ToZ-ln.FromZ)
-        if isTooSmall (x+y+z) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsYAligned cannot not check very short line. (tolerance 1e-6) %O" ln
+        if isTooSmall (x+y+z) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsYAligned cannot not check very short line. (tolerance 1e-6) %O" ln
         else x < 1e-9 && z < 1e-9
 
     /// Checks if 3D line is parallel to the world Z axis. Ignoring orientation.
@@ -94,7 +94,7 @@ module AutoOpenLine =
         let x = abs (ln.ToX-ln.FromX)
         let y = abs (ln.ToY-ln.FromY)
         let z = abs (ln.ToZ-ln.FromZ)
-        if isTooSmall (x+y+z) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsZAligned cannot not check very short line. (tolerance 1e-6) %O" ln
+        if isTooSmall (x+y+z) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsZAligned cannot not check very short line. (tolerance 1e-6) %O" ln
         else x < 1e-9 && y < 1e-9
 
     /// Checks if 3D line is parallel to the world Z axis. Ignoring orientation.
@@ -105,7 +105,7 @@ module AutoOpenLine =
         let x = abs (ln.ToX-ln.FromX)
         let y = abs (ln.ToY-ln.FromY)
         let z = abs (ln.ToZ-ln.FromZ)
-        if isTooSmall (x+y+z) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsVertical cannot not check very short line. (tolerance 1e-6) %O" ln
+        if isTooSmall (x+y+z) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsVertical cannot not check very short line. (tolerance 1e-6) %O" ln
         else x < 1e-9 && y < 1e-9
 
     /// Checks if 3D line is horizontal.
@@ -115,7 +115,7 @@ module AutoOpenLine =
         let x = abs (ln.ToX-ln.FromX)
         let y = abs (ln.ToY-ln.FromY)
         let z = abs (ln.ToZ-ln.FromZ)
-        if isTooSmall (x+y+z) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsHorizontal cannot not check very short line. (tolerance 1e-6) %O" ln
+        if isTooSmall (x+y+z) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsHorizontal cannot not check very short line. (tolerance 1e-6) %O" ln
         else z < 1e-9
 
     /// Check if the 3D line has exactly the same starting and ending point.
@@ -206,7 +206,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.Extend %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.Extend %O to short for finding point at a distance." ln
         Line( ln.FromX - x*distAtStart/l,
                 ln.FromY - y*distAtStart/l,
                 ln.FromZ - z*distAtStart/l,
@@ -221,7 +221,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ExtendStart %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ExtendStart %O to short for finding point at a distance." ln
         Line( ln.FromX - x*distAtStart/l,
                 ln.FromY - y*distAtStart/l,
                 ln.FromZ - z*distAtStart/l,
@@ -236,7 +236,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ExtendEnd %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ExtendEnd %O to short for finding point at a distance." ln
         Line( ln.FromX,
                 ln.FromY,
                 ln.FromZ,
@@ -252,7 +252,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ExtendRel %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ExtendRel %O to short for finding point at a distance." ln
         Line( ln.FromX - x*relAtStart,
                 ln.FromY - y*relAtStart,
                 ln.FromZ - z*relAtStart,
@@ -268,7 +268,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ExtendStartRel %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ExtendStartRel %O to short for finding point at a distance." ln
         Line( ln.FromX - x*relAtStart,
                 ln.FromY - y*relAtStart,
                 ln.FromZ - z*relAtStart,
@@ -284,7 +284,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ExtendEndRel %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ExtendEndRel %O to short for finding point at a distance." ln
         Line( ln.FromX,
                 ln.FromY,
                 ln.FromZ,
@@ -299,7 +299,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.Shrink %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.Shrink %O to short for finding point at a distance." ln
         Line( ln.FromX + x*distAtStart/l,
                 ln.FromY + y*distAtStart/l,
                 ln.FromZ + z*distAtStart/l,
@@ -314,7 +314,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ShrinkStart %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ShrinkStart %O to short for finding point at a distance." ln
         Line( ln.FromX + x*distAtStart/l,
                 ln.FromY + y*distAtStart/l,
                 ln.FromZ + z*distAtStart/l,
@@ -329,7 +329,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ShrinkEnd %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ShrinkEnd %O to short for finding point at a distance." ln
         Line( ln.FromX,
                 ln.FromY,
                 ln.FromZ,
@@ -383,7 +383,7 @@ module AutoOpenLine =
         let z = ln.FromZ - ln.ToZ
         let lenSq = x*x + y*y + z*z
         if isTooSmallSq(lenSq) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ClosestParameterInfinite failed on very short line %O for point %O" ln p
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ClosestParameterInfinite failed on very short line %O for point %O" ln p
         let u = ln.FromX-p.X
         let v = ln.FromY-p.Y
         let w = ln.FromZ-p.Z
@@ -420,7 +420,7 @@ module AutoOpenLine =
         let z = ln.FromZ - ln.ToZ
         let lenSq = x*x + y*y + z*z
         if isTooSmallSq(lenSq) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.ClosestPointInfinite failed on very short line %O for point %O" ln p
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.ClosestPointInfinite failed on very short line %O for point %O" ln p
         let u = ln.FromX-p.X
         let v = ln.FromY-p.Y
         let w = ln.FromZ-p.Z
@@ -449,7 +449,7 @@ module AutoOpenLine =
         let z = lnFromZ - ln.ToZ
         let lenSq = x*x + y*y + z*z
         if isTooSmallSq lenSq  then // corresponds to a line Length of 1e-6
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.DistanceSqToPntInfiniteSq failed on very short line %O for point %O" ln p
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.DistanceSqToPntInfiniteSq failed on very short line %O for point %O" ln p
         let u = lnFromX - p.X
         let v = lnFromY - p.Y
         let w = lnFromZ - p.Z
@@ -491,7 +491,7 @@ module AutoOpenLine =
     /// Calculates the dot product of both.
     /// Then checks if it is bigger than 1e-12.
     member inline ln.MatchesOrientation180 (v:Vector3d) =
-        if isTooTinySq(v.LengthSq) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.MatchesOrientation180: Vector3d 'v' is too short: %s. 'ln':%s " v.AsString ln.AsString
+        if isTooTinySq(v.LengthSq) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.MatchesOrientation180: Vector3d 'v' is too short: %s. 'ln':%s " v.AsString ln.AsString
         let dot = v.X*(ln.ToX-ln.FromX) + v.Y*(ln.ToY-ln.FromY) + v.Z*(ln.ToZ-ln.FromZ)
         dot > 1e-12
 
@@ -508,15 +508,15 @@ module AutoOpenLine =
     /// Ignores the line orientation.
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsParallelTo( other:Line, [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other.Vector
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsParallelTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsParallelTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsParallelTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsParallelTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         abs(bu * au) > float minCosine // 0.999990480720734 = cosine of 0.25 degrees:
@@ -525,15 +525,15 @@ module AutoOpenLine =
     /// Ignores the line orientation.
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines or vectors shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsParallelTo( other:Vector3d, [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsParallelTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsParallelTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsParallelTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsParallelTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         abs(bu * au) > float minCosine
@@ -544,15 +544,15 @@ module AutoOpenLine =
     /// Takes the line orientation into account too.
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsParallelAndOrientedTo (other:Line, [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other.Vector
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsParallelAndOrientedTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsParallelAndOrientedTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsParallelAndOrientedTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsParallelAndOrientedTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         bu * au > float minCosine // 0.999990480720734 = cosine of 0.25 degrees:
@@ -561,15 +561,15 @@ module AutoOpenLine =
     /// Takes the line orientation into account too.
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines or vectors shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsParallelAndOrientedTo (other:Vector3d, [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsParallelAndOrientedTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsParallelAndOrientedTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsParallelAndOrientedTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsParallelAndOrientedTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         bu * au > float minCosine
@@ -580,15 +580,15 @@ module AutoOpenLine =
     /// The default angle tolerance is 89.75 to 90.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
     /// The default cosine is 0.0043633 ( = 89.75 deg)
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsPerpendicularTo (other:Line, [<OPT;DEF(Cosine.``89.75``)>] maxCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other.Vector
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsPerpendicularTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsPerpendicularTo: Line 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.IsPerpendicularTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.IsPerpendicularTo: Line 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         let d = bu * au
@@ -599,15 +599,15 @@ module AutoOpenLine =
     /// The default angle tolerance is 89.75 to 90.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
     /// The default cosine is 0.0043633 ( = 89.75 deg)
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     /// Fails on lines or vectors shorter than zeroLengthTolerance (1e-12).
     member inline ln.IsPerpendicularTo (other:Vector3d, [<OPT;DEF(Cosine.``89.75``)>] maxCosine:float<Cosine.cosine> ) =
         let a = ln.Vector
         let b = other
         let sa = a.LengthSq
-        if isTooTinySq(sa) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsPerpendicularTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
+        if isTooTinySq(sa) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsPerpendicularTo: Line2D 'ln' is too short: %s. 'other':%s " a.AsString b.AsString
         let sb = b.LengthSq
-        if isTooTinySq(sb) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line2D.IsPerpendicularTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
+        if isTooTinySq(sb) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line2D.IsPerpendicularTo: Vector3d 'other' is too short: %s. 'ln':%s " b.AsString a.AsString
         let au = a * (1.0 / sqrt sa)
         let bu = b * (1.0 / sqrt sb)
         let d = bu * au
@@ -620,7 +620,7 @@ module AutoOpenLine =
     /// Also returns false on lines shorter than zeroLengthTolerance (1e-12).
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp.Cosine module.
+    /// See Rhino.Scripting.FSharp.Cosine module.
     member inline ln.IsCoincidentTo (other:Line,
                                     [<OPT;DEF(1e-6)>] distanceTolerance:float,
                                     [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine>) =
@@ -1023,7 +1023,7 @@ module AutoOpenLine =
     static member inline lengthToPtOnLine (ln:Line) pt =
         let t = ln.Vector
         let l = t.Length
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.lengthToPtOnLine %O to short for finding length to point." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.lengthToPtOnLine %O to short for finding length to point." ln
         (t/l) * (pt-ln.From)
 
     /// Extend 3D line by absolute amount at start and end.
@@ -1081,7 +1081,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let len = sqrt(x*x + y*y + z*z)
-        if isTooTiny len then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.pointAtDistance %O to short for finding point at a distance." ln
+        if isTooTiny len then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.pointAtDistance %O to short for finding point at a distance." ln
         let f = dist/len
         Point3d(ln.FromX + x*f,
             ln.FromY + y*f,
@@ -1094,7 +1094,7 @@ module AutoOpenLine =
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.withLengthFromStart %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.withLengthFromStart %O to short for finding point at a distance." ln
         let f = len/l
         Line( ln.FromX,
                 ln.FromY,
@@ -1110,7 +1110,7 @@ module AutoOpenLine =
         let y = ln.FromY-ln.ToY
         let z = ln.FromZ-ln.ToZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.withLengthToEnd %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.withLengthToEnd %O to short for finding point at a distance." ln
         let f = len/l
         Line( ln.ToX + x*f,
                 ln.ToY + y*f,
@@ -1126,7 +1126,7 @@ module AutoOpenLine =
         let y = ln.FromY-ln.ToY
         let z = ln.FromZ-ln.ToZ
         let l = sqrt(x*x + y*y + z*z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.withLengthFromMid %O to short for finding point at a distance." ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.withLengthFromMid %O to short for finding point at a distance." ln
         let f = (len/l + 1.0) * 0.5
         Line( ln.ToX   + x*f,
                 ln.ToY   + y*f,
@@ -1142,7 +1142,7 @@ module AutoOpenLine =
         let x = ln.ToX - ln.FromX
         let y = ln.ToY - ln.FromY
         let lenXY = sqrt (x*x + y*y)
-        if isTooTiny (lenXY ) then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.offset: Cannot offset vertical Line (by %g) %O" amount ln
+        if isTooTiny (lenXY ) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.offset: Cannot offset vertical Line (by %g) %O" amount ln
         let ox = -y*amount/lenXY  // unitized, horizontal, perpendicular  vector
         let oy =  x*amount/lenXY  // unitized, horizontal, perpendicular  vector
         Line( ln.FromX+ox,
@@ -1157,7 +1157,7 @@ module AutoOpenLine =
     /// Includes start and endpoint of line.
     static member divide (segments:int) (ln:Line) : Point3d[] =
         match segments with
-        | x when x < 1 -> RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.divide failed for %d segments. Minimum one. for %O"  segments ln
+        | x when x < 1 -> RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.divide failed for %d segments. Minimum one. for %O"  segments ln
         | 1 -> [|ln.From;  ln.To|]
         | k ->
             let x = ln.ToX - ln.FromX
@@ -1183,7 +1183,7 @@ module AutoOpenLine =
     static member divideMinLength (minSegmentLength:float) (ln:Line) : Point3d[] =
         let len = ln.Length
         if len < minSegmentLength then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.divideMinLength: minSegmentLength %g is bigger than line length %g for %O"  minSegmentLength len ln
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.divideMinLength: minSegmentLength %g is bigger than line length %g for %O"  minSegmentLength len ln
         let k = int (len / (minSegmentLength*1.00000095367431640625)) // 8 float steps above 1.0 https://float.exposed/0x3f800008
         Line.divide k ln
 
@@ -1203,7 +1203,7 @@ module AutoOpenLine =
     /// Returns an empty array if the length of the line is less than gap-size x segment-count-minus-1.
     static member split (gap:float) (segments:int) (ln:Line) : Line[] =
         if segments <= 0  then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.split failed for %d segments. Minimum one. for %O"  segments ln
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.split failed for %d segments. Minimum one. for %O"  segments ln
         let v = ln.Vector
         let len = v.Length
         let lenMinusGaps = len - gap * float (segments-1)
@@ -1242,7 +1242,7 @@ module AutoOpenLine =
     static member splitMinLength (gap:float) (minSegmentLength:float) (ln:Line) : Line[] =
         let len = ln.Length
         if len < minSegmentLength then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp.Line.splitMinLength: minSegmentLength %g is bigger than line length %g for %O"  minSegmentLength len ln
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.splitMinLength: minSegmentLength %g is bigger than line length %g for %O"  minSegmentLength len ln
         let k = int ((len+gap) / ((minSegmentLength+gap)*1.000000953)) // 8 float steps above 1.0 https://float.exposed/0x3f800008
         Line.split gap k ln
 
@@ -1301,11 +1301,11 @@ module AutoOpenLine =
     /// Returns point on lnB (the last parameter)
     static member intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d =
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
         b
 
     /// Finds intersection of two Infinite Lines.
@@ -1315,7 +1315,7 @@ module AutoOpenLine =
     /// Considers Lines infinite
     static member intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d=
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         a,b
@@ -1340,7 +1340,7 @@ module AutoOpenLine =
     /// Considers Lines finite
     static member intersectFinite (lnA:Line) (lnB:Line) : Point3d[]=
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
         else
             let ca = clamp 0. 1. ta
             let cb = clamp 0. 1. tb
@@ -1371,5 +1371,5 @@ module AutoOpenLine =
         if ln.Transform(xForm) then
             ln
         else
-            RhinoScriptingFsharpException.Raise "Line.transform failed on line %A with  %A" line xForm
+            RhinoScriptingFSharpException.Raise "Line.transform failed on line %A with  %A" line xForm
 

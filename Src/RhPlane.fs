@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 
 open FsEx
 open System
@@ -9,7 +9,7 @@ open Rhino.Scripting
 
 
 
-/// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
+/// When Rhino.Scripting.FSharp is opened this module will be auto-opened.
 /// It only contains extension members for type Plane.
 [<AutoOpen>]
 module AutoOpenPlane =
@@ -87,5 +87,5 @@ module AutoOpenPlane =
     static member inline rotateZ (angDegree:float) (pl:Plane) =
         let mutable p = pl.Clone()
         if not <| p.Rotate(UtilMath.toRadians angDegree, Vector3d.ZAxis) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
         p

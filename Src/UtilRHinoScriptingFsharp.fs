@@ -1,4 +1,4 @@
-namespace Rhino.Scripting.Fsharp
+namespace Rhino.Scripting.FSharp
 
 // copied from Euclid 0.16
 
@@ -11,20 +11,20 @@ type internal OPT = Runtime.InteropServices.OptionalAttribute
 type internal DEF = Runtime.InteropServices.DefaultParameterValueAttribute
 
 
-/// Exception for Errors in script execution in Rhino.Scripting.Fsharp Extensions
-type RhinoScriptingFsharpException (s:string) =
+/// Exception for Errors in script execution in Rhino.Scripting.FSharp Extensions
+type RhinoScriptingFSharpException (s:string) =
     inherit System.Exception(s)
 
     static member Raise msg =
-        Printf.kprintf (fun s -> raise (new RhinoScriptingFsharpException(s))) msg
+        Printf.kprintf (fun s -> raise (new RhinoScriptingFSharpException(s))) msg
 
     static member FailIfFalse s b =
-        if not b then raise (new RhinoScriptingFsharpException(s))
+        if not b then raise (new RhinoScriptingFSharpException(s))
 
 
 
 /// Math Utility functions and values.
-module UtilRHinoScriptingFsharp =
+module UtilRHinoScriptingFSharp =
 
     /// Test is a value is not null.
     let inline notNull x = match x with null -> false | _ -> true
@@ -48,13 +48,13 @@ module UtilRHinoScriptingFsharp =
         not ( x > 1e-12 )
 
     /// Returns true for values smaller than 1e-12 and for NaN
-    /// uses UtilRhino.Scripting.Fsharp:zeroLengthTolerance
+    /// uses UtilRhino.Scripting.FSharp:zeroLengthTolerance
     let inline isTooTiny x =
         // use 'not' to catch a NaN too ( a cross product of infinit long vectors can give a NaN length)
         not ( x > zeroLengthTolerance )
 
     /// Returns true for values smaller than 1e-24 (square of 1e-12) and for NaN
-    /// uses UtilRhino.Scripting.Fsharp:zeroLengthTolSquared
+    /// uses UtilRhino.Scripting.FSharp:zeroLengthTolSquared
     let inline isTooTinySq x =
         // use 'not' to catch a NaN too ( a cross product of infinit long vectors can give a NaN length)
         not ( x > zeroLengthTolSquared)

@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 
 open System
 open System.Collections.Generic
@@ -10,13 +10,13 @@ open FsEx
 open FsEx.SaveIgnore
 open Rhino.Scripting
 
-/// This module provides functions similar to Rhino.Scripting.Fsharp.GetObject(..)
-/// This module is automatically opened when Rhino.Scripting.Fsharp namespace is opened.
+/// This module provides functions similar to Rhino.Scripting.FSharp.GetObject(..)
+/// This module is automatically opened when Rhino.Scripting.FSharp namespace is opened.
 /// These type extensions are only visible in F#.
 [<AutoOpen>]
 module AutoOpenSelection =
 
-  // these functions are similar to the ones found in Rhino.Scripting.Fsharp: Scripting_Selection.fs
+  // these functions are similar to the ones found in Rhino.Scripting.FSharp: Scripting_Selection.fs
 
 
   let internal rememberedObjects = Dict<string,Rarr<Guid>>()

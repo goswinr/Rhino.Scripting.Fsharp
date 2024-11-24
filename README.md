@@ -1,16 +1,16 @@
-# Rhino.Scripting.Fsharp
+# Rhino.Scripting.FSharp
 
-[![Rhino.Scripting.Fsharp on nuget.org](https://img.shields.io/nuget/v/Rhino.Scripting.Fsharp.svg)](https://nuget.org/packages/Rhino.Scripting.Fsharp)
-[![Rhino.Scripting.Fsharp on fuget.org](https://www.fuget.org/packages/Rhino.Scripting.Fsharp/badge.svg)](https://www.fuget.org/packages/Rhino.Scripting.Fsharp)
-![code size](https://img.shields.io/github/languages/code-size/goswinr/Rhino.Scripting.Fsharp.svg)
-[![license](https://img.shields.io/github/license/goswinr/Rhino.Scripting.Fsharp)](LICENSE)
+[![Rhino.Scripting.FSharp on nuget.org](https://img.shields.io/nuget/v/Rhino.Scripting.FSharp.svg)](https://nuget.org/packages/Rhino.Scripting.FSharp)
+[![Rhino.Scripting.FSharp on fuget.org](https://www.fuget.org/packages/Rhino.Scripting.FSharp/badge.svg)](https://www.fuget.org/packages/Rhino.Scripting.FSharp)
+![code size](https://img.shields.io/github/languages/code-size/goswinr/Rhino.Scripting.FSharp.svg)
+[![license](https://img.shields.io/github/license/goswinr/Rhino.Scripting.FSharp)](LICENSE)
 
 
-![logo](https://raw.githubusercontent.com/goswinr/Rhino.Scripting.Fsharp/main/Doc/logo400.png)
+![logo](https://raw.githubusercontent.com/goswinr/Rhino.Scripting.FSharp/main/Doc/logo400.png)
 
-### What is Rhino.Scripting.Fsharp?
+### What is Rhino.Scripting.FSharp?
 
-Rhino.Scripting.Fsharp is a set of useful extensions to the [Rhino.Scripting](https://github.com/goswinr/Rhino.Scripting) library.
+Rhino.Scripting.FSharp is a set of useful extensions to the [Rhino.Scripting](https://github.com/goswinr/Rhino.Scripting) library.
 This includes type extension for pretty printing of Rhino objects as well as implementations of commonly used functions in curried form for use with F#.
 
 This library allows you to compose RhinoScript functions with pipelines:
@@ -19,7 +19,7 @@ Get started by opening the Rhino.Scripting namespaces:
 
 ```fsharp
 open Rhino.Scripting
-open Rhino.Scripting.Fsharp // opening this will extend RhinoScriptSyntax and some Rhino.Geometry types with additional static and member functions.
+open Rhino.Scripting.FSharp // opening this will extend RhinoScriptSyntax and some Rhino.Geometry types with additional static and member functions.
 type rs = RhinoScriptSyntax
 ```
 

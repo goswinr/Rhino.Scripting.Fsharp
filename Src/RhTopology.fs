@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 
 open Rhino
 open Rhino.Geometry

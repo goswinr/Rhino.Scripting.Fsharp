@@ -10,12 +10,12 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>    <!--to only have the english resources-->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Rhino.Scripting</RootNamespace>
-    <AssemblyName>Rhino.Scripting.Fsharp</AssemblyName>
-    <AssemblyTitle>Rhino.Scripting.Fsharp</AssemblyTitle>
-    <Product>Rhino.Scripting.Fsharp</Product>
+    <AssemblyName>Rhino.Scripting.FSharp</AssemblyName>
+    <AssemblyTitle>Rhino.Scripting.FSharp</AssemblyTitle>
+    <Product>Rhino.Scripting.FSharp</Product>
     <!--visible in explorer-->
-    <Title>Rhino.Scripting.Fsharp</Title>
-    <PackageId>Rhino.Scripting.Fsharp</PackageId>
+    <Title>Rhino.Scripting.FSharp</Title>
+    <PackageId>Rhino.Scripting.FSharp</PackageId>
     <Version>0.8.1</Version>
     <AssemblyVersion>0.8.1</AssemblyVersion>
     <FileVersion>0.8.1</FileVersion>
@@ -38,8 +38,8 @@
     <!--<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.Fsharp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.Fsharp</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/goswinr/Rhino.Scripting.FSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/goswinr/Rhino.Scripting.FSharp</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageIcon>logo128.png</PackageIcon>
     <PackageReadmeFile>READMEnuget.md</PackageReadmeFile>
@@ -64,7 +64,7 @@
     <None Include="Doc/READMEnuget.md" Pack="true" PackagePath="" />
     <!--PackagePath = "" makes the file available to nuget pack tool-->
     <None Include="Doc/logo128.png" Pack="true" PackagePath="" />
-    <Compile Include="Src/UtilRhinoScriptingFsharp.fs" />
+    <Compile Include="Src/UtilRhinoScriptingFSharp.fs" />
     <Compile Include="Src/Vector3d.fs" />
     <Compile Include="Src/Point3d.fs" />
     <Compile Include="Src/Line.fs" />

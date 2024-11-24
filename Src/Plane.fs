@@ -1,4 +1,4 @@
-﻿namespace Rhino.Scripting.Fsharp
+﻿namespace Rhino.Scripting.FSharp
 
 open FsEx
 open System
@@ -6,11 +6,11 @@ open Rhino
 open Rhino.Geometry
 open FsEx.UtilMath
 open Rhino.Scripting
-open UtilRHinoScriptingFsharp
+open UtilRHinoScriptingFSharp
 
 
 
-/// When Rhino.Scripting.Fsharp is opened this module will be auto-opened.
+/// When Rhino.Scripting.FSharp is opened this module will be auto-opened.
 /// It only contains extension members for type Plane.
 [<AutoOpen>]
 module AutoOpenPlane=
@@ -52,7 +52,7 @@ module AutoOpenPlane=
         let y = ln.ToY-ln.FromY
         let z = ln.ToZ-ln.FromZ
         let l = sqrt(x * x  + y * y + z * z)
-        if isTooTiny l then RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.Angle90ToLine: Line is too short. %O" ln
+        if isTooTiny l then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.Angle90ToLine: Line is too short. %O" ln
         let u = Vector3d (x/ l, y/ l, z/ l)
         90.0 - Vector3d.angle90 u pl.ZAxis
 
@@ -67,7 +67,7 @@ module AutoOpenPlane=
     /// and the distance of second origin to the first plane is less than the distance tolerance.
     /// The default angle tolerance is 0.25 degrees.
     /// This tolerance can be customized by an optional minium cosine value.
-    /// See Rhino.Scripting.Fsharp:.Cosine module.
+    /// See Rhino.Scripting.FSharp:.Cosine module.
     member inline pl.IsCoincidentTo (other:Plane,
                                     [<OPT;DEF(1e-6)>] distanceTolerance:float,
                                     [<OPT;DEF(Cosine.``0.25``)>] minCosine:float<Cosine.cosine>) =
@@ -130,7 +130,7 @@ module AutoOpenPlane=
     static member inline rotateZ (angDegree:float) (pl:Plane) =
         let mutable p = pl.Clone()
         if not <| p.Rotate(UtilMath.toRadians angDegree, Vector3d.ZAxis) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
         p
 
 
@@ -237,14 +237,14 @@ module AutoOpenPlane=
         let y = yPt-origin
         let lx = x.Length
         let ly = y.Length
-        if isTooSmall (lx) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createThreePoints the distance between origin %s and xPt %s is too small" origin.AsString xPt.AsString
-        if isTooSmall (ly) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createThreePoints the distance between origin %s and yPt %s is too small" origin.AsString yPt.AsString
+        if isTooSmall (lx) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createThreePoints the distance between origin %s and xPt %s is too small" origin.AsString xPt.AsString
+        if isTooSmall (ly) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createThreePoints the distance between origin %s and yPt %s is too small" origin.AsString yPt.AsString
         let xf = 1./lx
         let yf = 1./ly
         let xu = Vector3d(x.X*xf, x.Y*xf, x.Z*xf)
         let yu = Vector3d(y.X*yf, y.Y*yf, y.Z*yf)
         if xu.IsParallelTo(yu, Cosine.``1.0``) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createThreePoints failed. The points are colinear by less than 1.0 degree, origin %s and xPt %s and yPt %s" origin.AsString xPt.AsString yPt.AsString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createThreePoints failed. The points are colinear by less than 1.0 degree, origin %s and xPt %s and yPt %s" origin.AsString xPt.AsString yPt.AsString
         let z  = Vector3d.cross (xu, yu)
         let y' = Vector3d.cross (z, x)
         Plane(origin, xu, y'.Unitized)
@@ -258,8 +258,8 @@ module AutoOpenPlane=
     static member createOriginXaxisYaxis (origin:Point3d, xAxis:Vector3d, yAxis:Vector3d) =
         let lx = xAxis.Length
         let ly = yAxis.Length
-        if isTooSmall (lx) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginXaxisYaxis the X-axis is too small. origin %s X-Axis %s" origin.AsString xAxis.AsString
-        if isTooSmall (ly) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginXaxisYaxis the Y-axis is too small. origin %s Y-Axis %s" origin.AsString yAxis.AsString
+        if isTooSmall (lx) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginXaxisYaxis the X-axis is too small. origin %s X-Axis %s" origin.AsString xAxis.AsString
+        if isTooSmall (ly) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginXaxisYaxis the Y-axis is too small. origin %s Y-Axis %s" origin.AsString yAxis.AsString
         Plane(origin, xAxis, yAxis)
         // let xf = 1./lx
         // let yf = 1./ly
@@ -275,7 +275,7 @@ module AutoOpenPlane=
     /// Fails if the vectors are shorter than 1e-5.
     static member createOriginNormal (origin:Point3d, normal:Vector3d) =
         let len = normal.Length
-        if isTooSmall (len) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginNormal the Z-axis is too small. origin %s Z-Axis %s" origin.AsString normal.AsString
+        if isTooSmall (len) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginNormal the Z-axis is too small. origin %s Z-Axis %s" origin.AsString normal.AsString
         let f = 1./len
         let normal =  Vector3d(normal.X*f, normal.Y*f, normal.Z*f)
         if normal.IsParallelTo(Vector3d.ZAxis, Cosine.``0.5``) then
@@ -294,14 +294,14 @@ module AutoOpenPlane=
     static member createOriginNormalXaxis (origin:Point3d, normal:Vector3d, xAxis:Vector3d) =
         let lx = xAxis.Length
         let ln = normal.Length
-        if isTooSmall (lx) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginNormalXaxis the X-axis is too small. origin %s X-Axis %s" origin.AsString xAxis.AsString
-        if isTooSmall (ln) then  RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginNormalXaxis the normal is too small. origin %s Normal %s" origin.AsString normal.AsString
+        if isTooSmall (lx) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginNormalXaxis the X-axis is too small. origin %s X-Axis %s" origin.AsString xAxis.AsString
+        if isTooSmall (ln) then  RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginNormalXaxis the normal is too small. origin %s Normal %s" origin.AsString normal.AsString
         let xf = 1./lx
         let nf = 1./ln
         let xu = Vector3d(xAxis.X *xf,  xAxis.Y*xf,  xAxis.Z*xf)
         let nu = Vector3d(normal.X*nf, normal.Y*nf, normal.Z*nf)
         if nu.IsParallelTo(xu, Cosine.``1.0``) then
-            RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.createOriginNormalXaxis failed. The vectors are colinear by less than 1.0 degrees, origin %s and normal %s and normal %s" origin.AsString normal.AsString xAxis.AsString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.createOriginNormalXaxis failed. The vectors are colinear by less than 1.0 degrees, origin %s and normal %s and normal %s" origin.AsString normal.AsString xAxis.AsString
         let y = Vector3d.cross (nu, xu)
         let x = Vector3d.cross (y, nu)
         Plane(origin, x.Unitized, y.Unitized)
@@ -401,7 +401,7 @@ module AutoOpenPlane=
         let an = a.ZAxis
         let v = Vector3d.cross (an, bn)
         if isTooSmallSq v.LengthSq then
-            // RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.intersect: Planes are parallel or coincident: %O, %O" a b
+            // RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.intersect: Planes are parallel or coincident: %O, %O" a b
             None
         else
             let pa = Vector3d.cross(v, an)
@@ -420,7 +420,7 @@ module AutoOpenPlane=
         let z = pl.ZAxis
         let nenner = ln.Tangent * z
         if isTooSmall (abs nenner) then
-            // RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.intersectLineParameter: Line and Plane are parallel or line has zero length: %O, %O" ln pl
+            // RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.intersectLineParameter: Line and Plane are parallel or line has zero length: %O, %O" ln pl
             None
         else
             Some <| ((pl.Origin - ln.From) * z) / nenner
@@ -434,7 +434,7 @@ module AutoOpenPlane=
         let v = ln.Tangent
         let nenner = v * z
         if isTooSmall (abs nenner) then
-            // RhinoScriptingFsharpException.Raise "Rhino.Scripting.Fsharp:.Plane.intersectLineParameters: Line and Plane are parallel or line has zero length: %O, %O" ln pl
+            // RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp:.Plane.intersectLineParameters: Line and Plane are parallel or line has zero length: %O, %O" ln pl
             None
         else
             let t = ((pl.Origin - ln.From) * z) / nenner
