@@ -21,8 +21,8 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Run dotnet build  --configuration Release
-        run: dotnet build
+      - name: Run dotnet build
+        run: dotnet build --configuration Release
 
 
 
