@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/goswinr/Rhino.Scripting.FSharp/main/Doc/logo.png)
+![logo](https://raw.githubusercontent.com/goswinr/Rhino.Scripting.FSharp/main/Docs/img/logo.png)
 
 # Rhino.Scripting.FSharp
 
@@ -46,19 +46,18 @@ It passes it's input on as output. See [definition](https://github.com/goswinr/F
 
 [goswinr.github.io/Rhino.Scripting.FSharp](https://goswinr.github.io/Rhino.Scripting.FSharp)
 
+## Thread Safety
+While the main Rhino Document is officially not thread safe, this library can be used from any thread.\
+If running async this library will automatically marshal all calls that affect the UI to the main Rhino UI thread \
+and wait for switching back till completion on UI thread.\
+Modifying the Rhino Document from a background thread is actually OK as long as there is only one thread doing it.\
+The main reason to use this library async is to keep the Rhino UI and Fesh scripting editor UI responsive while doing long running operations.
+
+## Contributing
+Contributions are welcome even for small things like typos. If you have problems with this library please submit an issue.
+
 ### License
-[MIT](https://raw.githubusercontent.com/goswinr/FsEx/main/LICENSE.txt)
+[MIT](https://github.com/goswinr/Rhino.Scripting.FSharp/blob/main/LICENSE.md)
 
-### Change Log
-
-`0.8.1`
-- align Plane API with Euclid library
-
-`0.8.0`
-- align Line, Point3d and Vector3d API with Euclid library
-- referencing Rhino.Scripting 0.8.0
-
-`0.5.0`
-
-- first public release
-- referencing Rhino.Scripting 0.5.0
+### Changelog
+see [CHANGELOG.md](https://github.com/goswinr/Rhino.Scripting.FSharp/blob/main/CHANGELOG.md)

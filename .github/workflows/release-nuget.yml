@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '9.x'
 
     - name: dotnet build
-      run: dotnet build ForPublishing.fsproj --configuration Release
+      run: dotnet build --configuration Release
 
     - name: Check version consistency of git tag and CHANGELOG.md
       # needs in fsproj:
@@ -41,6 +41,6 @@ jobs:
     - name: Push NuGet package to nuget.org
       run: |
         dotnet nuget push `
-        ./bin/Release/Rhino.Scripting.${{ github.ref_name }}.symbols.nupkg `
+        ./bin/Release/Rhino.Scripting.FSharp.${{ github.ref_name }}.symbols.nupkg `
         --api-key ${{ secrets.NUGET_API_KEY }} `
         --source https://api.nuget.org/v3/index.json

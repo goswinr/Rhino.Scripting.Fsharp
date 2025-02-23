@@ -1,4 +1,4 @@
-name: Build for Standalone and Hosting
+name: Build
 
 on:
   push:
@@ -21,9 +21,8 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Run dotnet build ForEditing
-        run: dotnet build ForEditing.fsproj
+      - name: Run dotnet build  --configuration Release
+        run: dotnet build
 
-      - name: Run dotnet build ForPublishing
-        run: dotnet build ForPublishing.fsproj
+
 
