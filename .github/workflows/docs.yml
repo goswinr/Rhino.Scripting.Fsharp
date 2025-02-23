@@ -29,6 +29,11 @@ jobs:
       - name: Restore dotnet tools
         run: dotnet tool restore
 
+      - name: List files in Src directory
+        run: |
+          cd Src 
+          ls 
+
       - name: Build code to make xml file
         run: dotnet build --configuration Release # see required xml tags: https://fsprojects.github.io/FSharp.Formatting/zero-to-hero.html#Generating-API-documentation
 
