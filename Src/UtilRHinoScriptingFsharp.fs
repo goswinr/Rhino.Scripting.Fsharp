@@ -29,6 +29,14 @@ module UtilRHinoScriptingFSharp =
     /// Test is a value is not null.
     let inline notNull x = match x with null -> false | _ -> true
 
+    /// Any int will give a valid index for given collection size.
+    /// Converts negative indices to positive ones and loops to start after last index is reached.
+    /// Returns a valid index for a collection of 'length' items for any integer
+    let inline idxLooped i length =
+        let t = i % length
+        if t >= 0 then t
+        else           t + length
+
     /// Tolerance for zero length: 1e-12 in divisions and unitizing of vectors.
     [<Literal>]
     let zeroLengthTolerance = 1e-12

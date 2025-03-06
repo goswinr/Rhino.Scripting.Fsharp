@@ -5,9 +5,7 @@ open System.Collections.Generic
 
 open Rhino
 open Rhino.Geometry
-
-open FsEx
-open FsEx.SaveIgnore
+open Rhino.Scripting.RhinoScriptingUtils
 open Rhino.Scripting
 
 /// This module provides functions similar to Rhino.Scripting.FSharp.GetObject(..)
@@ -19,7 +17,7 @@ module AutoOpenSelection =
   // these functions are similar to the ones found in Rhino.Scripting.FSharp: Scripting_Selection.fs
 
 
-  let internal rememberedObjects = Dict<string,Rarr<Guid>>()
+  let internal rememberedObjects = Dict<string,ResizeArray<Guid>>()
 
   type RhinoScriptSyntax with
 
@@ -34,13 +32,13 @@ module AutoOpenSelection =
     ///<param name="includeLockedObjects">(bool) Optional, Default Value: <c>false</c> Include locked objects</param>
     ///<param name="includeLights">(bool) Optional, Default Value: <c>false</c> Include light objects</param>
     ///<param name="includeGrips">(bool) Optional, Default Value: <c>false</c> Include grips objects</param>
-    ///<returns>(Guid Rarr) Identifiers for all the objects that are not hidden and who's layer is on and visible.</returns>
+    ///<returns>(Guid ResizeArray) Identifiers for all the objects that are not hidden and who's layer is on and visible.</returns>
     static member ShownObjects(     [<OPT;DEF(0)>]filter:int,
                                     [<OPT;DEF(true)>]printCount:bool,
                                     [<OPT;DEF(false)>]includeReferences:bool,
                                     [<OPT;DEF(false)>]includeLockedObjects:bool,
                                     [<OPT;DEF(false)>]includeLights:bool,
-                                    [<OPT;DEF(false)>]includeGrips:bool) : Guid Rarr =
+                                    [<OPT;DEF(false)>]includeGrips:bool) : Guid ResizeArray =
         let viewId = // only get object from model space if current or current page
             if RhinoScriptSyntax.Doc.Views.ActiveView :? Display.RhinoPageView then RhinoScriptSyntax.Doc.Views.ActiveView.MainViewport.Id
             else Guid.Empty
@@ -59,13 +57,14 @@ module AutoOpenSelection =
         it.DeletedObjects <- false
         //it.VisibleFilter <- true
         let objects = RhinoScriptSyntax.Doc.Objects.GetObjectList(it)
-        let objectIds = Rarr()
+        let objectIds = ResizeArray()
         for ob in objects do
             if ob.Attributes.ViewportId = viewId then // only get object from model space if current or current page
                 if Vis.Contains(ob.Attributes.LayerIndex) then
                         objectIds.Add(ob.Id)
         if printCount then
-            RhinoScriptSyntax.PrintfnBlue "ShownObjects found %s"  ( RhinoScriptSyntax.ObjectDescription(objectIds))
+            // RhinoScriptSyntax.PrintfnBlue "ShownObjects found %s"  ( RhinoScriptSyntax.ObjectDescription(objectIds)) // TODO
+            RhinoScriptSyntax.Print $"ShownObjects found %d{objectIds.Count} objects"
         objectIds
 
 
@@ -93,7 +92,7 @@ module AutoOpenSelection =
     ///<param name="printCount">(bool) Optional, Default Value: <c>true</c> Print object count to command window</param>
     ///<param name="customFilter">(Input.Custom.GetObjectGeometryFilter) Optional, Will be ignored if 'objects' are set. Calls a custom function in the script and passes
     ///    the Rhino Object, Geometry, and component index and returns true or false indicating if the object can be selected</param>
-    ///<returns>(Guid Rarr) List of identifiers of the picked objects.</returns>
+    ///<returns>(Guid ResizeArray) List of identifiers of the picked objects.</returns>
     static member GetObjectsAndRemember(message:string,
                                         [<OPT;DEF(0)>]filter:int,
                                         [<OPT;DEF(true)>]group:bool,
@@ -103,13 +102,14 @@ module AutoOpenSelection =
                                         [<OPT;DEF(1)>]minimumCount:int,
                                         [<OPT;DEF(0)>]maximumCount:int,
                                         [<OPT;DEF(true)>]printCount:bool,
-                                        [<OPT;DEF(null:Input.Custom.GetObjectGeometryFilter)>]customFilter:Input.Custom.GetObjectGeometryFilter)  : Guid Rarr =
+                                        [<OPT;DEF(null:Input.Custom.GetObjectGeometryFilter)>]customFilter:Input.Custom.GetObjectGeometryFilter)  : Guid ResizeArray =
         try
             let objectIds = rememberedObjects.[message]
             if printCount then  // this print statement also raises an exception if object does not exist to trigger reselection
-                RhinoScriptSyntax.PrintfnBlue "GetObjectsAndRemember for '%s': %s" message ( RhinoScriptSyntax.ObjectDescription(objectIds))
-            elif objectIds |> Rarr.exists ( fun g -> let o =  RhinoScriptSyntax.Doc.Objects.FindId(g) in isNull o || o.IsDeleted ) then
-                fail() // to trigger reselection if object does not exist anymore
+                // RhinoScriptSyntax.PrintfnBlue "GetObjectsAndRemember for '%s': %s" message ( RhinoScriptSyntax.ObjectDescription(objectIds)) // TODO
+                RhinoScriptSyntax.Print $"GetObjectsAndRemember for '%s{message}': %d{objectIds.Count} objects"
+            elif objectIds.Exists  (System.Predicate ( fun g -> let o =  RhinoScriptSyntax.Doc.Objects.FindId(g) in isNull o || o.IsDeleted )) then
+                failwith "GetObjectsAndRemember" // to trigger reselection if object does not exist anymore
             objectIds
         with e ->
             //Printf.lightGray "%A" e
@@ -140,19 +140,20 @@ module AutoOpenSelection =
                                         [<OPT;DEF(false)>]printDescr:bool,
                                         [<OPT;DEF(null:Input.Custom.GetObjectGeometryFilter)>]customFilter:Input.Custom.GetObjectGeometryFilter)  : Guid =
         try
-            let objectId = rememberedObjects.[message].First // this may raises an exception if the key does  not exist, to trigger reselection
+            let objectId = rememberedObjects.[message].[0] // this may raises an exception if the key does  not exist, to trigger reselection
             if printDescr then
-                RhinoScriptSyntax.PrintfnBlue "GetObjectAndRemember for '%s': one %s" message ( RhinoScriptSyntax.ObjectDescription(objectId)) // this print statement also raises an exception if guid object does not exist, to trigger reselection
+                // RhinoScriptSyntax.PrintfnBlue "GetObjectAndRemember for '%s': one %s" message ( RhinoScriptSyntax.ObjectDescription(objectId)) // this print statement also raises an exception if guid object does not exist, to trigger reselection
+                RhinoScriptSyntax.Print $"GetObjectAndRemember for '%s{message}': one %s{ RhinoScriptSyntax.ObjectDescription(objectId)}"
             elif (let o = RhinoScriptSyntax.Doc.Objects.FindId(objectId) in isNull o || o.IsDeleted)  then
-                fail() // to trigger reselection if object does not exist anymore
+                failwith "GetObjectAndRemember" // to trigger reselection if object does not exist anymore
             objectId
         with e ->
-            Printf.lightGray "%A" e
+            // Printf.lightGray "%A" e
             let id = RhinoScriptSyntax.GetObject(message, filter,  preselect, select,  customFilter, subObjects=false)
-            rememberedObjects.[message] <- Rarr.singleton id
+            rememberedObjects.[message] <- ResizeArray [id]
             id
 
     ///<summary>Clears all remembered objects form internal Dictionary that where added via  rs.GetObjectAndRemember() or rs.GetObjectsAndRemember()</summary>
     static member ClearRememberedObjects()  : unit =
-        RhinoScriptSyntax.PrintfGray "Cleared %d remembered Selection Sets" rememberedObjects.Count
+        // RhinoScriptSyntax.PrintfGray "Cleared %d remembered Selection Sets" rememberedObjects.Count
         rememberedObjects.Clear()

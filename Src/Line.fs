@@ -2,8 +2,7 @@
 open Rhino.Scripting
 open Rhino
 open Rhino.Geometry
-open FsEx.UtilMath
-open FsEx
+open Rhino.Scripting.RhinoScriptingUtils
 open UtilRHinoScriptingFSharp
 
 
@@ -33,12 +32,12 @@ module AutoOpenLine =
     /// But without full type name as in v.ToString()
     member ln.AsString =
         sprintf "%s, %s, %s to %s, %s, %s"
-            (NiceFormat.float ln.FromX)
-            (NiceFormat.float ln.FromY)
-            (NiceFormat.float ln.FromZ)
-            (NiceFormat.float ln.ToX)
-            (NiceFormat.float ln.ToY)
-            (NiceFormat.float ln.ToZ)
+            (PrettyFormat.float ln.FromX)
+            (PrettyFormat.float ln.FromY)
+            (PrettyFormat.float ln.FromZ)
+            (PrettyFormat.float ln.ToX)
+            (PrettyFormat.float ln.ToY)
+            (PrettyFormat.float ln.ToZ)
 
 
     /// Same as ln.Vector or ln.Tangent.
@@ -494,7 +493,6 @@ module AutoOpenLine =
         if isTooTinySq(v.LengthSq) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp.Line.MatchesOrientation180: Vector3d 'v' is too short: %s. 'ln':%s " v.AsString ln.AsString
         let dot = v.X*(ln.ToX-ln.FromX) + v.Y*(ln.ToY-ln.FromY) + v.Z*(ln.ToZ-ln.FromZ)
         dot > 1e-12
-
 
 
     /// Checks if the angle between the two 3D lines is less than 90 degrees.
@@ -1301,11 +1299,11 @@ module AutoOpenLine =
     /// Returns point on lnB (the last parameter)
     static member intersectInOnePoint (lnA:Line) (lnB:Line) : Point3d =
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectInOnePoint failed, parallel ?  on %s and %s" lnA.Pretty lnB.Pretty
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         if (a-b).SquareLength > RhinoMath.ZeroTolerance then // = Length > 1e-6
-            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.ToNiceString lnB.ToNiceString
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersect intersectInOnePoint, they are skew. distance: %g  on %s and %s" (a-b).Length lnA.Pretty lnB.Pretty
         b
 
     /// Finds intersection of two Infinite Lines.
@@ -1315,7 +1313,7 @@ module AutoOpenLine =
     /// Considers Lines infinite
     static member intersectSkew (lnA:Line) (lnB:Line) :Point3d*Point3d=
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectSkew failed, parallel ?  on %s and %s" lnA.Pretty lnB.Pretty
         let a = lnA.PointAt(ta)
         let b = lnB.PointAt(tb)
         a,b
@@ -1340,10 +1338,16 @@ module AutoOpenLine =
     /// Considers Lines finite
     static member intersectFinite (lnA:Line) (lnB:Line) : Point3d[]=
         let ok, ta, tb = Intersect.Intersection.LineLine(lnA,lnB)
-        if not ok then [||] //RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.ToNiceString lnB.ToNiceString
+        if not ok then [||] //RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.Line.intersectFinite failed, parallel ?  on %s and %s" lnA.Pretty lnB.Pretty
         else
-            let ca = clamp 0. 1. ta
-            let cb = clamp 0. 1. tb
+            let inline clamp01 x =
+                if x < 0.0 then 0.0
+                elif x > 1.0 then 1.0
+                else x
+
+
+            let ca = clamp01 ta
+            let cb = clamp01 tb
             let a = lnA.PointAt(ca)
             let b = lnB.PointAt(cb)
             let d = Point3d.distance a b

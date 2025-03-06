@@ -4,10 +4,8 @@ open System
 open System.Collections.Generic
 open Rhino
 open Rhino.Geometry
-open FsEx
-open FsEx.SaveIgnore
 open Rhino.Scripting
-open FsEx.ExtensionsIList
+
 
 /// This module provides functions to create or manipulate Rhino Curves
 /// This module is automatically opened when Rhino.Scripting.FSharp namespace is opened.
@@ -33,7 +31,7 @@ module AutoOpenCurve =
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let t = ref 0.
         let rc = curve.ClosestPoint(point, t)
-        if not <| rc then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (NiceString.toNiceString curveId)
+        if not <| rc then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.curveClosestParameter failed. curveId:'%s'" (pretty curveId)
         !t
 
     ///<summary>Returns parameter of the point on a Curve that is closest to a test point.</summary>
@@ -53,7 +51,7 @@ module AutoOpenCurve =
     static member curveClosestPoint (curveId:Guid) (point:Point3d) : Point3d =
         let curve = RhinoScriptSyntax.CoerceCurve(curveId)
         let rc, t = curve.ClosestPoint(point)
-        if not <| rc then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (NiceString.toNiceString curveId)
+        if not <| rc then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.curveClosestPoint failed. curveId:'%s'" (pretty curveId)
         curve.PointAt(t)
 
     ///<summary>Returns the point on a Curve that is closest to a test point.</summary>
@@ -80,36 +78,36 @@ module AutoOpenCurve =
         // calculate trim
         let alphaDouble =
             let dot = uA*uB
-            if abs(dot) > 0.999  then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.ToNiceString midPt.ToNiceString nextPt.ToNiceString
+            if abs(dot) > 0.999  then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Can't fillet points that are collinear %s,%s,%s" prevPt.Pretty midPt.Pretty nextPt.Pretty
             acos dot
         let alpha = alphaDouble * 0.5
         let beta  = Math.PI * 0.5 - alpha
         let trim = tan(beta) * radius // the setback distance from intersection
-        if trim > A.Length then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.ToNiceString midPt.ToNiceString
-        if trim > B.Length then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.ToNiceString midPt.ToNiceString
+        if trim > A.Length then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for prev %s and  %s" radius prevPt.Pretty midPt.Pretty
+        if trim > B.Length then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletArc: Fillet Radius %g is too big for next %s and  %s" radius nextPt.Pretty midPt.Pretty
         let arcStart =  midPt + uA * trim // still on arc plane
         let arcEnd =    midPt + uB * trim
         Arc(arcStart, - uA , arcEnd)
 
     ///<summary>Fillet some corners of polyline.</summary>
-    ///<param name="fillets">(int*float Rarr)The index of the corners to fillet and the fillet radius</param>
-    ///<param name="polyline">(Point3d Rarr) The Polyline as point-list </param>
+    ///<param name="fillets">(int*float ResizeArray)The index of the corners to fillet and the fillet radius</param>
+    ///<param name="polyline">(Point3d ResizeArray) The Polyline as point-list </param>
     ///<returns>a PolyCurve object.</returns>
     static member FilletPolyline (fillets: IDictionary<int,float>, polyline:IList<Point3d>) : PolyCurve =
         for i in fillets.Keys do
-            if i >= polyline.LastIndex then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
+            if i >= polyline.Count-1 then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletPolyline: cannot fillet corner %d . in polyline of %d points" i polyline.Count
 
-        let closed = RhinoScriptSyntax.Distance(polyline.[0], polyline.Last) < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
+        let closed = RhinoScriptSyntax.Distance(polyline.[0], polyline.[polyline.Count-1] ) < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance
         let mutable prevPt = polyline.[0]
-        let mutable endPt = polyline.Last
+        let mutable endPt = polyline.[polyline.Count-1]
         let plc = new PolyCurve()
         if fillets.ContainsKey 0 then
             if closed then
-                let arc = RhinoScriptSyntax.FilletArc (polyline.Last, polyline.[0], polyline.[1], fillets.[0])
+                let arc = RhinoScriptSyntax.FilletArc (polyline.[polyline.Count-1], polyline.[0], polyline.[1], fillets.[0])
                 plc.Append arc  |> ignore
                 prevPt <- arc.EndPoint
                 endPt <- arc.StartPoint
-                if fillets.ContainsKey polyline.LastIndex then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
+                if fillets.ContainsKey (polyline.Count-1) then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletPolyline:Cannot set last and first radius on closed polyline fillet"
             else
                 RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.FilletPolyline: Cannot set radius at index 0 on open polyline"
 

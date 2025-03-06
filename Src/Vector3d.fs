@@ -3,7 +3,7 @@ namespace Rhino.Scripting.FSharp
 open Rhino
 open Rhino.Geometry
 open System
-open FsEx
+open Rhino.Scripting.RhinoScriptingUtils
 open UtilRHinoScriptingFSharp
 
 module internal VecUnitized =
@@ -104,7 +104,7 @@ module AutoOpenVector3d =
 
 
         member v.AsString =
-            sprintf "X=%s|Y=%s|Z=%s" (NiceFormat.float v.X) (NiceFormat.float v.Y) (NiceFormat.float v.Z)
+            sprintf "X=%s|Y=%s|Z=%s" (PrettyFormat.float v.X) (PrettyFormat.float v.Y) (PrettyFormat.float v.Z)
 
         // /// Returns the length of the 3D vector.
         // member inline v.Length =

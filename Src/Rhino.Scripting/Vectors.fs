@@ -2,15 +2,16 @@
 
 open System
 open System.Collections.Generic
-
 open Rhino
 open Rhino.Geometry
-
-open FsEx
-open FsEx.UtilMath
-open FsEx.SaveIgnore
-open FsEx.ExtensionsIList
 open Rhino.Scripting
+open Rhino.Scripting.RhinoScriptingUtils
+open UtilRHinoScriptingFSharp
+// open FsEx
+// open FsEx.UtilMath
+// open FsEx.SaveIgnore
+// open FsEx.ExtensionsIList
+
 
 /// This module provides functions to manipulate Rhino Vector3d
 /// This module is automatically opened when Rhino.Scripting.FSharp namespace is opened.
@@ -44,14 +45,20 @@ module AutoOpenVectors =
         static member DrawPlane(    pl:Plane,
                                     [<OPT;DEF(1.0)>]axLength:float,
                                     [<OPT;DEF("")>]suffixInDot:string,
-                                    [<OPT;DEF("")>]layer:string ) : Rarr<Guid>  =
-            let a= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.XAxis*axLength)
-            let b= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.YAxis*axLength)
-            let c= RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.ZAxis*axLength*0.5)
-            let e= RhinoScriptSyntax.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*axLength)
-            let f= RhinoScriptSyntax.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*axLength)
-            let g= RhinoScriptSyntax.AddTextDot("z"+suffixInDot, pl.Origin + pl.ZAxis*axLength*0.5)
-            let es = rarr { a;b;c;e;f;g }
+                                    [<OPT;DEF("")>]layer:string ) : ResizeArray<Guid>  =
+            let a = RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.XAxis*axLength)
+            let b = RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.YAxis*axLength)
+            let c = RhinoScriptSyntax.AddLine(pl.Origin, pl.Origin + pl.ZAxis*axLength*0.5)
+            let e = RhinoScriptSyntax.AddTextDot("x"+suffixInDot, pl.Origin + pl.XAxis*axLength)
+            let f = RhinoScriptSyntax.AddTextDot("y"+suffixInDot, pl.Origin + pl.YAxis*axLength)
+            let g = RhinoScriptSyntax.AddTextDot("z"+suffixInDot, pl.Origin + pl.ZAxis*axLength*0.5)
+            let es = ResizeArray<Guid>(6)
+            es.Add a
+            es.Add b
+            es.Add c
+            es.Add e
+            es.Add f
+            es.Add g
             if layer <>"" then RhinoScriptSyntax.setLayers layer es
             let gg= RhinoScriptSyntax.AddGroup()
             RhinoScriptSyntax.AddObjectsToGroup(es, gg)
@@ -85,24 +92,27 @@ module AutoOpenVectors =
         /// The first two points define the orientation of the normal.
         /// Considers current order of points too, counterclockwise in xy Plane is z
         static member NormalOfPoints(pts:Point3d IList) : Vector3d  =
-            if Seq.hasMaximumItems 2 pts then
-                RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints can't find normal of two or less points %s" (toNiceString pts)
-            elif Seq.hasItems 3 pts   then
+            if pts.Count <= 2  then
+                RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints can't find normal of two or less points %s" (pretty pts)
+            elif pts.Count = 3 then
                 let a = pts.[0] - pts.[1]
                 let b = pts.[2] - pts.[1]
                 let v= Vector3d.CrossProduct(b, a)
-                if v.IsTiny() then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints: three points are in a line  %s" (toNiceString pts)
+                if v.IsTiny() then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints: three points are in a line  %s" (pretty pts)
                 else
                     v.Unitized
             else
                 let cen = RhinoScriptSyntax.MeanPoint(pts)
                 let mutable v = Vector3d.Zero
-                for t, n in Seq.thisNext pts do
+                // for t, n in Seq.thisNext pts do
+                for i = 0 to pts.Count-1 do
+                    let t = pts.[i]
+                    let n = pts.[idxLooped (i+1) pts.Count]
                     let a = t-cen
                     let b = n-cen
                     let x = Vector3d.CrossProduct(a, b)  |> Vector3d.matchOrientation v // TODO do this matching?
                     v <- v + x
-                if v.IsTiny() then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints: points are in a line  %s" (toNiceString pts)
+                if v.IsTiny() then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.NormalOfPoints: points are in a line  %s" (pretty pts)
                 else
                     v.Unitized
 
@@ -141,7 +151,7 @@ module AutoOpenVectors =
         static member OffsetPoints(     points: IList<Point3d>,  // IList so it can take a Point3dList class too
                                         offsetDistances: float seq,
                                         [<OPT;DEF(null:seq<float>)>] normalDistances: float seq,
-                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  =
+                                        [<OPT;DEF(false)>]loop:bool) :Point3d  ResizeArray  =
             let offDists0  = Array.ofSeq offsetDistances
             let normDists0 = Array.ofSeq (normalDistances |? Seq.empty<float> )
             let pointCount = points.Count
@@ -149,20 +159,20 @@ module AutoOpenVectors =
             let lenDist = offDists0.Length
             let lenDistNorm = normDists0.Length
             if pointCount < 2 then
-                RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints needs at least two points but %s given" (toNiceString points)
+                RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints needs at least two points but %s given" (pretty points)
             elif pointCount = 2 then
                 let offDist =
                     if   lenDist = 0 then 0.0
                     elif lenDist = 1 then offDists0.[0]
-                    else RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints: offsetDistances has %d items but should have 1 or 0 for 2 given points %s" lenDist (toNiceString points)
+                    else RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints: offsetDistances has %d items but should have 1 or 0 for 2 given points %s" lenDist (pretty points)
                 let normDist =
                     if   lenDistNorm = 0 then 0.0
                     elif lenDistNorm = 1 then normDists0.[0]
-                    else RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (toNiceString points)
+                    else RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have 1 or 0 for 2 given points %s" lenDistNorm (pretty points)
                 let a, b = Point3d.offsetTwoPt(points.[0], points.[1] , offDist, normDist)
-                rarr { a; b}
+                ResizeArray<Point3d> [|a; b|]
             else // regular case more than 2 points
-                let lastIsFirst = (points.[0] - points.Last).Length < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
+                let lastIsFirst = (points.[0] - points.[points.Count-1]).Length < RhinoScriptSyntax.Doc.ModelAbsoluteTolerance //auto detect closed polyline points:
                 let distsNeeded =
                     if lastIsFirst then pointCount - 1
                     elif loop      then pointCount
@@ -182,13 +192,17 @@ module AutoOpenVectors =
                     elif lenDistNorm = distsNeededNorm then   normDists0
                     else RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.OffsetPoints: normalDistances has %d items but should have %d (lastIsFirst=%b) (loop=%b)" lenDist distsNeededNorm lastIsFirst loop
                 let refNormal = RhinoScriptSyntax.NormalOfPoints(points) //to have good starting direction, first kink might be in bad direction
-                let Pts = Rarr<Point3d>(pointCount)
-                let Ns = Rarr<Vector3d>(pointCount)
-                for i, p, t, n in Seq.iPrevThisNext(points) do
+                let Pts = ResizeArray<Point3d>(pointCount)
+                let Ns = ResizeArray<Vector3d>(pointCount)
+                // for i, p, t, n in Seq.iPrevThisNext(points) do
+                for i = 0 to lastIndex do
+                    let p = points[idxLooped (i-1) pointCount]
+                    let t = points.[i]
+                    let n = points[idxLooped (i+1) pointCount]
                     // first one:
                     if i=0 then
                         if lastIsFirst then
-                            let prev = points.GetNeg(-2) // because -1 is same as 0
+                            let prev = points[idxLooped -2 pointCount] //.GetNeg(-2) // because -1 is same as 0
                             let struct( _, _, pt, N) = Point3d.findOffsetCorner(prev, t, n, offDists.Last, offDists.[0], refNormal)
                             Pts.Add pt
                             Ns.Add N
@@ -221,13 +235,13 @@ module AutoOpenVectors =
                         if n <> Vector3d.Zero then
                             Pts.[i] <- Pts.[i] + n * normDists.[i]
 
-                let rec searchBack i (ns:Rarr<Vector3d>) =
+                let rec searchBack i (ns:ResizeArray<Vector3d>) =
                     let ii = saveIdx (i) ns.Count
                     let v = ns.[ii]
                     if v <> Vector3d.Zero || i < -ns.Count then ii
                     else searchBack (i-1) ns
 
-                let rec  searchForward i (ns:Rarr<Vector3d>) =
+                let rec  searchForward i (ns:ResizeArray<Vector3d>) =
                     let ii = saveIdx (i) ns.Count
                     let v = ns.[ii]
                     if v <> Vector3d.Zero || i > (2 * ns.Count) then ii
@@ -265,7 +279,7 @@ module AutoOpenVectors =
         static member OffsetPoints(     points:Point3d IList,
                                         offsetDistance: float,
                                         [<OPT;DEF(0.0)>]normalDistance: float ,
-                                        [<OPT;DEF(false)>]loop:bool) :Point3d  Rarr  =
+                                        [<OPT;DEF(false)>]loop:bool) :Point3d  ResizeArray  =
 
             if normalDistance = 0.0 then RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[]              , loop)
             else                         RhinoScriptSyntax.OffsetPoints(points,[offsetDistance],[normalDistance], loop)

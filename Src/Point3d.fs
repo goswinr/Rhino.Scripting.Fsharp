@@ -4,7 +4,7 @@ open Rhino.Scripting
 open System
 open Rhino
 open Rhino.Geometry
-open FsEx
+open Rhino.Scripting.RhinoScriptingUtils
 open UtilRHinoScriptingFSharp
 open System
 
@@ -23,7 +23,7 @@ module AutoOpenPnt =
 
         /// Format 3D point into string with nice floating point number formatting of X, Y and Z
         /// But without full type name as in pt.ToString()
-        member p.AsString = sprintf "X=%s|Y=%s|Z=%s" (NiceFormat.float p.X) (NiceFormat.float p.Y) (NiceFormat.float p.Z)
+        member p.AsString = sprintf "X=%s|Y=%s|Z=%s" (PrettyFormat.float p.X) (PrettyFormat.float p.Y) (PrettyFormat.float p.Z)
 
         //-----------------------------------------------------------------------------------------------------
         // These static members can't be extension methods to be useful for Array.sum and Array.average :
@@ -533,7 +533,7 @@ module AutoOpenPnt =
                 let lp = Line(thisPt + sp , vp)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>>ignore)
                 let ln = Line(thisPt + sn , vn)  //|>! ( RhinoScriptSyntax.Doc.Objects.AddLine>> ignore)
                 let ok, tp , _ = Intersect.Intersection.LineLine(lp, ln) //could also be solved with trigonometry functions
-                if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.ToNiceString ln.ToNiceString
+                if not ok then RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPnt.findOffsetCorner: Intersect.Intersection.LineLine failed on %s and %s" lp.Pretty ln.Pretty
                 struct(sp, sn, lp.PointAt(tp), n)  //or ln.PointAt(tn), should be same
 
 

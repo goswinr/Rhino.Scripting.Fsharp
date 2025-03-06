@@ -2,9 +2,8 @@
 
 open Rhino
 open Rhino.Geometry
-open FsEx
-open FsEx.SaveIgnore
 open Rhino.Scripting
+open Rhino.Scripting.RhinoScriptingUtils
 
 
 /// This module provides functions to create or manipulate Rhino Meshes
@@ -79,7 +78,7 @@ module AutoOpenMesh =
 
 
         /// Makes a closed loop of welded Quads, last Line is ignored, it is considered the same as the first one, (e.g. coming from closed Polyline)
-        static member MeshAddLoopWelded (m:Mesh, lns:Rarr<Line>) =
+        static member MeshAddLoopWelded (m:Mesh, lns:ResizeArray<Line>) =
             // add first face
             let ln0 = lns.[0]
             let s0 = ln0.From
@@ -94,7 +93,7 @@ module AutoOpenMesh =
             m.Faces.AddFace(a,b,c,d) |> ignore
             let a0,b0 = a,b // save for last face
             // add other faces:
-            for i=2 to lns.LastIndex-1 do // ignore last because it is the same as the first point
+            for i=2 to lns.Count-2 do // ignore last because it is the same as the first point
                 let ln = lns.[i]
                 let s = ln.From
                 let e = ln.To
@@ -107,15 +106,18 @@ module AutoOpenMesh =
             m.Faces.AddFace(d,c,b0,a0) |> ignore
 
         /// Makes a closed loop of NOT welded Quads, last Line is ignored, it is considered the same as the first one, (e.g. coming from closed Polyline)
-        static member MeshAddLoopUnWelded (m:Mesh, lns:Rarr<Line>) =
-            for lnP,ln in Seq.thisNext lns do
-                let  sP = lnP.From
-                let  eP = lnP.To
-                let  s = ln.From
-                let  e = ln.To
-                let  a = m.Vertices.Add (sP.X,sP.Y,sP.Z)
-                let  b = m.Vertices.Add (eP.X,eP.Y,eP.Z)
-                let  c = m.Vertices.Add (e.X,e.Y,e.Z)
-                let  d = m.Vertices.Add (s.X,s.Y,s.Z)
+        static member MeshAddLoopUnWelded (m:Mesh, lns:ResizeArray<Line>) =
+            // for lnP,ln in Seq.thisNext lns do
+            for i = 0 to lns.Count-1 do
+                let lnP = lns.[i]
+                let ln = lns.[(i+1)%lns.Count]
+                let sP = lnP.From
+                let eP = lnP.To
+                let s = ln.From
+                let e = ln.To
+                let a = m.Vertices.Add (sP.X,sP.Y,sP.Z)
+                let b = m.Vertices.Add (eP.X,eP.Y,eP.Z)
+                let c = m.Vertices.Add (e.X,e.Y,e.Z)
+                let d = m.Vertices.Add (s.X,s.Y,s.Z)
                 m.Faces.AddFace(a,b,c,d) |> ignore
 

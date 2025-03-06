@@ -1,12 +1,11 @@
 ﻿namespace Rhino.Scripting.FSharp
 
-open FsEx
 open System
 open Rhino
 open Rhino.Geometry
-open FsEx.UtilMath
 open Rhino.Scripting
 open UtilRHinoScriptingFSharp
+open Rhino.Scripting.RhinoScriptingUtils
 
 
 
@@ -129,8 +128,8 @@ module AutoOpenPlane=
     /// Counter clockwise in top view (for WorldXY Plane).
     static member inline rotateZ (angDegree:float) (pl:Plane) =
         let mutable p = pl.Clone()
-        if not <| p.Rotate(UtilMath.toRadians angDegree, Vector3d.ZAxis) then
-            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" angDegree.ToNiceString pl.ToNiceString
+        if not <| p.Rotate(toRadians angDegree, Vector3d.ZAxis) then
+            RhinoScriptingFSharpException.Raise "Rhino.Scripting.FSharp: RhinoScriptSyntax.RhPlane.rotateZ by %s for %s" (PrettyFormat.float angDegree) pl.Pretty
         p
 
 

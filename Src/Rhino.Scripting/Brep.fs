@@ -3,9 +3,8 @@
 open System
 open Rhino
 open Rhino.Geometry
-open FsEx
-open FsEx.SaveIgnore
 open Rhino.Scripting
+open Rhino.Scripting.RhinoScriptingUtils
 
 /// This module provides functions to create or manipulate Rhino Breps/ Polysurface
 /// This module is automatically opened when Rhino.Scripting.FSharp namespace is opened.

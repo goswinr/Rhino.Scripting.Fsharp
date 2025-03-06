@@ -2,27 +2,27 @@
 
 open Rhino
 open Rhino.Geometry
-open FsEx
 open Rhino.Scripting
+open Rhino.Scripting.RhinoScriptingUtils
 
 
 [<RequireQualifiedAccess>]
-module Topology =
+module RhTopology =
 
-    // The same function exist on FsEX.Rarr module too but with extra error checking.
-    // Swap the values of two given indices in Rarr
-    let inline private swap i j (xs:Rarr<'T>) :unit =
+    // The same function exist on FsEX.ResizeArray module too but with extra error checking.
+    // Swap the values of two given indices in ResizeArray
+    let inline private swap i j (xs:ResizeArray<'T>) :unit =
         if i<>j then
             let ti = xs.[i]
             xs.[i] <- xs.[j]
             xs.[j] <- ti
 
-    // The same function exist on FsEX.Rarr module too but with extra error checking.
-    // Like Rarr.minIndexBy but starting to search only from a given index
-    let inline private minIndexByFrom  (compareBy: 'T -> 'U)  fromIdx (xs:Rarr<'T>) : int =
+    // The same function exist on FsEX.ResizeArray module too but with extra error checking.
+    // Like ResizeArray.minIndexBy but starting to search only from a given index
+    let inline private minIndexByFrom  (compareBy: 'T -> 'U)  fromIdx (xs:ResizeArray<'T>) : int =
         let mutable idx = fromIdx
         let mutable mi = compareBy xs.[fromIdx]
-        for j = fromIdx + 1 to xs.LastIndex do
+        for j = fromIdx + 1 to xs.Count-1 do
             let this = compareBy xs.[j]
             if this < mi then
                 idx <- j
@@ -33,7 +33,7 @@ module Topology =
     /// for each line end point it finds the next closest line start point.
     /// (Does not check other line end points that might be closer)
     /// Line is used as an abstraction to hold start and end of arbitrary object.
-    let sortToLoop(getLine: 'T -> Line) (xs:Rarr<'T>)  =
+    let sortToLoop(getLine: 'T -> Line) (xs:ResizeArray<'T>)  =
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
             //  TODO could be optimized using a R-Tree for very large lists instead of minBy function
@@ -44,7 +44,7 @@ module Topology =
     /// For each line end it finds the next closest start point or end point.
     /// Line is used as an abstraction to hold start and end of arbitrary object.
     /// Reverses the input in place,  where required via reverseInPlace function that takes the index of the element as parameter.
-    let sortToLoopWithReversing (getLine: 'T -> Line) (reverseInPlace: int -> 'T -> unit) (xs:Rarr<'T>) : unit =
+    let sortToLoopWithReversing (getLine: 'T -> Line) (reverseInPlace: int -> 'T -> unit) (xs:ResizeArray<'T>) : unit =
         for i = 0 to xs.Count - 2 do // only run till second last
             let thisLine = getLine xs.[i]
             // TODO could be optimized using a R-Tree for very large lists instead of minBy function
