@@ -4,9 +4,11 @@ name: Docs
 
 # Trigger this Action when new code is pushed to the main branch
 on:
+  workflow_dispatch: # Allows manual triggering of the workflow
   push:
     branches:
       - main
+
 
 # We need some permissions to publish to Github Pages
 permissions:
@@ -33,15 +35,9 @@ jobs:
         run: |
           cd Src 
           ls 
-
           
       - name: Build code to make xml file
         run: dotnet build --configuration Release # see required xml tags: https://fsprojects.github.io/FSharp.Formatting/zero-to-hero.html#Generating-API-documentation
-
-      # Run dotnet build --configuration Release
-      #   Determining projects to restore...
-      #   Restored /home/runner/work/Rhino.Scripting.Fsharp/Rhino.Scripting.Fsharp/Rhino.Scripting.Fsharp.fsproj (in 1.22 sec).
-      # FSC : error FS0225: Source file '/home/runner/work/Rhino.Scripting.Fsharp/Rhino.Scripting.Fsharp/Src/UtilRhinoScriptingFSharp.fs' could not be found [/home/runner/work/Rhino.Scripting.Fsharp/Rhino.Scripting.Fsharp/Rhino.Scripting.Fsharp.fsproj]
 
       - name: copy README.md to Docs/index.md
         run: cp README.md Docs/index.md
