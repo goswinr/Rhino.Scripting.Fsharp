@@ -47,10 +47,10 @@ It passes it's input on as output. See [definition](https://github.com/goswinr/R
 [goswinr.github.io/Rhino.Scripting.FSharp](https://goswinr.github.io/Rhino.Scripting.FSharp)
 
 ## Thread Safety
-While the main Rhino Document is officially not thread safe, this library can be used from any thread.\
-If running async this library will automatically marshal all calls that affect the UI to the main Rhino UI thread \
-and wait for switching back till completion on UI thread.\
-Modifying the Rhino Document from a background thread is actually OK as long as there is only one thread doing it.\
+While the main Rhino Document is officially not thread safe, this library can be used from any thread.<br>
+If running async this library will automatically marshal all calls that affect the UI to the main Rhino UI thread <br>
+and wait for switching back till completion on UI thread.<br>
+Modifying the Rhino Document from a background thread is actually OK as long as there is only one thread doing it.<br>
 The main reason to use this library async is to keep the Rhino UI and Fesh scripting editor UI responsive while doing long running operations.
 
 ## Contributing

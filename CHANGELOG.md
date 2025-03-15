@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.10.1] - 2025-03-07
+## [0.10.1] - 2025-03-15
 ### Changed
 - Referencing Rhino.Scripting 0.10.1
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - removed FsEx dependency
 - rename .ToNiceString to .Pretty
 
-## [0.8.2] - 2025-02-23
+## [0.8.2] - 2025-02-24
 ### Changed
 - Referencing Rhino.Scripting 0.8.0
 - rename Rhino.Scripting.Fsharp -> Rhino.Scripting.FSharp (capital S)
@@ -35,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - First public release
 - Referencing Rhino.Scripting 0.5.0
-
 
 [Unreleased]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.10.1...HEAD
 [0.10.1]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.10.0...0.10.1
