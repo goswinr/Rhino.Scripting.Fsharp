@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2025-03-07
+### Changed
+- Referencing Rhino.Scripting 0.10.1
+
 ## [0.10.0] - 2025-03-07
 ### Changed
 - Referencing Rhino.Scripting 0.10.0
@@ -33,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Referencing Rhino.Scripting 0.5.0
 
 
-[Unreleased]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.10.1...HEAD
+[0.10.1]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.10.0...0.10.1
 [0.10.0]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.8.2...0.10.0
 [0.8.2]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.8.1...0.8.2
 [0.8.1]: https://github.com/goswinr/Rhino.Scripting.FSharp/compare/0.8.0...0.8.1
