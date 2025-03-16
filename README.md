@@ -40,7 +40,7 @@ rs.ObjectName (guid, "123")
 ```
 
 The `|>!` operator is part of Rhino.Scripting.FSharp library.
-It passes it's input on as output. See [definition](https://github.com/goswinr/Rhino.Scripting.Fsharp/blob/main/Src/Rhino.Scripting/Curried.fs#L16).
+It passes it's input on as output. See [definition](https://github.com/goswinr/Rhino.Scripting.FSharp/blob/main/Src/Rhino.Scripting/Curried.fs#L16).
 
 ### Full API Documentation
 

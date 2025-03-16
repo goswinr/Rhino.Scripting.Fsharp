@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.2] - 2025-02-24
 ### Changed
 - Referencing Rhino.Scripting 0.8.0
-- rename Rhino.Scripting.Fsharp -> Rhino.Scripting.FSharp (capital S)
+- rename Rhino.Scripting.FSharp -> Rhino.Scripting.FSharp (capital S)
 
 ## [0.8.1] - 2024-10-06
 ### Changed
